@@ -17,12 +17,23 @@ class UserController
   public function register()
   {
     try {
-      $json_payload = file_get_contents('php://input');
-      if (empty($json_payload)) {
-        throw new \Exception("Invalid JSON payload.");
+      $username = isset($_POST['username']) ? trim($_POST['username']) : '';
+      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+      $password = isset($_POST['password']) ? $_POST['password'] : '';
+
+      if (empty($username) || empty($email) || empty($password)) {
+        throw new \Exception("Username, email, and password are required.");
       }
-      $data = json_decode($json_payload, true);
-      $user = $this->auth->register($data["username"], $data["email"], $data["password"]);
+
+      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new \Exception("Invalid email format.");
+      }
+
+      if (strlen($password) < 6) {
+        throw new \Exception("Password must be at least 6 characters long.");
+      }
+
+      $user = $this->auth->register($username, $email, $password);
       JsonView::render($user, 201);
     } catch (\Exception $e) {
       JsonView::render(['error' => $e->getMessage()], 400);
@@ -32,12 +43,18 @@ class UserController
   public function login()
   {
     try {
-      $json_payload = file_get_contents('php://input');
-      if (empty($json_payload)) {
-        throw new \Exception("Invalid JSON payload.");
+      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+      $password = isset($_POST['password']) ? $_POST['password'] : '';
+
+      if (empty($email) || empty($password)) {
+        throw new \Exception("Email and password are required.");
       }
-      $data = json_decode($json_payload, true);
-      $user = $this->auth->login($data["email"], $data["password"]);
+
+      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new \Exception("Invalid email format.");
+      }
+
+      $user = $this->auth->login($email, $password);
       JsonView::render($user, 200);
     } catch (\Exception $e) {
       JsonView::render(['error' => $e->getMessage()], 401);
