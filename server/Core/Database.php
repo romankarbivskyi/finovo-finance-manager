@@ -13,11 +13,11 @@ class Database
   private function __construct()
   {
     try {
-      $host = 'localhost';
-      $port = '5432';
-      $dbname = 'finance_manager';
-      $username = 'postgres';
-      $password = 'root';
+      $host = getenv('DB_HOST') ?: 'localhost';
+      $port = getenv('DB_PORT') ?: '5432';
+      $dbname = getenv('DB_NAME') ?: 'finance_manager';
+      $username = getenv('DB_USER') ?: 'postgres';
+      $password = getenv('DB_PASS') ?: 'root';
       $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -30,6 +30,14 @@ class Database
         $password,
         $options
       );
+
+      $sqlFile = getenv('DB_INIT_SQL') ?: (__DIR__ . '/init.sql');
+      if (file_exists($sqlFile)) {
+        $sql = file_get_contents($sqlFile);
+        if ($sql !== false) {
+          $this->connection->exec($sql);
+        }
+      }
     } catch (PDOException $e) {
       die("Database connection failed: " . $e->getMessage());
     }
