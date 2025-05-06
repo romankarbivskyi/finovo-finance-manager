@@ -14,8 +14,10 @@ $router->addRoute('GET', '/', function () {
 
 $router->addRoute('POST', '/register', 'UserController@register');
 $router->addRoute('POST', '/login', 'UserController@login');
-$router->addRoute('GET', '/user', 'UserController@getUser');
+$router->addRoute('GET', '/users/profile', 'UserController@getUser');
 $router->addRoute('POST', '/logout', 'UserController@logout');
+
+$router->addRoute('POST', '/goals', 'GoalController@createGoal');
 
 $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
