@@ -31,7 +31,7 @@ class Database
         $options
       );
 
-      $sqlFile = getenv('DB_INIT_SQL') ?: (__DIR__ . '/init.sql');
+      $sqlFile = __DIR__ . '/../init.sql';
       if (file_exists($sqlFile)) {
         $sql = file_get_contents($sqlFile);
         if ($sql !== false) {

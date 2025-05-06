@@ -2,9 +2,11 @@
 
 require_once __DIR__ . '/autoload.php';
 
+use server\Core\Database;
 use server\Core\Router;
 
 $router = new Router();
+$db = Database::getInstance();
 
 $router->addRoute('GET', '/', function () {
   echo "Welcome to the home page!";
