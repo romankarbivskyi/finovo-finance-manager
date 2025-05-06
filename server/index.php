@@ -12,8 +12,10 @@ $router->addRoute('GET', '/', function () {
   echo "Welcome to the home page!";
 });
 
-$router->addRoute('GET', '/test', 'TestController@index');
-$router->addRoute('GET', '/test/{id}', 'TestController@show');
+$router->addRoute('POST', '/register', 'UserController@register');
+$router->addRoute('POST', '/login', 'UserController@login');
+$router->addRoute('GET', '/user', 'UserController@getUser');
+$router->addRoute('POST', '/logout', 'UserController@logout');
 
 $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 

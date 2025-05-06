@@ -23,10 +23,16 @@ class Auth
     return self::$instance;
   }
 
-  public function register($username, $password)
+  public function register($username, $email, $password)
   {
+
+    $existingUser = $this->db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
+    if ($existingUser) {
+      throw new \Exception("Email already exists.");
+    }
+
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-    $userId = $this->db->insert("INSERT INTO users (username, password) VALUES (?, ?)", [$username, $hashedPassword]);
+    $userId = $this->db->insert("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", [$username, $email, $hashedPassword]);
 
     if (!$userId) {
       throw new \Exception("User registration failed.");
@@ -39,9 +45,9 @@ class Auth
     return $user;
   }
 
-  public function login($username, $password)
+  public function login($email, $password)
   {
-    $user = $this->db->fetchOne("SELECT * FROM users WHERE username = ?", [$username]);
+    $user = $this->db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
 
     if (!$user || !password_verify($password, $user['password'])) {
       throw new \Exception("Invalid username or password.");
@@ -49,6 +55,22 @@ class Auth
 
     $this->session->set('user_id', $user['id']);
     $this->session->regenerate();
+    return $user;
+  }
+
+  public function getUser()
+  {
+    if (!$this->isAuthenticated()) {
+      return null;
+    }
+
+    $userId = $this->session->get('user_id');
+    $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+
+    if (!$user) {
+      throw new \Exception("User not found.");
+    }
+
     return $user;
   }
 
