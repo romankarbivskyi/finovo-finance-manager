@@ -2,15 +2,29 @@
 
 namespace server\Controllers;
 
+use server\Core\JsonView;
+
 class TestController
 {
   public function index()
   {
-    echo "This is the index method of TestController.";
+    JsonView::render([
+      'message' => 'This is the index method of TestController',
+      'data' => [
+        'item1' => 'value1',
+        'item2' => 'value2',
+      ],
+    ]);
   }
 
   public function show($id)
   {
-    echo "This is the show method of TestController with ID: $id";
+    JsonView::render([
+      'message' => 'This is the show method of TestController',
+      'data' => [
+        'id' => $id,
+        'item' => 'value' . $id,
+      ],
+    ]);
   }
 }

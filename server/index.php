@@ -28,7 +28,6 @@ if ($route) {
     call_user_func_array([$controllerInstance, $method], $params);
   }
 } else {
-  // Handle 404
   header("HTTP/1.0 404 Not Found");
   echo "404 Not Found";
 }
