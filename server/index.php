@@ -3,13 +3,17 @@
 require_once __DIR__ . '/autoload.php';
 
 use server\Core\Database;
+use server\Core\Response;
 use server\Core\Router;
+use server\Core\Session;
+
+Session::getInstance();
 
 $router = new Router();
 $db = Database::getInstance();
 
 $router->addRoute('GET', '/', function () {
-  echo "Welcome to the home page!";
+  echo "Welcome to the home page! Method: " . $_SERVER['REQUEST_METHOD'];
 });
 
 $router->addRoute('POST', '/register', 'UserController@register');
@@ -19,22 +23,36 @@ $router->addRoute('POST', '/logout', 'UserController@logout');
 
 $router->addRoute('POST', '/goals/{id}', 'GoalController@update');
 $router->addRoute('POST', '/goals', 'GoalController@create');
+$router->addRoute('GET', '/goals', 'GoalController@getAll');
+$router->addRoute('DELETE', '/goals/{id}', 'GoalController@delete');
+$router->addRoute('GET', '/goals/{id}', 'GoalController@getById');
+
+$router->addRoute('POST', '/goals/{id}/transactions', 'TransactionController@create');
+$router->addRoute('GET', '/goals/{id}/transactions', 'TransactionController@getAllForGoal');
+$router->addRoute('DELETE', '/transactions/{id}', 'TransactionController@delete');
 
 $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
 if ($route) {
   $callback = $route['callback'];
-  $params = $route['params'];
+  $routeParams = $route['params'];
 
   if (is_callable($callback)) {
-    call_user_func_array($callback, $params);
+    call_user_func_array($callback, $actionArgs);
   } else if (is_string($callback) && strpos($callback, '@') !== false) {
     list($controller, $method) = explode('@', $callback);
-    $controller = "server\\Controllers\\{$controller}";
-    $controllerInstance = new $controller();
-    call_user_func_array([$controllerInstance, $method], $params);
+    $controllerClass = "server\\Controllers\\{$controller}";
+    if (class_exists($controllerClass)) {
+      $controllerInstance = new $controllerClass();
+      if (method_exists($controllerInstance, $method)) {
+        call_user_func_array([$controllerInstance, $method], $routeParams);
+      } else {
+        Response::json(['error' => 'Method not found'], 404);
+      }
+    } else {
+      Response::json(['error' => 'Controller not found'], 404);
+    }
   }
 } else {
-  header("HTTP/1.0 404 Not Found");
-  echo "404 Not Found";
+  Response::json(['error' => 'Route not found'], 404);
 }

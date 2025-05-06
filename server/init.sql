@@ -18,3 +18,15 @@ CREATE TABLE IF NOT EXISTS "goals" (
   "preview_image" VARCHAR(255),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS "transactions" (
+  "id" SERIAL PRIMARY KEY,
+  "goal_id" INTEGER NOT NULL,
+  "user_id" INTEGER NOT NULL,
+  "amount" DECIMAL(10, 2) NOT NULL,
+  "description" TEXT,
+  "transaction_type" VARCHAR(10) NOT NULL CHECK (transaction_type IN ('income', 'expense')),
+  "transaction_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (goal_id) REFERENCES goals(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

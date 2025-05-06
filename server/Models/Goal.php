@@ -19,7 +19,7 @@ class Goal
     $imageUrl = null;
     if ($image && $image['error'] === UPLOAD_ERR_OK) {
       $imageName = ImageHandler::uploadImage($image);
-      $imageUrl = $imageName;
+      $imageUrl = ImageHandler::getImageUrl($imageName);
     }
 
     $goalId = $this->db->insert(
@@ -63,7 +63,7 @@ class Goal
         ImageHandler::deleteImage($goal['preview_image']);
       }
       $imageName = ImageHandler::uploadImage($image);
-      $imageUrl = $imageName;
+      $imageUrl = ImageHandler::getImageUrl($imageName);
     }
 
     $this->db->query(
@@ -136,5 +136,24 @@ class Goal
     }
 
     return $errors;
+  }
+
+  public function updateCurrentAmount($goalId, $amount, $transactionType)
+  {
+    $goal = $this->getById($goalId);
+
+    if (!$goal) {
+      throw new \Exception("Goal not found.");
+    }
+
+    if ($transactionType === 'income') {
+      $goal['current_amount'] += $amount;
+    } elseif ($transactionType === 'expense') {
+      $goal['current_amount'] -= $amount;
+    } else {
+      throw new \Exception("Invalid transaction type.");
+    }
+
+    return $this->update($goalId, $goal['user_id'], $goal);
   }
 }

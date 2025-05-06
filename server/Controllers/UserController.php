@@ -5,6 +5,7 @@ namespace server\Controllers;
 use server\Core\Auth;
 use server\Core\Response;
 use server\Models\User;
+use server\Core\Request;
 
 class UserController
 {
@@ -23,7 +24,7 @@ class UserController
       $userData = [
         'username' => isset($_POST['username']) ? trim($_POST['username']) : '',
         'email' => isset($_POST['email']) ? trim($_POST['email']) : '',
-        'password' => isset($_POST['password']) ? $_POST['password'] : ''
+        'password' => isset($data['password']) ? $_POST['password'] : ''
       ];
 
       $errors = User::validateRegistration($userData);
@@ -45,8 +46,8 @@ class UserController
   public function login()
   {
     try {
-      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-      $password = isset($_POST['password']) ? $_POST['password'] : '';
+      $email = isset($data['email']) ? trim($_POST['email']) : '';
+      $password = isset($data['password']) ? $_POST['password'] : '';
 
       if (empty($email) || empty($password)) {
         throw new \Exception("Email and password are required.");

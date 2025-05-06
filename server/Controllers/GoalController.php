@@ -3,6 +3,7 @@
 namespace server\Controllers;
 
 use server\Core\Auth;
+use server\Core\Request;
 use server\Core\Response;
 use server\Models\Goal;
 
@@ -51,7 +52,6 @@ class GoalController
         Response::json(['error' => 'User not authenticated.'], 401);
         return;
       }
-
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
       $errors = Goal::validate($_POST);
@@ -82,6 +82,78 @@ class GoalController
         $statusCode = 401;
       }
       Response::json(['error' => $e->getMessage()], $statusCode);
+    }
+  }
+
+  public function delete($id)
+  {
+    try {
+      $user = $this->auth->getUser();
+      if (!$user) {
+        Response::json(['error' => 'User not authenticated.'], 401);
+        return;
+      }
+
+      $goal = $this->goalModel->getById($id);
+      if (!$goal) {
+        Response::json(['error' => 'Goal not found.'], 404);
+        return;
+      }
+      if ($goal['user_id'] !== $user['id']) {
+        Response::json(['error' => 'Unauthorized action.'], 403);
+        return;
+      }
+
+      $deleted = $this->goalModel->delete($id, $user['id']);
+
+      if ($deleted) {
+        Response::json(['message' => 'Goal deleted successfully.'], 200);
+      } else {
+        Response::json(['error' => 'Goal not found or deletion failed.'], 404);
+      }
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
+
+  public function getAll()
+  {
+    try {
+      $user = $this->auth->getUser();
+      if (!$user) {
+        Response::json(['error' => 'User not authenticated.'], 401);
+        return;
+      }
+
+      $goals = $this->goalModel->getAllForUser($user['id']);
+      Response::json($goals, 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
+
+  public function getById($id)
+  {
+    try {
+      $user = $this->auth->getUser();
+      if (!$user) {
+        Response::json(['error' => 'User not authenticated.'], 401);
+        return;
+      }
+
+      $goal = $this->goalModel->getById($id);
+      if (!$goal) {
+        Response::json(['error' => 'Goal not found.'], 404);
+        return;
+      }
+      if ($goal['user_id'] !== $user['id']) {
+        Response::json(['error' => 'Unauthorized action.'], 403);
+        return;
+      }
+
+      Response::json($goal, 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
     }
   }
 }
