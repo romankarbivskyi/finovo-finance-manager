@@ -3,40 +3,42 @@
 namespace server\Controllers;
 
 use server\Core\Auth;
-use server\Core\JsonView;
+use server\Core\Response;
+use server\Models\User;
 
 class UserController
 {
   private $auth;
+  private $userModel;
 
   public function __construct()
   {
     $this->auth = Auth::getInstance();
+    $this->userModel = new User();
   }
 
   public function register()
   {
     try {
-      $username = isset($_POST['username']) ? trim($_POST['username']) : '';
-      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-      $password = isset($_POST['password']) ? $_POST['password'] : '';
+      $userData = [
+        'username' => isset($_POST['username']) ? trim($_POST['username']) : '',
+        'email' => isset($_POST['email']) ? trim($_POST['email']) : '',
+        'password' => isset($_POST['password']) ? $_POST['password'] : ''
+      ];
 
-      if (empty($username) || empty($email) || empty($password)) {
-        throw new \Exception("Username, email, and password are required.");
+      $errors = User::validateRegistration($userData);
+      if (!empty($errors)) {
+        Response::json(['errors' => $errors], 400);
+        return;
       }
 
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        throw new \Exception("Invalid email format.");
-      }
+      $user = $this->auth->register($userData['username'], $userData['email'], $userData['password']);
 
-      if (strlen($password) < 6) {
-        throw new \Exception("Password must be at least 6 characters long.");
-      }
+      unset($user['password']);
 
-      $user = $this->auth->register($username, $email, $password);
-      JsonView::render($user, 201);
+      Response::json($user, 201);
     } catch (\Exception $e) {
-      JsonView::render(['error' => $e->getMessage()], 400);
+      Response::json(['error' => $e->getMessage()], 400);
     }
   }
 
@@ -50,14 +52,19 @@ class UserController
         throw new \Exception("Email and password are required.");
       }
 
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        throw new \Exception("Invalid email format.");
+      $user = $this->userModel->validateCredentials($email, $password);
+
+      if (!$user) {
+        throw new \Exception("Invalid email or password.");
       }
 
-      $user = $this->auth->login($email, $password);
-      JsonView::render($user, 200);
+      $this->auth->login($email, $password);
+
+      unset($user['password']);
+
+      Response::json($user, 200);
     } catch (\Exception $e) {
-      JsonView::render(['error' => $e->getMessage()], 401);
+      Response::json(['error' => $e->getMessage()], 401);
     }
   }
 
@@ -66,12 +73,13 @@ class UserController
     try {
       $user = $this->auth->getUser();
       if ($user) {
-        JsonView::render($user, 200);
+        unset($user['password']);
+        Response::json($user, 200);
       } else {
-        JsonView::render(['error' => 'User not authenticated.'], 401);
+        Response::json(['error' => 'User not authenticated.'], 401);
       }
     } catch (\Exception $e) {
-      JsonView::render(['error' => 'Failed to retrieve user.'], 500);
+      Response::json(['error' => 'Failed to retrieve user.'], 500);
     }
   }
 
@@ -79,9 +87,9 @@ class UserController
   {
     try {
       $this->auth->logout();
-      JsonView::render(['message' => 'Logged out successfully.'], 200);
+      Response::json(['message' => 'Logged out successfully.'], 200);
     } catch (\Exception $e) {
-      JsonView::render(['error' => 'Logout failed.'], 500);
+      Response::json(['error' => 'Logout failed.'], 500);
     }
   }
 }

@@ -17,7 +17,8 @@ $router->addRoute('POST', '/login', 'UserController@login');
 $router->addRoute('GET', '/users/profile', 'UserController@getUser');
 $router->addRoute('POST', '/logout', 'UserController@logout');
 
-$router->addRoute('POST', '/goals', 'GoalController@createGoal');
+$router->addRoute('POST', '/goals/{id}', 'GoalController@update');
+$router->addRoute('POST', '/goals', 'GoalController@create');
 
 $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 

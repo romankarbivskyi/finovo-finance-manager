@@ -2,9 +2,9 @@
 
 namespace server\Core;
 
-class JsonView
+class Response
 {
-  static function render($data, $statusCode = 200)
+  static function json($data, $statusCode = 200)
   {
     http_response_code($statusCode);
     header('Content-Type: application/json');

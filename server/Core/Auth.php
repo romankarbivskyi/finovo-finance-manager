@@ -2,16 +2,17 @@
 
 namespace server\Core;
 
+use server\Models\User;
+
 class Auth
 {
   public static $instance = null;
-  private $db;
+  private $userModel;
   private $session;
-
 
   private function __construct()
   {
-    $this->db = Database::getInstance();
+    $this->userModel = new User();
     $this->session = Session::getInstance();
   }
 
@@ -25,36 +26,38 @@ class Auth
 
   public function register($username, $email, $password)
   {
-
-    $existingUser = $this->db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
+    $existingUser = $this->userModel->findByEmail($email);
     if ($existingUser) {
       throw new \Exception("Email already exists.");
     }
 
-    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-    $userId = $this->db->insert("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", [$username, $email, $hashedPassword]);
+    $userData = [
+      'username' => $username,
+      'email' => $email,
+      'password' => $password
+    ];
 
-    if (!$userId) {
-      throw new \Exception("User registration failed.");
-    }
-
-    $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+    $user = $this->userModel->create($userData);
 
     $this->session->set('user_id', $user['id']);
+    $this->session->regenerate();
 
+    unset($user['password']);
     return $user;
   }
 
   public function login($email, $password)
   {
-    $user = $this->db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
+    $user = $this->userModel->validateCredentials($email, $password);
 
-    if (!$user || !password_verify($password, $user['password'])) {
-      throw new \Exception("Invalid username or password.");
+    if (!$user) {
+      throw new \Exception("Invalid email or password.");
     }
 
     $this->session->set('user_id', $user['id']);
     $this->session->regenerate();
+
+    unset($user['password']);
     return $user;
   }
 
@@ -65,12 +68,14 @@ class Auth
     }
 
     $userId = $this->session->get('user_id');
-    $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+    $user = $this->userModel->findById($userId);
 
     if (!$user) {
-      throw new \Exception("User not found.");
+      $this->session->remove('user_id');
+      return null;
     }
 
+    unset($user['password']);
     return $user;
   }
 
