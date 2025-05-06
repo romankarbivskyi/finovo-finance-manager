@@ -23,13 +23,13 @@ class GoalController
     try {
       $user = $this->auth->getUser();
       if (!$user) {
-        JsonView::render(['error' => 'User not authenticated.'], 401);
+        throw new \Exception('User not authenticated.', 401);
       }
 
       $requiredFields = ['name', 'description', 'target_date', 'current_amount', 'target_amount', 'currency'];
       foreach ($requiredFields as $field) {
         if (empty($_POST[$field])) {
-          JsonView::render(['error' => "Field '{$field}' is required."], 400);
+          throw new \Exception("Field '{$field}' is required.", 400);
         }
       }
 
@@ -42,17 +42,17 @@ class GoalController
       $userId = $user["id"];
 
       if ($currentAmount === false || $currentAmount < 0) {
-        JsonView::render(['error' => "Invalid current_amount."], 400);
+        throw new \Exception("Invalid current_amount.", 400);
       }
       if ($targetAmount === false || $targetAmount <= 0) {
-        JsonView::render(['error' => "Invalid target_amount."], 400);
+        throw new \Exception("Invalid target_amount.", 400);
       }
       if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $targetDate)) {
-        JsonView::render(['error' => "Invalid target_date format. Use YYYY-MM-DD."], 400);
+        throw new \Exception("Invalid target_date format. Use YYYY-MM-DD.", 400);
       }
       $allowedCurrencies = ['USD', 'UAH', 'EUR'];
       if (!in_array(strtoupper($currency), $allowedCurrencies, true)) {
-        JsonView::render(['error' => "Invalid currency. Allowed values: USD, UAH, EUR."], 400);
+        throw new \Exception("Invalid currency. Allowed values: USD, UAH, EUR.", 400);
       }
 
       $imageName = ImageHandler::uploadImage($_FILES["image"]);
@@ -70,7 +70,7 @@ class GoalController
       ]);
 
       if (!$goalId) {
-        JsonView::render(['error' => 'Goal was not created.'], 400);
+        throw new \Exception('Goal was not created.', 400);
       }
 
       $goal = $this->db->fetchOne("SELECT * FROM goals WHERE id = ?", [$goalId]);
