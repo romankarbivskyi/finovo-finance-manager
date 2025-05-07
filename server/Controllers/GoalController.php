@@ -3,7 +3,6 @@
 namespace server\Controllers;
 
 use server\Core\Auth;
-use server\Core\Request;
 use server\Core\Response;
 use server\Models\Goal;
 

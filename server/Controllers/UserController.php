@@ -5,7 +5,6 @@ namespace server\Controllers;
 use server\Core\Auth;
 use server\Core\Response;
 use server\Models\User;
-use server\Core\Request;
 
 class UserController
 {
