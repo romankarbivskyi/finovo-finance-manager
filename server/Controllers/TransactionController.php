@@ -2,7 +2,6 @@
 
 namespace server\Controllers;
 
-use server\Core\Request;
 use server\Core\Response;
 use server\Core\Auth;
 use server\Models\Transaction;
@@ -18,7 +17,7 @@ class TransactionController
     $this->transactionModel = new Transaction();
   }
 
-  public function create($goalId)
+  public function create($id)
   {
     try {
       $user = $this->auth->getUser();
@@ -27,7 +26,7 @@ class TransactionController
         throw new \Exception("User not authenticated.");
       }
 
-      $transaction = $this->transactionModel->create($goalId, $user['id'], $_POST);
+      $transaction = $this->transactionModel->create($id, $user['id'], $_POST);
 
       Response::json($transaction, 201);
     } catch (\Exception $e) {

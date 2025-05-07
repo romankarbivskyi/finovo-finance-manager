@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS "goals" (
   "currency" VARCHAR(10) NOT NULL CHECK (currency IN ('USH', 'UAH', 'EUR')) DEFAULT 'UAH',
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "preview_image" VARCHAR(255),
+  "status" VARCHAR(20) NOT NULL CHECK (status IN ('active', 'completed')) DEFAULT 'active',
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

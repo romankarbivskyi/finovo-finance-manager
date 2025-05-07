@@ -74,7 +74,8 @@ class Goal
         current_amount = ?, 
         target_amount = ?, 
         currency = ?, 
-        preview_image = ? 
+        preview_image = ?,
+        status = ?
       WHERE id = ? AND user_id = ?",
       [
         $data['name'],
@@ -84,6 +85,7 @@ class Goal
         $data['target_amount'],
         $data['currency'],
         $imageUrl,
+        $data['status'],
         $id,
         $userId
       ]
@@ -153,6 +155,8 @@ class Goal
     } else {
       throw new \Exception("Invalid transaction type.");
     }
+
+    $goal['status'] = $goal['current_amount'] >= $goal['target_amount'] ? 'completed' : 'active';
 
     return $this->update($goalId, $goal['user_id'], $goal);
   }

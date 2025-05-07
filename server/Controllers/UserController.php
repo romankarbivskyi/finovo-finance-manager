@@ -45,8 +45,8 @@ class UserController
   public function login()
   {
     try {
-      $email = isset($data['email']) ? trim($_POST['email']) : '';
-      $password = isset($data['password']) ? $_POST['password'] : '';
+      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+      $password = isset($_POST['password']) ? $_POST['password'] : '';
 
       if (empty($email) || empty($password)) {
         throw new \Exception("Email and password are required.");
