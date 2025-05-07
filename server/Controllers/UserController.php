@@ -23,10 +23,10 @@ class UserController
       $userData = [
         'username' => isset($_POST['username']) ? trim($_POST['username']) : '',
         'email' => isset($_POST['email']) ? trim($_POST['email']) : '',
-        'password' => isset($data['password']) ? $_POST['password'] : ''
+        'password' => isset($_POST['password']) ? $_POST['password'] : ''
       ];
 
-      $errors = User::validateRegistration($userData);
+      $errors = $this->userModel->validateRegistration($userData);
       if (!empty($errors)) {
         Response::json(['errors' => $errors], 400);
         return;
@@ -90,6 +90,53 @@ class UserController
       Response::json(['message' => 'Logged out successfully.'], 200);
     } catch (\Exception $e) {
       Response::json(['error' => 'Logout failed.'], 500);
+    }
+  }
+
+  public function sendRecoveryToken()
+  {
+    try {
+      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+
+      if (empty($email)) {
+        throw new \Exception("Email is required.");
+      }
+
+      $user = $this->userModel->findByEmail($email);
+
+      if (!$user) {
+        throw new \Exception("Email not found.");
+      }
+
+      $token = $this->userModel->generateRecoveryToken($user['id']);
+
+      Response::json(['message' => 'Recovery token sent.'], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
+
+  public function resetPassword()
+  {
+    try {
+      $token = isset($_POST['token']) ? trim($_POST['token']) : '';
+      $newPassword = isset($_POST['password']) ? $_POST['password'] : '';
+
+      if (empty($token) || empty($newPassword)) {
+        throw new \Exception("Token and new password are required.");
+      }
+
+      $userId = $this->userModel->validateRecoveryToken($token);
+
+      if (!$userId) {
+        throw new \Exception("Invalid or expired token.");
+      }
+
+      $this->userModel->updatePassword($userId, $newPassword);
+
+      Response::json(['message' => 'Password reset successfully.'], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
     }
   }
 }

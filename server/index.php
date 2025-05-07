@@ -16,10 +16,12 @@ $router->addRoute('GET', '/', function () {
   echo "Welcome to the home page! Method: " . $_SERVER['REQUEST_METHOD'];
 });
 
-$router->addRoute('POST', '/register', 'UserController@register');
-$router->addRoute('POST', '/login', 'UserController@login');
+$router->addRoute('POST', '/users/register', 'UserController@register');
+$router->addRoute('POST', '/users/login', 'UserController@login');
 $router->addRoute('GET', '/users/profile', 'UserController@getUser');
-$router->addRoute('POST', '/logout', 'UserController@logout');
+$router->addRoute('POST', '/users/logout', 'UserController@logout');
+$router->addRoute('POST', '/users/password/forgot', 'UserController@sendRecoveryToken');
+$router->addRoute('POST', '/users/password/reset', 'UserController@resetPassword');
 
 $router->addRoute('POST', '/goals/{id}', 'GoalController@update');
 $router->addRoute('POST', '/goals', 'GoalController@create');
@@ -38,7 +40,7 @@ if ($route) {
   $routeParams = $route['params'];
 
   if (is_callable($callback)) {
-    call_user_func_array($callback, $actionArgs);
+    call_user_func_array($callback, $routeParams);
   } else if (is_string($callback) && strpos($callback, '@') !== false) {
     list($controller, $method) = explode('@', $callback);
     $controllerClass = "server\\Controllers\\{$controller}";

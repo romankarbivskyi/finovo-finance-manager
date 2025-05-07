@@ -51,7 +51,7 @@ class User
     return $user;
   }
 
-  public static function validateRegistration($data)
+  public function validateRegistration($data)
   {
     $errors = [];
 
@@ -72,5 +72,69 @@ class User
     }
 
     return $errors;
+  }
+
+  public function generateRecoveryToken($userId)
+  {
+    $user = $this->findById($userId);
+    if (!$user) {
+      throw new \Exception("User not found.");
+    }
+
+    $token = bin2hex(random_bytes(16));
+    $createdAt = date('Y-m-d H:i:s');
+    $expiresAt = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+    $this->db->insert(
+      "INSERT INTO password_resets (user_id, token, created_at, expires_at) VALUES (?, ?, ?, ?)",
+      [
+        $userId,
+        $token,
+        $createdAt,
+        $expiresAt,
+      ]
+    );
+    return $token;
+  }
+
+  public function validateRecoveryToken($token)
+  {
+    $reset = $this->db->fetchOne(
+      "SELECT * FROM password_resets WHERE token = ?",
+      [$token]
+    );
+
+    if ($reset['expires_at'] < date('Y-m-d H:i:s')) {
+      $this->db->query(
+        "DELETE FROM password_resets WHERE token = ?",
+        [$token]
+      );
+      throw new \Exception("Token has expired.");
+    }
+
+    if (!$reset) {
+      throw new \Exception("Invalid or expired token.");
+    }
+
+    return $reset['user_id'];
+  }
+
+  public function updatePassword($userId, $newPassword)
+  {
+    try {
+      $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+      $this->db->getConnection()->beginTransaction();
+      $this->db->query(
+        "UPDATE users SET password = ? WHERE id = ?",
+        [$hashedPassword, $userId]
+      );
+      $this->db->query(
+        "DELETE FROM password_resets WHERE user_id = ?",
+        [$userId]
+      );
+      $this->db->getConnection()->commit();
+    } catch (\Exception $e) {
+      $this->db->getConnection()->rollBack();
+      throw new \Exception("Failed to update password: " . $e->getMessage());
+    }
   }
 }
