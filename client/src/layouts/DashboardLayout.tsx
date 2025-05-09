@@ -1,12 +1,24 @@
-import { Outlet, redirect } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import SidebarNav from "@/components/SidebarNav";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 
-const DashboardLayout = () => {
-  const { isAuthenticated } = useAuth();
+import { useEffect } from "react";
 
-  if (!isAuthenticated) redirect("/");
+const DashboardLayout = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+
+  console.log("isAuthenticated", isAuthenticated);
+  console.log("user", user);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <SidebarProvider>
