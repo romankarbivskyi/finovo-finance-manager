@@ -15,11 +15,13 @@ use server\Core\Database;
 use server\Core\Response;
 use server\Core\Router;
 use server\Core\Session;
+use server\Core\Request;
 
 Session::getInstance();
 
 $router = new Router();
 $db = Database::getInstance();
+$request = new Request();
 
 $router->addRoute('GET', '/', function () {
   echo "Welcome to the home page! Method: " . $_SERVER['REQUEST_METHOD'];
@@ -47,16 +49,17 @@ $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 if ($route) {
   $callback = $route['callback'];
   $routeParams = $route['params'];
+  $actionParams = array_merge($routeParams, [$request]);
 
   if (is_callable($callback)) {
-    call_user_func_array($callback, $routeParams);
+    call_user_func_array($callback, $actionParams);
   } else if (is_string($callback) && strpos($callback, '@') !== false) {
     list($controller, $method) = explode('@', $callback);
     $controllerClass = "server\\Controllers\\{$controller}";
     if (class_exists($controllerClass)) {
       $controllerInstance = new $controllerClass();
       if (method_exists($controllerInstance, $method)) {
-        call_user_func_array([$controllerInstance, $method], $routeParams);
+        call_user_func_array([$controllerInstance, $method], $actionParams);
       } else {
         Response::json(['error' => 'Method not found'], 404);
       }

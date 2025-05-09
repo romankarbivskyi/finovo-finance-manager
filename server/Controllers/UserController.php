@@ -5,6 +5,7 @@ namespace server\Controllers;
 use server\Core\Auth;
 use server\Core\Response;
 use server\Models\User;
+use server\Core\Request;
 
 class UserController
 {
@@ -17,13 +18,14 @@ class UserController
     $this->userModel = new User();
   }
 
-  public function register()
+  public function register(Request $request)
   {
     try {
+      $data = $request->getJsonBody();
       $userData = [
-        'username' => isset($_POST['username']) ? trim($_POST['username']) : '',
-        'email' => isset($_POST['email']) ? trim($_POST['email']) : '',
-        'password' => isset($_POST['password']) ? $_POST['password'] : ''
+        'username' => isset($data['username']) ? trim($data['username']) : '',
+        'email' => isset($data['email']) ? trim($data['email']) : '',
+        'password' => isset($data['password']) ? $data['password'] : ''
       ];
 
       $errors = $this->userModel->validateRegistration($userData);
@@ -42,11 +44,12 @@ class UserController
     }
   }
 
-  public function login()
+  public function login(Request $request)
   {
     try {
-      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-      $password = isset($_POST['password']) ? $_POST['password'] : '';
+      $data = $request->getJsonBody();
+      $email = isset($data['email']) ? trim($data['email']) : '';
+      $password = isset($data['password']) ? $data['password'] : '';
 
       if (empty($email) || empty($password)) {
         throw new \Exception("Email and password are required.");
@@ -67,6 +70,7 @@ class UserController
       Response::json(['error' => $e->getMessage()], 401);
     }
   }
+
 
   public function getUser()
   {
@@ -93,10 +97,11 @@ class UserController
     }
   }
 
-  public function sendRecoveryToken()
+  public function sendRecoveryToken(Request $request)
   {
     try {
-      $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+      $data = $request->getJsonBody();
+      $email = isset($data['email']) ? trim($data['email']) : '';
 
       if (empty($email)) {
         throw new \Exception("Email is required.");
@@ -116,11 +121,12 @@ class UserController
     }
   }
 
-  public function resetPassword()
+  public function resetPassword(Request $request)
   {
     try {
-      $token = isset($_POST['token']) ? trim($_POST['token']) : '';
-      $newPassword = isset($_POST['password']) ? $_POST['password'] : '';
+      $data = $request->getJsonBody();
+      $token = isset($data['token']) ? trim($data['token']) : '';
+      $newPassword = isset($data['password']) ? $data['password'] : '';
 
       if (empty($token) || empty($newPassword)) {
         throw new \Exception("Token and new password are required.");

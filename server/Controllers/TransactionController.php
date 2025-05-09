@@ -5,6 +5,7 @@ namespace server\Controllers;
 use server\Core\Response;
 use server\Core\Auth;
 use server\Models\Transaction;
+use server\Core\Request;
 
 class TransactionController
 {
@@ -17,16 +18,17 @@ class TransactionController
     $this->transactionModel = new Transaction();
   }
 
-  public function create($id)
+  public function create($id, Request $request)
   {
     try {
+      $data = $request->getJsonBody();
       $user = $this->auth->getUser();
 
       if (!$user) {
         throw new \Exception("User not authenticated.");
       }
 
-      $transaction = $this->transactionModel->create($id, $user['id'], $_POST);
+      $transaction = $this->transactionModel->create($id, $user['id'], $data);
 
       Response::json(['data' => $transaction], 201);
     } catch (\Exception $e) {
