@@ -77,7 +77,6 @@ class UserController
     try {
       $user = $this->auth->getUser();
       if ($user) {
-        unset($user['password']);
         Response::json(['data' => $user], 200);
       } else {
         Response::json(['error' => 'User not authenticated.'], 401);
