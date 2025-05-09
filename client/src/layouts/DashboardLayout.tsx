@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 const DashboardLayout = () => {
   const { isAuthenticated } = useAuth();
 
-  if (!isAuthenticated) return redirect("/");
+  if (!isAuthenticated) redirect("/");
 
   return (
     <SidebarProvider>
