@@ -36,7 +36,7 @@ class UserController
 
       unset($user['password']);
 
-      Response::json($user, 201);
+      Response::json(['data' => $user], 201);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
@@ -62,7 +62,7 @@ class UserController
 
       unset($user['password']);
 
-      Response::json($user, 200);
+      Response::json(['data' => $user], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 401);
     }
@@ -74,7 +74,7 @@ class UserController
       $user = $this->auth->getUser();
       if ($user) {
         unset($user['password']);
-        Response::json($user, 200);
+        Response::json(['data' => $user], 200);
       } else {
         Response::json(['error' => 'User not authenticated.'], 401);
       }

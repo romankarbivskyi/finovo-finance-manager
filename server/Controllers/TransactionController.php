@@ -28,7 +28,7 @@ class TransactionController
 
       $transaction = $this->transactionModel->create($id, $user['id'], $_POST);
 
-      Response::json($transaction, 201);
+      Response::json(['data' => $transaction], 201);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
@@ -45,7 +45,7 @@ class TransactionController
 
       $transactions = $this->transactionModel->getAllForGoal($goalId);
 
-      Response::json($transactions, 200);
+      Response::json(['data' => $transactions], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }

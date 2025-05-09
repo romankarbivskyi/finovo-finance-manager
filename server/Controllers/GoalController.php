@@ -37,7 +37,7 @@ class GoalController
         isset($_FILES['image']) ? $_FILES['image'] : null
       );
 
-      Response::json($goal, 201);
+      Response::json(['data' => $goal], 201);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
@@ -71,7 +71,7 @@ class GoalController
         return;
       }
 
-      Response::json($updatedGoal, 200);
+      Response::json(['data' => $updatedGoal], 200);
     } catch (\Exception $e) {
       $statusCode = $e->getCode();
       if (!is_int($statusCode) || $statusCode < 400 || $statusCode >= 600) {
@@ -125,7 +125,7 @@ class GoalController
       }
 
       $goals = $this->goalModel->getAllForUser($user['id']);
-      Response::json($goals, 200);
+      Response::json(['data' => $goals], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
@@ -150,7 +150,7 @@ class GoalController
         return;
       }
 
-      Response::json($goal, 200);
+      Response::json(['data' => $goal], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
