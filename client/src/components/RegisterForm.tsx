@@ -11,6 +11,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { registerSchema } from "@/schemas/auth";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RegisterFormInputs {
   username: string;
@@ -19,6 +20,8 @@ interface RegisterFormInputs {
 }
 
 const RegisterForm = () => {
+  const { register } = useAuth();
+
   const form = useForm<RegisterFormInputs>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -29,7 +32,7 @@ const RegisterForm = () => {
   });
 
   const onSubmit = (data: RegisterFormInputs) => {
-    console.log(data);
+    register(data.username, data.email, data.password);
   };
 
   return (

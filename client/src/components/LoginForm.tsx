@@ -30,7 +30,6 @@ const LoginForm = () => {
   });
 
   const onSubmit = (data: LoginFormInputs) => {
-    console.log(data);
     login(data.email, data.password);
   };
 

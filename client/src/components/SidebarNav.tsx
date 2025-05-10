@@ -24,9 +24,11 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 import { Link, useNavigate } from "react-router";
+import { useAuth } from "@/hooks/useAuth";
 
 const SidebarNav = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const routes = [
     {
@@ -41,14 +43,8 @@ const SidebarNav = () => {
     },
   ];
 
-  const user = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-  };
-
   const handleSignOut = () => {
-    console.log("Signing out...");
-    navigate("/login");
+    logout();
   };
 
   return (
@@ -79,7 +75,9 @@ const SidebarNav = () => {
                   <div className="flex items-center">
                     <User2 size={20} className="mr-2" />
                     <div className="flex flex-col items-start">
-                      <span className="text-sm font-medium">{user.name}</span>
+                      <span className="text-sm font-medium">
+                        {user?.username}
+                      </span>
                     </div>
                   </div>
                   <ChevronUp size={18} className="ml-auto" />
