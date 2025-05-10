@@ -46,8 +46,10 @@ class TransactionController
       }
 
       $transactions = $this->transactionModel->getAllForGoal($goalId);
+      $total = $this->transactionModel->getTotalForGoal($goalId);
 
-      Response::json(['data' => $transactions], 200);
+      Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
+      statusCode:
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }

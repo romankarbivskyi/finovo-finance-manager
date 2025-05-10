@@ -45,9 +45,14 @@ class Goal
     return $this->db->fetchOne("SELECT * FROM goals WHERE id = ?", [$id]);
   }
 
-  public function getAllForUser($userId)
+  public function getAllForUser($userId, $limit = 10, $offset = 0)
   {
-    return $this->db->fetchAll("SELECT * FROM goals WHERE user_id = ? ORDER BY created_at DESC", [$userId]);
+    return $this->db->fetchAll("SELECT * FROM goals WHERE user_id = ? LIMIT ? OFFSET ?", [$userId, $limit, $offset]);
+  }
+
+  public function getTotalForUser($userId)
+  {
+    return $this->db->fetchOne("SELECT COUNT(*) as count FROM goals WHERE user_id = ?", [$userId])['count'];
   }
 
   public function update($id, $userId, $data, $image = null)

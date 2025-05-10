@@ -125,7 +125,8 @@ class GoalController
       }
 
       $goals = $this->goalModel->getAllForUser($user['id']);
-      Response::json(['data' => $goals], 200);
+      $total = $this->goalModel->getTotalForUser($user['id']);
+      Response::json(['data' => ['goals' => $goals, 'total' => $total]], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
