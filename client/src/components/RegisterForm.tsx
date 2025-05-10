@@ -10,8 +10,10 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { registerSchema } from "@/schemas/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { z } from "zod";
+import { register } from "@/services/user.service";
+import { toast } from "sonner";
 
 interface RegisterFormInputs {
   username: string;
@@ -19,8 +21,19 @@ interface RegisterFormInputs {
   password: string;
 }
 
+const registerSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters" })
+    .max(20, { message: "Username must be at most 20 characters" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
+});
+
 const RegisterForm = () => {
-  const { register } = useAuth();
+  const { setUser } = useAuth();
 
   const form = useForm<RegisterFormInputs>({
     resolver: zodResolver(registerSchema),
@@ -31,8 +44,16 @@ const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    register(data.username, data.email, data.password);
+  const onSubmit = async (data: RegisterFormInputs) => {
+    const { username, email, password } = data;
+    const response = await register(username, email, password);
+
+    if (response.success && response.data) {
+      setUser(response.data);
+      toast.success("Registration successful!");
+    } else {
+      toast.error(response.error || response.message || "Registration failed");
+    }
   };
 
   return (

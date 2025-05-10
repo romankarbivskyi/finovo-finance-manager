@@ -1,108 +1,84 @@
 import { createContext, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { User } from "@/types/user";
+import { toast } from "sonner";
+import { AxiosError, type AxiosResponse } from "axios";
+import type { ApiResponse } from "@/types/api.types";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   setUser: (user: User | null) => void;
-  getProfile: () => Promise<void>;
-  login: (email: string, password: string) => void;
-  register: (username: string, email: string, password: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  getProfile: () => Promise<User | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const isAuthenticated = !!user;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const isAuthenticated: boolean = !!user;
 
-  const login = (email: string, password: string) => {
-    setIsLoading(true);
-    api
-      .post("/users/login", { email, password })
-      .then((response) => {
-        setUser(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Login failed:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const register = (username: string, email: string, password: string) => {
-    setIsLoading(true);
-    api
-      .post("/users/register", { username, email, password })
-      .then((response) => {
-        setUser(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Registration failed:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const logout = () => {
-    setIsLoading(true);
-    api
-      .post("/users/logout")
-      .then(() => {
-        setUser(null);
-      })
-      .catch((error) => {
-        console.error("Logout failed:", error);
-        setUser(null);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const getProfile = async () => {
+  const logout = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const response = await api.get("/users/profile");
-      if (response.data?.data) {
-        setUser(response.data.data);
-      }
+      await api.post("/users/logout");
     } catch (error) {
-      console.error("Failed to fetch profile:", error);
-      setUser(null);
+      console.error("Logout failed:", error);
     } finally {
+      setUser(null);
       setIsLoading(false);
     }
   };
 
+  const getProfile = async (): Promise<User | null> => {
+    try {
+      const response = await api.get<
+        ApiResponse<User>,
+        AxiosResponse<ApiResponse<User>>
+      >("/users/profile");
+
+      const { data, success } = response.data;
+
+      if (success && data) {
+        setUser(data);
+        return data;
+      } else {
+        setUser(null);
+      }
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        const error = err.response?.data as ApiResponse<User>;
+        if (error) {
+          setUser(null);
+        }
+      }
+    }
+    return null;
+  };
+
   useEffect(() => {
-    getProfile();
+    const initAuth = async (): Promise<void> => {
+      await getProfile();
+      setIsInitializing(false);
+    };
+
+    initAuth();
   }, []);
 
-  if (isLoading) {
-    return null;
-  }
+  const contextValue: AuthContextType = {
+    user,
+    isAuthenticated,
+    isLoading: isLoading || isInitializing,
+    logout,
+    getProfile,
+    setUser,
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        isAuthenticated,
-        isLoading,
-        login,
-        register,
-        logout,
-        getProfile,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };

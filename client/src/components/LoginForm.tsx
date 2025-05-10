@@ -10,16 +10,25 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { loginSchema } from "@/schemas/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { z } from "zod";
+import { toast } from "sonner";
+import { login } from "@/services/user.service";
 
 interface LoginFormInputs {
   email: string;
   password: string;
 }
 
-const LoginForm = () => {
-  const { login } = useAuth();
+const loginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
+});
+
+const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
+  const { setUser } = useAuth();
 
   const form = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
@@ -29,8 +38,16 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data: LoginFormInputs) => {
-    login(data.email, data.password);
+  const onSubmit = async (data: LoginFormInputs) => {
+    const { email, password } = data;
+    const response = await login(email, password);
+
+    if (response.success && response.data) {
+      setUser(response.data);
+      toast.success("Login successful!");
+    } else {
+      toast.error(response.error || response.message || "Login failed");
+    }
   };
 
   return (
@@ -62,7 +79,19 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <div className="text-right">
+          <Button
+            type="button"
+            variant="link"
+            className="h-auto p-0"
+            onClick={onForgotPassword}
+          >
+            Forgot password?
+          </Button>
+        </div>
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
       </form>
     </Form>
   );

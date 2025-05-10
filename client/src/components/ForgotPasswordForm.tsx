@@ -10,10 +10,10 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { useState } from "react";
 import { toast } from "sonner";
+import { sendRecoveryToken } from "@/services/user.service";
 
 interface ForgotPasswordFormProps {
   onBackToLogin: () => void;
@@ -28,7 +28,6 @@ const forgotPasswordSchema = z.object({
 });
 
 const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
-  const { sendRecoveryToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ForgotPasswordFormInputs>({
@@ -38,12 +37,21 @@ const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
     },
   });
 
-  // Use event parameter explicitly
-  const onSubmit = async (
-    data: ForgotPasswordFormInputs,
-  ) => {
+  const onSubmit = async (data: ForgotPasswordFormInputs) => {
     try {
-      
+      setIsSubmitting(true);
+      const response = await sendRecoveryToken(data.email);
+
+      if (response) {
+        toast.success("Recovery link sent to your email!");
+        onBackToLogin();
+      } else {
+        toast.error("Failed to send recovery link. Please try again.");
+      }
+    } catch {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -55,7 +63,7 @@ const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            form.handleSubmit((data) => onSubmit(data, e))();
+            form.handleSubmit((data) => onSubmit(data))();
           }}
           className="space-y-4"
         >
