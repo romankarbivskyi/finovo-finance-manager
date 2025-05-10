@@ -2,24 +2,34 @@ import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import AuthModal from "./AuthModal";
+import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router";
 
 const TopNav = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="relative flex items-center justify-between border-b p-4">
       <h1 className="text-2xl font-semibold">Finovo</h1>
       <nav className="absolute left-1/2 hidden -translate-x-1/2 transform items-center gap-10 md:flex">
-        <a href="/" className="text-sm">
+        <Link to="/" className="text-sm">
           Home
-        </a>
-        <a href="/about" className="text-sm">
+        </Link>
+        <Link to="/about" className="text-sm">
           About
-        </a>
-        <a href="/contact" className="text-sm">
+        </Link>
+        <Link to="/contact" className="text-sm">
           Contact
-        </a>
+        </Link>
       </nav>
       <div className="hidden md:block">
-        <AuthModal />
+        {isAuthenticated ? (
+          <Button>
+            <Link to="/dashboard">Dashboard</Link>
+          </Button>
+        ) : (
+          <AuthModal />
+        )}
       </div>
       <div className="md:hidden">
         <Popover>
@@ -30,17 +40,23 @@ const TopNav = () => {
           </PopoverTrigger>
           <PopoverContent className="mr-4 flex max-w-min flex-col items-start gap-4 p-4">
             <nav className="flex flex-col items-start gap-4">
-              <a href="/" className="text-sm">
+              <Link to="/" className="text-sm">
                 Home
-              </a>
-              <a href="/about" className="text-sm">
+              </Link>
+              <Link to="/about" className="text-sm">
                 About
-              </a>
-              <a href="/contact" className="text-sm">
+              </Link>
+              <Link to="/contact" className="text-sm">
                 Contact
-              </a>
+              </Link>
             </nav>
-            <AuthModal />
+            {isAuthenticated ? (
+              <Button>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <AuthModal />
+            )}
           </PopoverContent>
         </Popover>
       </div>
