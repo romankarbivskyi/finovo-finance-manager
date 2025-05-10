@@ -5,6 +5,7 @@ namespace server\Controllers;
 use server\Core\Auth;
 use server\Core\Response;
 use server\Models\Goal;
+use server\Core\Request;
 
 class GoalController
 {
@@ -115,16 +116,19 @@ class GoalController
     }
   }
 
-  public function getAll()
+  public function getAll(Request $request)
   {
     try {
+      $queryParams = $request->getQueryParams();
+      $limit = isset($queryParams['limit']) ? (int) $queryParams['limit'] : 10;
+      $offset = isset($queryParams['offset']) ? (int) $queryParams['offset'] : 0;
       $user = $this->auth->getUser();
       if (!$user) {
         Response::json(['error' => 'User not authenticated.'], 401);
         return;
       }
 
-      $goals = $this->goalModel->getAllForUser($user['id']);
+      $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset);
       $total = $this->goalModel->getTotalForUser($user['id']);
       Response::json(['data' => ['goals' => $goals, 'total' => $total]], 200);
     } catch (\Exception $e) {

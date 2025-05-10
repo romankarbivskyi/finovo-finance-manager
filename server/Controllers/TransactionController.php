@@ -36,16 +36,18 @@ class TransactionController
     }
   }
 
-  public function getAllForGoal($goalId)
+  public function getAllForGoal($goalId, Request $request)
   {
     try {
+      $queryParams = $request->getQueryParams();
+      $limit = isset($queryParams['limit']) ? (int) $queryParams['limit'] : 10;
+      $offset = isset($queryParams['offset']) ? (int) $queryParams['offset'] : 0;
       $user = $this->auth->getUser();
-
       if (!$user) {
         throw new \Exception("User not authenticated.");
       }
 
-      $transactions = $this->transactionModel->getAllForGoal($goalId);
+      $transactions = $this->transactionModel->getAllForGoal($goalId, $limit, $offset);
       $total = $this->transactionModel->getTotalForGoal($goalId);
 
       Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
