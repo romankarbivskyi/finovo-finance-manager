@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { register } from "@/services/user.service";
 import { toast } from "sonner";
+import { useState } from "react";
 
 interface RegisterFormInputs {
   username: string;
@@ -34,6 +35,7 @@ const registerSchema = z.object({
 
 const RegisterForm = () => {
   const { setUser } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<RegisterFormInputs>({
     resolver: zodResolver(registerSchema),
@@ -45,6 +47,7 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (data: RegisterFormInputs) => {
+    setIsSubmitting(true);
     const { username, email, password } = data;
     const response = await register(username, email, password);
 
@@ -54,6 +57,7 @@ const RegisterForm = () => {
     } else {
       toast.error(response.error || response.message || "Registration failed");
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -98,7 +102,9 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Registering..." : "Register"}
+        </Button>
       </form>
     </Form>
   );

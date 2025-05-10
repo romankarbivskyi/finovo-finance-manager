@@ -38,21 +38,16 @@ const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
   });
 
   const onSubmit = async (data: ForgotPasswordFormInputs) => {
-    try {
-      setIsSubmitting(true);
-      const response = await sendRecoveryToken(data.email);
+    setIsSubmitting(true);
+    const response = await sendRecoveryToken(data.email);
 
-      if (response) {
-        toast.success("Recovery link sent to your email!");
-        onBackToLogin();
-      } else {
-        toast.error("Failed to send recovery link. Please try again.");
-      }
-    } catch {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+    if (response.success) {
+      toast.success("Recovery link sent to your email");
+      onBackToLogin();
+    } else {
+      toast.error("Failed to send recovery link");
     }
+    setIsSubmitting(false);
   };
 
   return (

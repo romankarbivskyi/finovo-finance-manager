@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { toast } from "sonner";
 import { login } from "@/services/user.service";
+import { useState } from "react";
 
 interface LoginFormInputs {
   email: string;
@@ -29,6 +30,7 @@ const loginSchema = z.object({
 
 const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
   const { setUser } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
@@ -39,6 +41,7 @@ const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
+    setIsSubmitting(true);
     const { email, password } = data;
     const response = await login(email, password);
 
@@ -48,6 +51,7 @@ const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
     } else {
       toast.error(response.error || response.message || "Login failed");
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -89,8 +93,8 @@ const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
             Forgot password?
           </Button>
         </div>
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
         </Button>
       </form>
     </Form>
