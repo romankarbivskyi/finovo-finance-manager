@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
-import type { User } from "@/types/user";
+import type { User } from "@/types/user.types";
 import { type AxiosResponse, AxiosError } from "axios";
 
 export const login = async (

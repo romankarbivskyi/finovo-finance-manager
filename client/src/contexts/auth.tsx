@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import type { User } from "@/types/user";
-import { toast } from "sonner";
+import type { User } from "@/types/user.types";
 import { AxiosError, type AxiosResponse } from "axios";
 import type { ApiResponse } from "@/types/api.types";
 
