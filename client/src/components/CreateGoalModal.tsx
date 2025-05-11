@@ -35,21 +35,19 @@ import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createGoal } from "@/services/goal.service";
+import { toast } from "sonner";
 
 const currencyEnum = z.enum(["USD", "EUR", "UAH"]);
 
 const createGoalSchema = z
   .object({
     name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, "Description is required").optional(),
+    description: z.string().optional(),
     currentAmount: z
       .number()
-      .min(0, "Current amount must be greater than or equal to 0")
-      .optional(),
-    targetAmount: z
-      .number()
-      .min(0, "Target amount must be greater than 0")
-      .optional(),
+      .min(0, "Current amount must be greater than or equal to 0"),
+    targetAmount: z.number().min(0, "Target amount must be greater than 0"),
     targetDate: z.date(),
     currency: currencyEnum,
     image: z.instanceof(File).optional(),
@@ -68,7 +66,9 @@ const createGoalSchema = z
 type CreateGoalFormValues = z.infer<typeof createGoalSchema>;
 
 const CreateGoalModal = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const form = useForm<CreateGoalFormValues>({
     resolver: zodResolver(createGoalSchema),
@@ -83,26 +83,47 @@ const CreateGoalModal = () => {
   });
 
   const onSubmit = async (data: CreateGoalFormValues) => {
-    console.log("Form data:", data);
-  };
+    setIsSubmitting(true);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("image", file);
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description || "");
+      formData.append("current_amount", data.currentAmount.toString());
+      formData.append("target_amount", data.targetAmount.toString());
+      formData.append("target_date", format(data.targetDate, "yyyy-MM-dd"));
+      formData.append("currency", data.currency);
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      if (data.image instanceof File) {
+        formData.append("image", data.image);
+        console.log("Appending image:", data.image.name, data.image.size);
+      }
+
+      const response = await createGoal(formData);
+
+      if (response.success) {
+        toast.success("Goal created successfully");
+        setOpen(false);
+        form.reset();
+        setImagePreview(null);
+      } else {
+        toast.error(response.message || "Failed to create goal");
+      }
+    } catch (error) {
+      console.error("Error creating goal:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button
+          className="flex items-center gap-2"
+          onClick={() => setOpen(true)}
+        >
           <Plus className="h-4 w-4" />
           Create
         </Button>
@@ -114,7 +135,6 @@ const CreateGoalModal = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            {/* Name Field */}
             <FormField
               control={form.control}
               name="name"
@@ -159,8 +179,11 @@ const CreateGoalModal = () => {
                         type="number"
                         placeholder="0"
                         {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        value={field.value}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
+                        }}
+                        value={field.value === 0 ? "" : field.value}
                         className="w-full"
                       />
                     </FormControl>
@@ -180,8 +203,12 @@ const CreateGoalModal = () => {
                         type="number"
                         placeholder="1000"
                         {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        value={field.value}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
+                        }}
+                        value={field.value === 0 ? "" : field.value}
+                        className="w-full"
                       />
                     </FormControl>
                     <FormMessage />
@@ -268,7 +295,18 @@ const CreateGoalModal = () => {
                       <Input
                         type="file"
                         accept="image/*"
-                        onChange={handleImageChange}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            onChange(file);
+
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setImagePreview(reader.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
                         {...fieldProps}
                         className="w-full"
                       />
@@ -293,8 +331,12 @@ const CreateGoalModal = () => {
             />
 
             <DialogFooter className="mt-6 sm:mt-8">
-              <Button type="submit" className="w-full sm:w-auto">
-                Create Goal
+              <Button
+                type="submit"
+                className="w-full sm:w-auto"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Creating..." : "Create Goal"}
               </Button>
             </DialogFooter>
           </form>

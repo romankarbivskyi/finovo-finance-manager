@@ -120,13 +120,13 @@ class Goal
 
     $requiredFields = ['name', 'target_date', 'current_amount', 'target_amount', 'currency'];
     foreach ($requiredFields as $field) {
-      if (empty($data[$field])) {
+      if (!isset($data[$field]) || $data[$field] === '') {
         $errors[$field] = "Field '{$field}' is required.";
       }
     }
 
     if (isset($data['current_amount']) && (!is_numeric($data['current_amount']) || $data['current_amount'] < 0)) {
-      $errors['current_amount'] = "Current amount must be a positive number.";
+      $errors['current_amount'] = "Current amount must be zero or a positive number.";
     }
 
     if (isset($data['target_amount']) && (!is_numeric($data['target_amount']) || $data['target_amount'] <= 0)) {

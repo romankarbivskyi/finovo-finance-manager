@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "goals" (
   "target_date" DATE,
   "current_amount" DECIMAL(10, 2) DEFAULT 0.00,
   "target_amount" DECIMAL(10, 2) NOT NULL,
-  "currency" VARCHAR(10) NOT NULL CHECK (currency IN ('USH', 'UAH', 'EUR')) DEFAULT 'UAH',
+  "currency" VARCHAR(10) NOT NULL CHECK (currency IN ('USD', 'UAH', 'EUR')) DEFAULT 'UAH',
   "preview_image" VARCHAR(255),
   "status" VARCHAR(20) NOT NULL CHECK (status IN ('active', 'completed')) DEFAULT 'active',
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
