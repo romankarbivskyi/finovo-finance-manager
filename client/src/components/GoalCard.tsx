@@ -27,16 +27,14 @@ const GoalCard = ({ goal }: GoalCardProps) => {
   const progressValue = Math.round((current_amount / target_amount) * 100);
 
   return (
-    <Card className="flex h-full flex-col">
-      <CardContent className="pt-6">
-        <div className="aspect-video w-full overflow-hidden rounded-md">
-          <img
-            src={preview_image}
-            alt={`Preview image: ${name}`}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      </CardContent>
+    <Card className="flex h-full flex-col p-0 pb-5">
+      <div className="aspect-video w-full overflow-hidden rounded-t-md">
+        <img
+          src={preview_image}
+          alt={`Preview image: ${name}`}
+          className="h-full w-full object-cover"
+        />
+      </div>
 
       <CardHeader className="flex-grow">
         <CardTitle className="line-clamp-1">{name}</CardTitle>
