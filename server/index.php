@@ -61,6 +61,10 @@ $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 if ($route) {
   $callback = $route['callback'];
   $routeParams = $route['params'];
+  $queryParams = $route['query'] ?? [];
+
+  $request->setQueryParams($queryParams);
+
   $actionParams = array_merge($routeParams, [$request]);
 
   if (is_callable($callback)) {

@@ -27,17 +27,26 @@ class Router
 
   public function match($requestMethod, $requestPath)
   {
+    $pathParts = explode('?', $requestPath, 2);
+    $path = $pathParts[0];
+
+    $queryParams = [];
+    if (isset($pathParts[1])) {
+      parse_str($pathParts[1], $queryParams);
+    }
+
     foreach ($this->routes as $route) {
       if ($route['method'] === strtoupper($requestMethod)) {
         $matches = [];
-        if (preg_match($route['path'], $requestPath, $matches)) {
+        if (preg_match($route['path'], $path, $matches)) {
           $params = array_filter($matches, function ($key) {
             return !is_numeric($key);
           }, ARRAY_FILTER_USE_KEY);
 
           return [
             'callback' => $route['callback'],
-            'params' => $params
+            'params' => $params,
+            'query' => $queryParams
           ];
         }
       }

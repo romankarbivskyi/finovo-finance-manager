@@ -119,9 +119,8 @@ class GoalController
   public function getAll(Request $request)
   {
     try {
-      $queryParams = $request->getQueryParams();
-      $limit = isset($queryParams['limit']) ? (int) $queryParams['limit'] : 10;
-      $offset = isset($queryParams['offset']) ? (int) $queryParams['offset'] : 0;
+      $limit = $request->query('limit', 10);
+      $offset = $request->query('offset', 0);
       $user = $this->auth->getUser();
       if (!$user) {
         Response::json(['error' => 'User not authenticated.'], 401);

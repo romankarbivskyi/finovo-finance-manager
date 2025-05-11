@@ -8,6 +8,7 @@ class Request
   private $requestUri;
   private $requestHeaders;
   private $requestBody;
+  private $queryParams;
 
   public function __construct()
   {
@@ -37,23 +38,29 @@ class Request
     return $this->requestBody;
   }
 
-  public function getQueryParams()
-  {
-    $query = parse_url($this->requestUri, PHP_URL_QUERY);
-    parse_str($query, $params);
-    return $params;
-  }
-
   public function getHeader($headerName)
   {
     $headerName = str_replace('-', '_', strtoupper($headerName));
     return isset($this->requestHeaders[$headerName]) ? $this->requestHeaders[$headerName] : null;
   }
 
-
   public function getJsonBody()
   {
     return json_decode($this->requestBody, true);
+  }
+
+  public function setQueryParams(array $params)
+  {
+    $this->queryParams = $params;
+  }
+
+  public function query($key = null, $default = null)
+  {
+    if ($key === null) {
+      return $this->queryParams;
+    }
+
+    return $this->queryParams[$key] ?? $default;
   }
 
 }
