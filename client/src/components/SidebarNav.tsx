@@ -6,6 +6,7 @@ import {
   ChevronUp,
   LogOut,
   CircleUser,
+  Goal,
 } from "lucide-react";
 import {
   SidebarHeader,
@@ -35,6 +36,11 @@ const SidebarNav = () => {
       name: "Dashboard",
       path: "/dashboard",
       icon: <LayoutDashboard size={18} />,
+    },
+    {
+      name: "Goals",
+      path: "/goals",
+      icon: <Goal size={18} />,
     },
     {
       name: "Transactions",
