@@ -19,14 +19,11 @@ export const login = async (
     return response.data;
   } catch (err) {
     const error = err as AxiosError<ApiResponse<User>>;
-    return {
-      success: false,
-      error:
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        "Login request failed",
-      message: error.response?.data?.message || "Login failed",
-    };
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
   }
 };
 
@@ -48,14 +45,11 @@ export const register = async (
     return response.data;
   } catch (err) {
     const error = err as AxiosError<ApiResponse<User>>;
-    return {
-      success: false,
-      error:
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        "Registration request failed",
-      message: error.response?.data?.message || "Registration failed",
-    };
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
   }
 };
 
@@ -73,13 +67,10 @@ export const sendRecoveryToken = async (
     return response.data;
   } catch (err) {
     const error = err as AxiosError<ApiResponse<null>>;
-    return {
-      success: false,
-      error:
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        "Recovery email request failed",
-      message: error.response?.data?.message || "Failed to send recovery email",
-    };
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
   }
 };
