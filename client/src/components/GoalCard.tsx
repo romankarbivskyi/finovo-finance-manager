@@ -47,10 +47,12 @@ const GoalCard = ({ goal }: GoalCardProps) => {
 
       <CardFooter className="flex flex-col gap-4">
         <div className="flex w-full items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-foreground text-sm font-medium">
             {current_amount} / {target_amount}
           </span>
-          <span className="text-sm font-medium text-gray-700">{currency}</span>
+          <span className="text-foreground text-sm font-medium">
+            {currency}
+          </span>
         </div>
         <Progress value={progressValue} className="h-2" />
       </CardFooter>
