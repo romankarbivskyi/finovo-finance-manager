@@ -5,3 +5,6 @@ export { default as AuthModal } from "./AuthModal";
 export { default as LoginForm } from "./LoginForm";
 export { default as RegisterForm } from "./RegisterForm";
 export { default as ForgotPasswordForm } from "./ForgotPasswordForm";
+export { default as Pagination } from "./Pagination";
+export { default as DataList } from "./DataList";
+export { default as GoalCard } from "./GoalCard";
