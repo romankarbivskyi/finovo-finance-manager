@@ -1,7 +1,7 @@
 import { fetchAllGoals } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { DataList, GoalCard, Header } from "@/components";
+import { CreateGoalModal, DataList, GoalCard, Header } from "@/components";
 import type { ApiResponse } from "@/types/api.types";
 import type { GoalsResponse } from "@/types/goal.types";
 import { ITEMS_PER_PAGE } from "@/constants";
@@ -22,7 +22,10 @@ const GoalsPage = () => {
 
   return (
     <div>
-      <Header title="Goals" subtitle="Manage your financial goals" />
+      <Header title="Goals" subtitle="Manage your financial goals">
+        <CreateGoalModal />
+      </Header>
+
       <DataList
         data={goals}
         isLoading={isLoading}

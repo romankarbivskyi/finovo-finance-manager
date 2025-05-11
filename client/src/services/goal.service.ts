@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
-import type { GoalsResponse } from "@/types/goal.types";
+import type { Goal, GoalsResponse } from "@/types/goal.types";
 import type { AxiosError } from "axios";
 
 export const fetchAllGoals = async (
@@ -18,6 +18,27 @@ export const fetchAllGoals = async (
     return response.data;
   } catch (err) {
     const error = err as AxiosError<ApiResponse<GoalsResponse>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};
+
+export const createGoal = async (
+  goal: FormData,
+): Promise<ApiResponse<Goal>> => {
+  try {
+    const response = await api.post("/goals", goal, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<Goal>>;
     return (
       error.response?.data || {
         success: false,
