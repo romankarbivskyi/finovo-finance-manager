@@ -4,7 +4,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent,
   CardFooter,
 } from "./ui/card";
 import { Progress } from "./ui/progress";
