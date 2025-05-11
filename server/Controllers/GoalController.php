@@ -26,7 +26,7 @@ class GoalController
         throw new \Exception('User not authenticated.', 401);
       }
 
-      $errors = Goal::validate($_POST);
+      $errors = $this->goalModel->validate($_POST);
       if (!empty($errors)) {
         Response::json(['errors' => $errors], 400);
         return;
@@ -54,7 +54,7 @@ class GoalController
       }
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
-      $errors = Goal::validate($_POST);
+      $errors = $this->goalModel->validate($_POST);
       if (!empty($errors)) {
         Response::json(['errors' => $errors], 400);
         return;

@@ -27,7 +27,7 @@ class Goal
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [
         $data['name'],
-        $data['description'],
+        $data['description'] ?? null,
         $data['target_date'],
         $data['current_amount'],
         $data['target_amount'],
@@ -84,7 +84,7 @@ class Goal
       WHERE id = ? AND user_id = ?",
       [
         $data['name'],
-        $data['description'],
+        $data['description'] ?? null,
         $data['target_date'],
         $data['current_amount'],
         $data['target_amount'],
@@ -114,11 +114,11 @@ class Goal
     return true;
   }
 
-  public static function validate($data)
+  public function validate($data)
   {
     $errors = [];
 
-    $requiredFields = ['name', 'description', 'target_date', 'current_amount', 'target_amount', 'currency'];
+    $requiredFields = ['name', 'target_date', 'current_amount', 'target_amount', 'currency'];
     foreach ($requiredFields as $field) {
       if (empty($data[$field])) {
         $errors[$field] = "Field '{$field}' is required.";
