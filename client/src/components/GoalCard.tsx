@@ -7,6 +7,7 @@ import {
   CardFooter,
 } from "./ui/card";
 import { Progress } from "./ui/progress";
+import { Link } from "react-router";
 
 interface GoalCardProps {
   goal: Goal;
@@ -26,34 +27,36 @@ const GoalCard = ({ goal }: GoalCardProps) => {
   const progressValue = Math.round((current_amount / target_amount) * 100);
 
   return (
-    <Card className="flex h-full flex-col p-0 pb-5">
-      <div className="aspect-video w-full overflow-hidden rounded-t-md">
-        <img
-          src={preview_image}
-          alt={`Preview image: ${name}`}
-          className="h-full w-full object-cover"
-        />
-      </div>
-
-      <CardHeader className="flex-grow">
-        <CardTitle className="line-clamp-1">{name}</CardTitle>
-        <CardDescription className="line-clamp-2">
-          {description}
-        </CardDescription>
-      </CardHeader>
-
-      <CardFooter className="flex flex-col gap-4">
-        <div className="flex w-full items-center justify-between">
-          <span className="text-foreground text-sm font-medium">
-            {current_amount} / {target_amount}
-          </span>
-          <span className="text-foreground text-sm font-medium">
-            {currency}
-          </span>
+    <Link to={`/goals/${goal.id}`}>
+      <Card className="flex h-full flex-col p-0 pb-5">
+        <div className="aspect-video w-full overflow-hidden rounded-t-md">
+          <img
+            src={preview_image}
+            alt={`Preview image: ${name}`}
+            className="h-full w-full object-cover"
+          />
         </div>
-        <Progress value={progressValue} className="h-2" />
-      </CardFooter>
-    </Card>
+
+        <CardHeader className="flex-grow">
+          <CardTitle className="line-clamp-1">{name}</CardTitle>
+          <CardDescription className="line-clamp-2">
+            {description}
+          </CardDescription>
+        </CardHeader>
+
+        <CardFooter className="flex flex-col gap-4">
+          <div className="flex w-full items-center justify-between">
+            <span className="text-foreground text-sm font-medium">
+              {current_amount} / {target_amount}
+            </span>
+            <span className="text-foreground text-sm font-medium">
+              {currency}
+            </span>
+          </div>
+          <Progress value={progressValue} className="h-2" />
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
 

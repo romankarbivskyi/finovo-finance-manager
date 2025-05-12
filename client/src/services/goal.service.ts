@@ -26,6 +26,23 @@ export const fetchAllGoals = async (
   }
 };
 
+export const fetchGoalById = async (
+  goalId: string,
+): Promise<ApiResponse<Goal>> => {
+  try {
+    const response = await api.get(`/goals/${goalId}`);
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<Goal>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};
+
 export const createGoal = async (
   goal: FormData,
 ): Promise<ApiResponse<Goal>> => {

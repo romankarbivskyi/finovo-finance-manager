@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import {
   DashboardPage,
+  GoalDetailsPage,
   GoalsPage,
   HomePage,
   NotFound,
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "/goals",
         element: <GoalsPage />,
+      },
+      {
+        path: "/goals/:goalId",
+        element: <GoalDetailsPage />,
       },
       {
         path: "/transactions",
