@@ -55,7 +55,6 @@ const GoalDetailsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      {/* Header with navigation and actions */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" asChild>
@@ -78,11 +77,8 @@ const GoalDetailsPage = () => {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left column - Goal details */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Goal image and details */}
           <Card>
             {goal.preview_image && (
               <div className="aspect-video w-full overflow-hidden rounded-t-lg">
@@ -147,7 +143,6 @@ const GoalDetailsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Transactions section */}
           <Card>
             <CardHeader className="flex-row items-center justify-between">
               <div>
@@ -163,7 +158,6 @@ const GoalDetailsPage = () => {
             </CardHeader>
 
             <CardContent>
-              {/* This would be where you'd display transactions */}
               <div className="rounded-lg border p-8 text-center">
                 <p className="text-muted-foreground">
                   No transactions yet. Add your first transaction to track
@@ -174,7 +168,6 @@ const GoalDetailsPage = () => {
           </Card>
         </div>
 
-        {/* Right column - Stats and suggestions */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
