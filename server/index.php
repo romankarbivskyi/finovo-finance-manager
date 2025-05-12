@@ -65,7 +65,8 @@ if ($route) {
 
   $request->setQueryParams($queryParams);
 
-  $actionParams = array_merge($routeParams, [$request]);
+  $actionParams = array_values($routeParams);
+  $actionParams[] = $request;
 
   if (is_callable($callback)) {
     call_user_func_array($callback, $actionParams);
