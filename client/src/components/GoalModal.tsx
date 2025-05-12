@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -35,12 +35,13 @@ import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createGoal } from "@/services/goal.service";
+import { createOrUpdateGoal } from "@/services/goal.service";
 import { toast } from "sonner";
+import type { Goal } from "@/types/goal.types";
 
 const currencyEnum = z.enum(["USD", "EUR", "UAH"]);
 
-const createGoalSchema = z
+const goalSchema = z
   .object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
@@ -63,26 +64,33 @@ const createGoalSchema = z
     },
   );
 
-type CreateGoalFormValues = z.infer<typeof createGoalSchema>;
+type GoalFormValues = z.infer<typeof goalSchema>;
 
-const CreateGoalModal = () => {
+interface GoalModalProps {
+  type?: "create" | "edit";
+  goal?: Goal;
+}
+
+const GoalModal = ({ type, goal }: GoalModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    goal?.preview_image ?? null,
+  );
   const [open, setOpen] = useState(false);
 
-  const form = useForm<CreateGoalFormValues>({
-    resolver: zodResolver(createGoalSchema),
+  const form = useForm<GoalFormValues>({
+    resolver: zodResolver(goalSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      currentAmount: 0,
-      targetAmount: 0,
-      targetDate: new Date(),
-      currency: "USD",
+      name: goal?.name || "",
+      description: goal?.description || "",
+      currentAmount: goal?.current_amount || 0,
+      targetAmount: goal?.target_amount || 0,
+      targetDate: goal?.target_date ? new Date(goal.target_date) : new Date(),
+      currency: goal?.currency || "USD",
     },
   });
 
-  const onSubmit = async (data: CreateGoalFormValues) => {
+  const onSubmit = async (data: GoalFormValues) => {
     setIsSubmitting(true);
 
     try {
@@ -99,18 +107,30 @@ const CreateGoalModal = () => {
         console.log("Appending image:", data.image.name, data.image.size);
       }
 
-      const response = await createGoal(formData);
+      if (type === "edit" && goal?.id) {
+        const response = await createOrUpdateGoal(formData, goal.id);
 
-      if (response.success) {
-        toast.success("Goal created successfully");
-        setOpen(false);
-        form.reset();
-        setImagePreview(null);
-      } else {
-        toast.error(response.message || "Failed to create goal");
+        if (response.success) {
+          toast.success("Goal updated successfully");
+          setOpen(false);
+          form.reset();
+          setImagePreview(null);
+        } else {
+          toast.error(response.message || "Failed to update goal");
+        }
+      } else if (type === "create") {
+        const response = await createOrUpdateGoal(formData);
+
+        if (response.success) {
+          toast.success("Goal created successfully");
+          setOpen(false);
+          form.reset();
+          setImagePreview(null);
+        } else {
+          toast.error(response.message || "Failed to create goal");
+        }
       }
-    } catch (error) {
-      console.error("Error creating goal:", error);
+    } catch {
       toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
@@ -120,17 +140,26 @@ const CreateGoalModal = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="flex items-center gap-2"
-          onClick={() => setOpen(true)}
-        >
-          <Plus className="h-4 w-4" />
-          Create
-        </Button>
+        {type === "create" ? (
+          <Button
+            className="flex items-center gap-2"
+            onClick={() => setOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Create
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm">
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="w-[calc(100%-2rem)] max-w-[500px] p-4 sm:p-6">
         <DialogHeader className="mb-4">
-          <DialogTitle>Create Goal</DialogTitle>
+          <DialogTitle>
+            {type === "create" ? "Create" : "Edit"} Goal
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -336,7 +365,13 @@ const CreateGoalModal = () => {
                 className="w-full sm:w-auto"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creating..." : "Create Goal"}
+                {isSubmitting
+                  ? type === "edit"
+                    ? "Saving..."
+                    : "Creating..."
+                  : type === "edit"
+                    ? "Save Changes"
+                    : "Create Goal"}
               </Button>
             </DialogFooter>
           </form>
@@ -346,4 +381,4 @@ const CreateGoalModal = () => {
   );
 };
 
-export default CreateGoalModal;
+export default GoalModal;

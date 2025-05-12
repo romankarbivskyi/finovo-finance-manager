@@ -8,4 +8,4 @@ export { default as ForgotPasswordForm } from "./ForgotPasswordForm";
 export { default as Pagination } from "./Pagination";
 export { default as DataList } from "./DataList";
 export { default as GoalCard } from "./GoalCard";
-export { default as CreateGoalModal } from "./CreateGoalModal";
+export { default as GoalModal } from "./GoalModal";

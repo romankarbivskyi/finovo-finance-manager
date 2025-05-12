@@ -34,8 +34,6 @@ class ImageHandler
     if (file_exists($imagePath)) {
       unlink($imagePath);
       return true;
-    } else {
-      throw new \Exception("Image not found.");
     }
   }
 

@@ -65,11 +65,14 @@ class Goal
     $imageUrl = $goal['preview_image'];
     if ($image && $image['error'] === UPLOAD_ERR_OK) {
       if ($goal['preview_image']) {
-        ImageHandler::deleteImage($goal['preview_image']);
+        $imageName = basename(str_replace('\\', '/', $goal['preview_image']));
+        ImageHandler::deleteImage($imageName);
       }
       $imageName = ImageHandler::uploadImage($image);
       $imageUrl = ImageHandler::getImageUrl($imageName);
     }
+
+    $status = $data['status'] ?? 'active';
 
     $this->db->query(
       "UPDATE goals SET 
@@ -90,7 +93,7 @@ class Goal
         $data['target_amount'],
         $data['currency'],
         $imageUrl,
-        $data['status'],
+        $status,
         $id,
         $userId
       ]

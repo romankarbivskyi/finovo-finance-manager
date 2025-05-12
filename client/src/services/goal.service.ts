@@ -43,11 +43,13 @@ export const fetchGoalById = async (
   }
 };
 
-export const createGoal = async (
+export const createOrUpdateGoal = async (
   goal: FormData,
+  goalId?: number,
 ): Promise<ApiResponse<Goal>> => {
   try {
-    const response = await api.post("/goals", goal, {
+    const url = goalId ? `/goals/${goalId}` : "/goals";
+    const response = await api.post(url, goal, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
