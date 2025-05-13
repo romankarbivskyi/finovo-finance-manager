@@ -8,6 +8,7 @@ import {
 } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { Link } from "react-router";
+import { ImageOff } from "lucide-react";
 
 interface GoalCardProps {
   goal: Goal;
@@ -29,12 +30,16 @@ const GoalCard = ({ goal }: GoalCardProps) => {
   return (
     <Link to={`/goals/${goal.id}`}>
       <Card className="flex h-full flex-col p-0 pb-5">
-        <div className="aspect-video w-full overflow-hidden rounded-t-md">
-          <img
-            src={preview_image}
-            alt={`Preview image: ${name}`}
-            className="h-full w-full object-cover"
-          />
+        <div className="flex aspect-video w-full items-center justify-center overflow-hidden rounded-t-md">
+          {preview_image ? (
+            <img
+              src={preview_image}
+              alt={`Preview image: ${name}`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <ImageOff className="stroke-accent h-1/2 w-1/2" />
+          )}
         </div>
 
         <CardHeader className="flex-grow">
