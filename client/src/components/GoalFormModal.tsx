@@ -66,12 +66,12 @@ const goalSchema = z
 
 type GoalFormValues = z.infer<typeof goalSchema>;
 
-interface GoalModalProps {
+interface GoalFormModalProps {
   type?: "create" | "edit";
   goal?: Goal;
 }
 
-const GoalModal = ({ type, goal }: GoalModalProps) => {
+const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(
     goal?.preview_image ?? null,
@@ -381,4 +381,4 @@ const GoalModal = ({ type, goal }: GoalModalProps) => {
   );
 };
 
-export default GoalModal;
+export default GoalFormModal;

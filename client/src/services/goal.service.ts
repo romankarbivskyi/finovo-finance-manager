@@ -65,3 +65,18 @@ export const createOrUpdateGoal = async (
     );
   }
 };
+
+export const deleteGoal = async (goalId: number): Promise<ApiResponse> => {
+  try {
+    const response = await api.delete(`/goals/${goalId}`);
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};

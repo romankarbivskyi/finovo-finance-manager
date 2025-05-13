@@ -1,6 +1,6 @@
 import { fetchGoalById } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Trash2, Plus } from "lucide-react";
+import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import { useParams, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -14,7 +14,7 @@ import {
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { GoalModal } from "@/components";
+import { DeleteGoalModal, GoalFormModal } from "@/components";
 
 const GoalDetailsPage = () => {
   const { goalId } = useParams();
@@ -67,11 +67,8 @@ const GoalDetailsPage = () => {
         </div>
 
         <div className="flex gap-2">
-          <GoalModal type="edit" goal={goal} />
-          <Button variant="destructive" size="sm">
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
-          </Button>
+          <GoalFormModal type="edit" goal={goal} />
+          <DeleteGoalModal goalId={goal.id} />
         </div>
       </div>
 
