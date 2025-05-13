@@ -38,6 +38,8 @@ import { cn } from "@/lib/utils";
 import { createOrUpdateGoal } from "@/services/goal.service";
 import { toast } from "sonner";
 import type { Goal } from "@/types/goal.types";
+import { useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 const currencyEnum = z.enum(["USD", "EUR", "UAH"]);
 
@@ -72,6 +74,8 @@ interface GoalFormModalProps {
 }
 
 const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(
     goal?.preview_image ?? null,
@@ -104,7 +108,6 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
 
       if (data.image instanceof File) {
         formData.append("image", data.image);
-        console.log("Appending image:", data.image.name, data.image.size);
       }
 
       if (type === "edit" && goal?.id) {
@@ -112,24 +115,27 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
 
         if (response.success) {
           toast.success("Goal updated successfully");
-          setOpen(false);
-          form.reset();
-          setImagePreview(null);
         } else {
           toast.error(response.message || "Failed to update goal");
+          return;
         }
       } else if (type === "create") {
         const response = await createOrUpdateGoal(formData);
 
         if (response.success) {
           toast.success("Goal created successfully");
-          setOpen(false);
-          form.reset();
-          setImagePreview(null);
         } else {
           toast.error(response.message || "Failed to create goal");
+          return;
         }
       }
+
+      setOpen(false);
+      form.reset();
+      setImagePreview(null);
+
+      navigate("/goals");
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
     } catch {
       toast.error("An unexpected error occurred");
     } finally {

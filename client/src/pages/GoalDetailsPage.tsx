@@ -23,6 +23,7 @@ const GoalDetailsPage = () => {
     queryKey: ["goal", goalId],
     queryFn: async () => await fetchGoalById(goalId!),
     enabled: !!goalId,
+    refetchInterval: 10000,
   });
 
   const goal = apiResponse?.data || null;
