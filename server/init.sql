@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS "transactions" (
   "amount" DECIMAL(10, 2) NOT NULL,
   "description" TEXT,
   "transaction_type" VARCHAR(10) NOT NULL CHECK (transaction_type IN ('income', 'expense')),
-  "transaction_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (goal_id) REFERENCES goals(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

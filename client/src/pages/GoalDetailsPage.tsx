@@ -1,6 +1,6 @@
 import { fetchGoalById } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Plus } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useParams, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -14,7 +14,11 @@ import {
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { DeleteGoalModal, GoalFormModal } from "@/components";
+import {
+  CreateTransactionModal,
+  DeleteGoalModal,
+  GoalFormModal,
+} from "@/components";
 
 const GoalDetailsPage = () => {
   const { goalId } = useParams();
@@ -147,10 +151,7 @@ const GoalDetailsPage = () => {
                   Track your progress with transactions
                 </CardDescription>
               </div>
-              <Button size="sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Transaction
-              </Button>
+              <CreateTransactionModal goalId={goal.id} />
             </CardHeader>
 
             <CardContent>
