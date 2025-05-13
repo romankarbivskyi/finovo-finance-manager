@@ -211,12 +211,12 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
                     <FormLabel>Current Amount</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
                         placeholder="0"
                         {...field}
                         onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === "" ? 0 : Number(value));
+                          const value = e.target.value.replace(/[^\d.]/g, "");
+                          field.onChange(value === "" ? 0 : parseFloat(value));
                         }}
                         value={field.value === 0 ? "" : field.value}
                         className="w-full"
@@ -235,12 +235,12 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
                     <FormLabel>Target Amount</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
                         placeholder="1000"
                         {...field}
                         onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === "" ? 0 : Number(value));
+                          const value = e.target.value.replace(/[^\d.]/g, "");
+                          field.onChange(value === "" ? 0 : parseFloat(value));
                         }}
                         value={field.value === 0 ? "" : field.value}
                         className="w-full"
