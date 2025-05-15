@@ -66,6 +66,19 @@ class Transaction
     return $this->db->fetchOne("SELECT * FROM transactions WHERE id = ?", [$id]);
   }
 
+  public function getAllForUser($userId, $limit = 10, $offset = 0)
+  {
+    return $this->db->fetchAll(
+      "SELECT * FROM transactions WHERE user_id = ? ORDER BY id DESC LIMIT ? OFFSET ?",
+      [$userId, $limit, $offset]
+    );
+  }
+
+  public function getTotalForUser($userId)
+  {
+    return $this->db->fetchOne("SELECT COUNT(*) as count FROM transactions WHERE user_id = ?", [$userId])['count'];
+  }
+
   public function getAllForGoal($goalId, $limit = 10, $offset = 0)
   {
     return $this->db->fetchAll(

@@ -37,6 +37,26 @@ class TransactionController
     }
   }
 
+  public function getAllForUser(Request $request)
+  {
+    try {
+      $limit = $request->query('limit', 10);
+      $offset = $request->query('offset', 0);
+      $user = $this->auth->getUser();
+
+      if (!$user) {
+        throw new \Exception("User not authenticated.");
+      }
+
+      $transactions = $this->transactionModel->getAllForUser($user['id'], $limit, $offset);
+      $total = $this->transactionModel->getTotalForUser($user['id']);
+
+      Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
+
   public function getAllForGoal($goalId, Request $request)
   {
     try {

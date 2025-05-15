@@ -51,8 +51,9 @@ $router->addRoute('POST', '/goals', 'GoalController@create');
 $router->addRoute('GET', '/goals', 'GoalController@getAll');
 $router->addRoute('DELETE', '/goals/{id}', 'GoalController@delete');
 $router->addRoute('GET', '/goals/{id}', 'GoalController@getById');
-
 $router->addRoute('GET', '/goals/{id}/transactions', 'TransactionController@getAllForGoal');
+
+$router->addRoute('GET', '/transactions', 'TransactionController@getAllForUser');
 $router->addRoute('POST', '/transactions', 'TransactionController@create');
 $router->addRoute('DELETE', '/transactions/{id}', 'TransactionController@delete');
 
