@@ -52,7 +52,7 @@ const GoalDetailsPage = () => {
     enabled: !!goalId && Number(goalId) > 0,
   });
 
-  const handleTransactionCreate = () => {
+  const handleRefetch = () => {
     refetchTransactions();
     refetchGoal();
   };
@@ -192,10 +192,7 @@ const GoalDetailsPage = () => {
                   Track your progress with transactions
                 </CardDescription>
               </div>
-              <CreateTransactionModal
-                goalId={gId}
-                onCreate={handleTransactionCreate}
-              />
+              <CreateTransactionModal goalId={gId} onCreate={handleRefetch} />
             </CardHeader>
 
             <CardContent>
@@ -211,6 +208,7 @@ const GoalDetailsPage = () => {
                       isLoading={isTransactionsLoading}
                       page={page}
                       setPage={setPage}
+                      onDelete={handleRefetch}
                     />
                     <p className="text-muted-foreground text-sm">
                       Total Transactions: {goalTransactions.total}

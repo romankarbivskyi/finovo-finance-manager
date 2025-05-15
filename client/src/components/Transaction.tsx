@@ -11,11 +11,13 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { format } from "date-fns";
+import { deleteTransaction } from "@/services/transaction.service";
+import { toast } from "sonner";
 
 interface TransactionProps {
   transaction: ITransaction;
   currency?: string;
-  onDelete?: (id: number) => void;
+  onDelete?: () => void;
 }
 
 const Transaction = ({ transaction, currency, onDelete }: TransactionProps) => {
@@ -26,6 +28,20 @@ const Transaction = ({ transaction, currency, onDelete }: TransactionProps) => {
     addSuffix: true,
   });
   const fullDate = format(new Date(created_at), "PPP 'at' p");
+
+  const handleDelete = async () => {
+    const response = await deleteTransaction(id);
+
+    if (response.success) {
+      const successMessage =
+        response.message || "Transaction deleted successfully";
+      toast.success(successMessage);
+      onDelete?.();
+    } else {
+      const errorMessage = response.message || "Failed to delete transaction";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <Card className="min-w-[600px] overflow-hidden py-2">
@@ -77,16 +93,14 @@ const Transaction = ({ transaction, currency, onDelete }: TransactionProps) => {
               </p>
             </div>
 
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onDelete(id)}
-                className="text-muted-foreground hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDelete}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </CardContent>

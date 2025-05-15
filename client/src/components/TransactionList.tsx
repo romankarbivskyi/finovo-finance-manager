@@ -9,6 +9,7 @@ interface TransactionListProps {
   isLoading: boolean;
   page: number;
   setPage: (page: number) => void;
+  onDelete?: () => void;
 }
 
 const TransactionList = ({
@@ -18,6 +19,7 @@ const TransactionList = ({
   isLoading,
   page,
   setPage,
+  onDelete,
 }: TransactionListProps) => {
   return (
     <DataList
@@ -30,7 +32,7 @@ const TransactionList = ({
         <Transaction
           transaction={transaction}
           currency={currency}
-          onDelete={() => {}}
+          onDelete={onDelete}
         />
       )}
       containerClassName="space-y-2"
