@@ -47,7 +47,7 @@ class Goal
 
   public function getAllForUser($userId, $limit = 10, $offset = 0)
   {
-    return $this->db->fetchAll("SELECT * FROM goals WHERE user_id = ? LIMIT ? OFFSET ?", [$userId, $limit, $offset]);
+    return $this->db->fetchAll("SELECT * FROM goals WHERE user_id = ? ORDER BY id DESC LIMIT ? OFFSET ?", [$userId, $limit, $offset]);
   }
 
   public function getTotalForUser($userId)

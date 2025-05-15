@@ -68,7 +68,10 @@ class Transaction
 
   public function getAllForGoal($goalId, $limit = 10, $offset = 0)
   {
-    return $this->db->fetchAll("SELECT * FROM transactions WHERE goal_id = ? LIMIT ? OFFSET ?", [$goalId, $limit, $offset]);
+    return $this->db->fetchAll(
+      "SELECT * FROM transactions WHERE goal_id = ? ORDER BY id DESC LIMIT ? OFFSET ?",
+      [$goalId, $limit, $offset]
+    );
   }
 
   public function getTotalForGoal($goalId)
