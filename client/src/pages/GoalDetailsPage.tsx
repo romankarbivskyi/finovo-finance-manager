@@ -23,7 +23,11 @@ import {
 const GoalDetailsPage = () => {
   const { goalId } = useParams();
 
-  const { data: apiResponse, isLoading } = useQuery({
+  const {
+    data: apiResponse,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["goal", goalId],
     queryFn: async () => await fetchGoalById(goalId!),
     enabled: !!goalId,
@@ -151,7 +155,7 @@ const GoalDetailsPage = () => {
                   Track your progress with transactions
                 </CardDescription>
               </div>
-              <CreateTransactionModal goalId={goal.id} />
+              <CreateTransactionModal goalId={goal.id} refetch={refetch} />
             </CardHeader>
 
             <CardContent>

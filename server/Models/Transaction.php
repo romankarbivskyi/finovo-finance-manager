@@ -26,6 +26,11 @@ class Transaction
       throw new \Exception("Access denied.");
     }
 
+    $amount = $data['transaction_type'] === 'expense' ? -$data['amount'] : $data['amount'];
+    if ($goal['current_amount'] + $amount < 0) {
+      throw new \Exception("Insufficient funds.");
+    }
+
     $this->db->getConnection()->beginTransaction();
     $goalModel = new Goal();
 

@@ -26,13 +26,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { createTransaction } from "@/services/transaction.service";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const transactionSchema = z.object({
   goal_id: z
     .number()
     .positive({ message: "Goal ID must be a positive number" }),
   amount: z.number().positive({ message: "Amount must be a positive number" }),
-  description: z.string().min(1, { message: "Description is required" }),
+  description: z.string().optional(),
   transaction_type: z.enum(["income", "expense"], {
     required_error: "Transaction type is required",
     invalid_type_error: "Transaction type must be 'income' or 'expense'",
@@ -43,9 +46,15 @@ export type CreateTransactionValues = z.infer<typeof transactionSchema>;
 
 interface CreateTransactionModalProps {
   goalId: number;
+  refetch?: () => void;
 }
 
-const CreateTransactionModal = ({ goalId }: CreateTransactionModalProps) => {
+const CreateTransactionModal = ({
+  goalId,
+  refetch,
+}: CreateTransactionModalProps) => {
+  const [open, setOpen] = useState(false);
+
   const form = useForm<CreateTransactionValues>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
@@ -56,12 +65,30 @@ const CreateTransactionModal = ({ goalId }: CreateTransactionModalProps) => {
     },
   });
 
-  const onSubmit = (data: CreateTransactionValues) => {
+  const onSubmit = async (data: CreateTransactionValues) => {
     console.log("Form submitted:", data);
+    const { goal_id, amount, description, transaction_type } = data;
+
+    const response = await createTransaction(
+      goal_id,
+      amount,
+      description,
+      transaction_type,
+    );
+
+    if (response.success) {
+      toast.success("Transaction created successfully");
+      form.reset();
+      setOpen(false);
+      refetch?.();
+    } else {
+      const errorMessage = response.error || "Failed to create transaction";
+      toast.error(errorMessage);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm">
           <Plus className="mr-2 h-4 w-4" />
@@ -127,7 +154,7 @@ const CreateTransactionModal = ({ goalId }: CreateTransactionModalProps) => {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="income">Income</SelectItem>
-                        <SelectItem value="exprense">Expense</SelectItem>
+                        <SelectItem value="expense">Expense</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

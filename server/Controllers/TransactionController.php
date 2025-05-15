@@ -18,17 +18,18 @@ class TransactionController
     $this->transactionModel = new Transaction();
   }
 
-  public function create($id, Request $request)
+  public function create(Request $request)
   {
     try {
       $data = $request->getJsonBody();
+      $goalId = $data['goal_id'] ?? null;
       $user = $this->auth->getUser();
 
       if (!$user) {
         throw new \Exception("User not authenticated.");
       }
 
-      $transaction = $this->transactionModel->create($id, $user['id'], $data);
+      $transaction = $this->transactionModel->create($goalId, $user['id'], $data);
 
       Response::json(['data' => $transaction], 201);
     } catch (\Exception $e) {
