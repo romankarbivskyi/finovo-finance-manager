@@ -45,6 +45,7 @@ const GoalDetailsPage = () => {
     preview_image,
     target_date,
     created_at,
+    status,
   } = goal!;
 
   if (isLoading && !goal) {
@@ -145,7 +146,7 @@ const GoalDetailsPage = () => {
                   </p>
                 </div>
 
-                {current_amount < target_amount && (
+                {status == "active" && (
                   <p className="text-sm">
                     You need{" "}
                     <span className="font-semibold">
