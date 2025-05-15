@@ -87,8 +87,8 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
     defaultValues: {
       name: goal?.name || "",
       description: goal?.description || "",
-      currentAmount: goal?.current_amount || 0,
-      targetAmount: goal?.target_amount || 0,
+      currentAmount: goal?.current_amount ? Number(goal.current_amount) : 0,
+      targetAmount: goal?.target_amount ? Number(goal.target_amount) : 0,
       targetDate: goal?.target_date ? new Date(goal.target_date) : new Date(),
       currency: goal?.currency || "USD",
     },
@@ -211,15 +211,15 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
                     <FormLabel>Current Amount</FormLabel>
                     <FormControl>
                       <Input
-                        type="text"
+                        type="number"
                         placeholder="0"
+                        className="w-full"
                         {...field}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/[^\d.]/g, "");
-                          field.onChange(value === "" ? 0 : parseFloat(value));
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
                         }}
                         value={field.value === 0 ? "" : field.value}
-                        className="w-full"
                       />
                     </FormControl>
                     <FormMessage />
@@ -235,15 +235,15 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
                     <FormLabel>Target Amount</FormLabel>
                     <FormControl>
                       <Input
-                        type="text"
+                        type="number"
                         placeholder="1000"
+                        className="w-full"
                         {...field}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/[^\d.]/g, "");
-                          field.onChange(value === "" ? 0 : parseFloat(value));
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
                         }}
                         value={field.value === 0 ? "" : field.value}
-                        className="w-full"
                       />
                     </FormControl>
                     <FormMessage />
