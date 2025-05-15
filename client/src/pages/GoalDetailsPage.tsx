@@ -35,6 +35,17 @@ const GoalDetailsPage = () => {
   });
 
   const goal = apiResponse?.data || null;
+  const {
+    id,
+    name,
+    description,
+    current_amount,
+    target_amount,
+    currency,
+    preview_image,
+    target_date,
+    created_at,
+  } = goal!;
 
   if (isLoading && !goal) {
     return (
@@ -58,10 +69,8 @@ const GoalDetailsPage = () => {
     );
   }
 
-  const progressPercentage = Math.round(
-    (goal.current_amount / goal.target_amount) * 100,
-  );
-  const remaining = goal.target_amount - goal.current_amount;
+  const progressPercentage = Math.round((current_amount / target_amount) * 100);
+  const remaining = target_amount - current_amount;
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -72,23 +81,23 @@ const GoalDetailsPage = () => {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <h1 className="text-2xl font-bold">{goal.name}</h1>
+          <h1 className="text-2xl font-bold">{name}</h1>
         </div>
 
         <div className="flex gap-2">
           <GoalFormModal type="edit" goal={goal} />
-          <DeleteGoalModal goalId={goal.id} />
+          <DeleteGoalModal goalId={id} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Card>
-            {goal.preview_image && (
+            {preview_image && (
               <div className="aspect-video w-full overflow-hidden rounded-t-lg">
                 <img
-                  src={goal.preview_image}
-                  alt={goal.name}
+                  src={preview_image}
+                  alt={name}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -96,11 +105,11 @@ const GoalDetailsPage = () => {
 
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">{goal.name}</CardTitle>
-                <Badge>{goal.status}</Badge>
+                <CardTitle className="text-xl">{name}</CardTitle>
+                <Badge>{status}</Badge>
               </div>
               <CardDescription>
-                {goal.description || "No description provided"}
+                {description || "No description provided"}
               </CardDescription>
             </CardHeader>
 
@@ -108,7 +117,7 @@ const GoalDetailsPage = () => {
               <div>
                 <p className="text-muted-foreground text-sm">Target Date</p>
                 <p className="font-medium">
-                  {format(new Date(goal.target_date), "PPP")}
+                  {format(new Date(target_date), "PPP")}
                 </p>
               </div>
 
@@ -125,24 +134,26 @@ const GoalDetailsPage = () => {
                   <p>
                     Current:{" "}
                     <span className="text-foreground font-medium">
-                      {goal.current_amount} {goal.currency}
+                      {current_amount} {currency}
                     </span>
                   </p>
                   <p>
                     Target:{" "}
                     <span className="text-foreground font-medium">
-                      {goal.target_amount} {goal.currency}
+                      {target_amount} {currency}
                     </span>
                   </p>
                 </div>
 
-                <p className="text-sm">
-                  You need{" "}
-                  <span className="font-semibold">
-                    {remaining} {goal.currency}
-                  </span>{" "}
-                  more to reach your goal
-                </p>
+                {current_amount < target_amount && (
+                  <p className="text-sm">
+                    You need{" "}
+                    <span className="font-semibold">
+                      {remaining} {currency}
+                    </span>{" "}
+                    more to reach your goal
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -155,7 +166,7 @@ const GoalDetailsPage = () => {
                   Track your progress with transactions
                 </CardDescription>
               </div>
-              <CreateTransactionModal goalId={goal.id} refetch={refetch} />
+              <CreateTransactionModal goalId={id} refetch={refetch} />
             </CardHeader>
 
             <CardContent>
@@ -177,7 +188,7 @@ const GoalDetailsPage = () => {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Created</span>
-                <span>{format(new Date(goal.created_at), "PPP")}</span>
+                <span>{format(new Date(created_at), "PPP")}</span>
               </div>
 
               <Separator />
@@ -193,14 +204,14 @@ const GoalDetailsPage = () => {
                       Math.max(
                         1,
                         Math.ceil(
-                          (new Date(goal.target_date).getTime() -
+                          (new Date(target_date).getTime() -
                             new Date().getTime()) /
                             (1000 * 60 * 60 * 24 * 30),
                         ),
                       )
                     ).toFixed(2)}
                   </span>
-                  {goal.currency} per month.
+                  {currency} per month.
                 </p>
               </div>
             </CardContent>
