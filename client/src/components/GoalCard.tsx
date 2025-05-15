@@ -9,6 +9,7 @@ import {
 import { Progress } from "./ui/progress";
 import { Link } from "react-router";
 import { ImageOff } from "lucide-react";
+import { Badge } from "./ui/badge";
 
 interface GoalCardProps {
   goal: Goal;
@@ -23,6 +24,7 @@ const GoalCard = ({ goal }: GoalCardProps) => {
     target_amount,
     current_amount,
     currency,
+    status,
   } = goal;
 
   const progressValue = Math.round((current_amount / target_amount) * 100);
@@ -43,7 +45,10 @@ const GoalCard = ({ goal }: GoalCardProps) => {
         </div>
 
         <CardHeader className="flex-grow">
-          <CardTitle className="line-clamp-1">{name}</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="line-clamp-1">{name}</CardTitle>
+            <Badge>{status}</Badge>
+          </div>
           <CardDescription className="line-clamp-2">
             {description}
           </CardDescription>
