@@ -21,11 +21,12 @@ import {
   TransactionList,
 } from "@/components";
 import { useState } from "react";
-import { ITEMS_PER_PAGE } from "@/constants";
+
+export const transactionLimit = 5;
 
 const GoalDetailsPage = () => {
   const [page, setPage] = useState<number>(1);
-  const offset = (page - 1) * ITEMS_PER_PAGE;
+  const offset = (page - 1) * transactionLimit;
 
   const { goalId } = useParams();
 
@@ -45,9 +46,9 @@ const GoalDetailsPage = () => {
     isLoading: isTransactionsLoading,
     refetch: refetchTransactions,
   } = useQuery({
-    queryKey: ["goalTransactions", goalId],
+    queryKey: ["goalTransactions", goalId, page],
     queryFn: async () =>
-      await fetchGoalTransactions(Number(goalId), ITEMS_PER_PAGE, offset),
+      await fetchGoalTransactions(Number(goalId), transactionLimit, offset),
     enabled: !!goalId && Number(goalId) > 0,
   });
 
