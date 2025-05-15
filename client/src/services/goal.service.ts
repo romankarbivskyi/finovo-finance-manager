@@ -8,7 +8,7 @@ export const fetchAllGoals = async (
   offset: number,
 ): Promise<ApiResponse<GoalsResponse>> => {
   try {
-    const response = await api.get("/goals", {
+    const response = await api.get<ApiResponse<GoalsResponse>>("/goals", {
       params: {
         limit,
         offset,
@@ -30,7 +30,7 @@ export const fetchGoalById = async (
   goalId: string,
 ): Promise<ApiResponse<Goal>> => {
   try {
-    const response = await api.get(`/goals/${goalId}`);
+    const response = await api.get<ApiResponse<Goal>>(`/goals/${goalId}`);
 
     return response.data;
   } catch (err) {

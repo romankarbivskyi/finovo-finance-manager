@@ -1,17 +1,14 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
 import type { User } from "@/types/user.types";
-import { type AxiosResponse, AxiosError } from "axios";
+import { AxiosError } from "axios";
 
 export const login = async (
   email: string,
   password: string,
 ): Promise<ApiResponse<User>> => {
   try {
-    const response = await api.post<
-      ApiResponse<User>,
-      AxiosResponse<ApiResponse<User>>
-    >("/users/login", {
+    const response = await api.post<ApiResponse<User>>("/users/login", {
       email,
       password,
     });
@@ -33,10 +30,7 @@ export const register = async (
   password: string,
 ): Promise<ApiResponse<User>> => {
   try {
-    const response = await api.post<
-      ApiResponse<User>,
-      AxiosResponse<ApiResponse<User>>
-    >("/users/register", {
+    const response = await api.post<ApiResponse<User>>("/users/register", {
       username,
       email,
       password,
@@ -57,12 +51,12 @@ export const sendRecoveryToken = async (
   email: string,
 ): Promise<ApiResponse<null>> => {
   try {
-    const response = await api.post<
-      ApiResponse<null>,
-      AxiosResponse<ApiResponse<null>>
-    >("/users/password/forgot", {
-      email,
-    });
+    const response = await api.post<ApiResponse<null>>(
+      "/users/password/forgot",
+      {
+        email,
+      },
+    );
 
     return response.data;
   } catch (err) {
