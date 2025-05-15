@@ -16,12 +16,12 @@ import { toast } from "sonner";
 
 interface TransactionProps {
   transaction: ITransaction;
-  currency?: string;
   onDelete?: () => void;
 }
 
-const Transaction = ({ transaction, currency, onDelete }: TransactionProps) => {
-  const { id, amount, transaction_type, description, created_at } = transaction;
+const Transaction = ({ transaction, onDelete }: TransactionProps) => {
+  const { id, amount, transaction_type, description, created_at, currency } =
+    transaction;
 
   const isIncome = transaction_type === "income";
   const formattedDate = formatDistanceToNow(new Date(created_at), {

@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS "transactions" (
   "goal_id" INTEGER NOT NULL,
   "user_id" INTEGER NOT NULL,
   "amount" DECIMAL(10, 2) NOT NULL,
+  "currency" VARCHAR(10) NOT NULL CHECK (currency IN ('USD', 'UAH', 'EUR')) DEFAULT 'UAH',
   "description" TEXT,
   "transaction_type" VARCHAR(10) NOT NULL CHECK (transaction_type IN ('income', 'expense')),
   "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

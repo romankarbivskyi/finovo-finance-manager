@@ -3,6 +3,7 @@ export interface ITransaction {
   goal_id: number;
   user_id: number;
   amount: number;
+  currency: string;
   description: string;
   transaction_type: "income" | "expense";
   created_at: Date;

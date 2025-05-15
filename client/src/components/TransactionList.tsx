@@ -5,7 +5,6 @@ import Transaction from "./Transaction";
 interface TransactionListProps {
   transactions: ITransaction[];
   total: number;
-  currency: string;
   isLoading: boolean;
   page: number;
   setPage: (page: number) => void;
@@ -15,7 +14,6 @@ interface TransactionListProps {
 const TransactionList = ({
   transactions,
   total,
-  currency,
   isLoading,
   page,
   setPage,
@@ -29,11 +27,7 @@ const TransactionList = ({
       total={total}
       onPageChange={setPage}
       renderItem={(transaction) => (
-        <Transaction
-          transaction={transaction}
-          currency={currency}
-          onDelete={onDelete}
-        />
+        <Transaction transaction={transaction} onDelete={onDelete} />
       )}
       containerClassName="space-y-2"
     />

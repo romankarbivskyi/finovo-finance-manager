@@ -41,12 +41,13 @@ class Transaction
     }
 
     $transactionId = $this->db->insert(
-      "INSERT INTO transactions (goal_id, user_id, amount, description, transaction_type) 
-             VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO transactions (goal_id, user_id, amount, currency, description, transaction_type) 
+             VALUES (?, ?, ?, ?, ?, ?)",
       [
         $goalId,
         $userId,
         $data['amount'],
+        $goal['currency'],
         $data['description'],
         $data['transaction_type'],
       ]

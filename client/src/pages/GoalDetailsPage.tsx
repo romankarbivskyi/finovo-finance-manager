@@ -204,7 +204,6 @@ const GoalDetailsPage = () => {
                     <TransactionList
                       transactions={goalTransactions.transactions}
                       total={goalTransactions.total}
-                      currency={currency}
                       isLoading={isTransactionsLoading}
                       page={page}
                       setPage={setPage}
