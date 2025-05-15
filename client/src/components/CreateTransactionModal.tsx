@@ -46,12 +46,12 @@ export type CreateTransactionValues = z.infer<typeof transactionSchema>;
 
 interface CreateTransactionModalProps {
   goalId: number;
-  refetch?: () => void;
+  onCreate?: () => void;
 }
 
 const CreateTransactionModal = ({
   goalId,
-  refetch,
+  onCreate,
 }: CreateTransactionModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -80,7 +80,7 @@ const CreateTransactionModal = ({
       toast.success("Transaction created successfully");
       form.reset();
       setOpen(false);
-      refetch?.();
+      onCreate?.();
     } else {
       const errorMessage = response.error || "Failed to create transaction";
       toast.error(errorMessage);

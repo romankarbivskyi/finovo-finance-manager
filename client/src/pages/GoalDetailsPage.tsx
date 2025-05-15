@@ -1,4 +1,4 @@
-import { fetchGoalById } from "@/services/goal.service";
+import { fetchGoalById, fetchGoalTransactions } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useParams, Link } from "react-router";
@@ -18,15 +18,21 @@ import {
   CreateTransactionModal,
   DeleteGoalModal,
   GoalFormModal,
+  TransactionList,
 } from "@/components";
+import { useState } from "react";
+import { ITEMS_PER_PAGE } from "@/constants";
 
 const GoalDetailsPage = () => {
+  const [page, setPage] = useState<number>(1);
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+
   const { goalId } = useParams();
 
   const {
-    data: apiResponse,
-    isLoading,
-    refetch,
+    data: goalResponse,
+    isLoading: isGoalLoading,
+    refetch: refetchGoal,
   } = useQuery({
     queryKey: ["goal", goalId],
     queryFn: async () => await fetchGoalById(goalId!),
@@ -34,27 +40,32 @@ const GoalDetailsPage = () => {
     refetchInterval: 10000,
   });
 
-  const goal = apiResponse?.data || null;
   const {
-    id,
-    name,
-    description,
-    current_amount,
-    target_amount,
-    currency,
-    preview_image,
-    target_date,
-    created_at,
-    status,
-  } = goal!;
+    data: goalTransactionsResponse,
+    isLoading: isTransactionsLoading,
+    refetch: refetchTransactions,
+  } = useQuery({
+    queryKey: ["goalTransactions", goalId],
+    queryFn: async () =>
+      await fetchGoalTransactions(Number(goalId), ITEMS_PER_PAGE, offset),
+    enabled: !!goalId && Number(goalId) > 0,
+  });
 
-  if (isLoading && !goal) {
+  const handleTransactionCreate = () => {
+    refetchTransactions();
+    refetchGoal();
+  };
+
+  if (isGoalLoading) {
     return (
       <div className="flex h-64 w-full items-center justify-center">
         <Loader2 className="text-primary h-8 w-8 animate-spin" />
       </div>
     );
   }
+
+  const goalTransactions = goalTransactionsResponse?.data || null;
+  const goal = goalResponse?.data || null;
 
   if (!goal) {
     return (
@@ -69,6 +80,19 @@ const GoalDetailsPage = () => {
       </div>
     );
   }
+
+  const {
+    id: gId,
+    name,
+    description,
+    current_amount,
+    target_amount,
+    currency,
+    preview_image,
+    target_date,
+    created_at,
+    status,
+  } = goal;
 
   const progressPercentage = Math.round((current_amount / target_amount) * 100);
   const remaining = target_amount - current_amount;
@@ -87,7 +111,7 @@ const GoalDetailsPage = () => {
 
         <div className="flex gap-2">
           <GoalFormModal type="edit" goal={goal} />
-          <DeleteGoalModal goalId={id} />
+          <DeleteGoalModal goalId={gId} />
         </div>
       </div>
 
@@ -167,15 +191,36 @@ const GoalDetailsPage = () => {
                   Track your progress with transactions
                 </CardDescription>
               </div>
-              <CreateTransactionModal goalId={id} refetch={refetch} />
+              <CreateTransactionModal
+                goalId={gId}
+                onCreate={handleTransactionCreate}
+              />
             </CardHeader>
 
             <CardContent>
               <div className="rounded-lg border p-8 text-center">
-                <p className="text-muted-foreground">
-                  No transactions yet. Add your first transaction to track
-                  progress.
-                </p>
+                {goalTransactions &&
+                Array.isArray(goalTransactions.transactions) &&
+                goalTransactions.transactions.length > 0 ? (
+                  <div className="overflow-auto">
+                    <TransactionList
+                      transactions={goalTransactions.transactions}
+                      total={goalTransactions.total}
+                      currency={currency}
+                      isLoading={isTransactionsLoading}
+                      page={page}
+                      setPage={setPage}
+                    />
+                    <p className="text-muted-foreground text-sm">
+                      Total Transactions: {goalTransactions.total}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">
+                    No transactions yet. Add your first transaction to track
+                    progress.
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
