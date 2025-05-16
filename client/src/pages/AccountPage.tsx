@@ -111,7 +111,7 @@ const AccountPage = () => {
                       <h3 className="font-medium">Password</h3>
                     </div>
                     <p className="text-muted-foreground text-sm">
-                      Last changed 3 months ago
+                      For your security, change your password regularly.
                     </p>
                   </div>
                   <ChangePasswordModal />
