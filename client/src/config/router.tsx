@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import {
+  AccountPage,
   DashboardPage,
   GoalDetailsPage,
   GoalsPage,
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: "/transactions",
         element: <TransactionsPage />,
+      },
+      {
+        path: "/account",
+        element: <AccountPage />,
       },
     ],
   },

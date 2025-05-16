@@ -144,4 +144,33 @@ class UserController
       Response::json(['error' => $e->getMessage()], 400);
     }
   }
+
+  public function changePassword(Request $request)
+  {
+    try {
+      $data = $request->getJsonBody();
+      $currentPassword = isset($data['current_password']) ? $data['current_password'] : '';
+      $newPassword = isset($data['new_password']) ? $data['new_password'] : '';
+
+      if (empty($currentPassword) || empty($newPassword)) {
+        throw new \Exception("Current and new passwords are required.");
+      }
+
+      $user = $this->auth->getUser();
+
+      if (!$user) {
+        throw new \Exception("User not authenticated.");
+      }
+
+      if (!$this->userModel->validateCredentials($user['email'], $currentPassword)) {
+        throw new \Exception("Current password is incorrect.");
+      }
+
+      $this->userModel->updatePassword($user['id'], $newPassword);
+
+      Response::json(['message' => 'Password changed successfully.'], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
 }

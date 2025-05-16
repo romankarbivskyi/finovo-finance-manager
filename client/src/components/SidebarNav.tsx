@@ -49,10 +49,6 @@ const SidebarNav = () => {
     },
   ];
 
-  const handleSignOut = () => {
-    logout();
-  };
-
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
@@ -103,10 +99,7 @@ const SidebarNav = () => {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleSignOut}
-                  className="text-red-600"
-                >
+                <DropdownMenuItem onClick={logout} className="text-red-600">
                   <LogOut size={16} className="mr-2" />
                   <span>Sign out</span>
                 </DropdownMenuItem>

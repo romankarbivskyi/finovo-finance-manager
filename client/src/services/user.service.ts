@@ -68,3 +68,27 @@ export const sendRecoveryToken = async (
     );
   }
 };
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string,
+) => {
+  try {
+    const response = await api.post<ApiResponse<null>>(
+      "/users/password/change",
+      {
+        current_password: currentPassword,
+        new_password: newPassword,
+      },
+    );
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<null>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};

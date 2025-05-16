@@ -13,3 +13,4 @@ export { default as DeleteGoalModal } from "./DeleteGoalModal";
 export { default as CreateTransactionModal } from "./CreateTransactionModal";
 export { default as Transaction } from "./Transaction";
 export { default as TransactionList } from "./TransactionList";
+export { default as ChangePasswordModal } from "./ChangePasswordModal";

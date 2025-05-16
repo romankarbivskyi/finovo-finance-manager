@@ -45,6 +45,7 @@ $router->addRoute('GET', '/users/profile', 'UserController@getUser');
 $router->addRoute('POST', '/users/logout', 'UserController@logout');
 $router->addRoute('POST', '/users/password/forgot', 'UserController@sendRecoveryToken');
 $router->addRoute('POST', '/users/password/reset', 'UserController@resetPassword');
+$router->addRoute('POST', '/users/password/change', 'UserController@changePassword');
 
 $router->addRoute('POST', '/goals/{id}', 'GoalController@update');
 $router->addRoute('POST', '/goals', 'GoalController@create');
