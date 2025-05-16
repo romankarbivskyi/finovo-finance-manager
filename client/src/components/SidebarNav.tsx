@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   ArrowLeftRight,
-  Settings,
   User2,
   ChevronUp,
   LogOut,
@@ -93,10 +92,6 @@ const SidebarNav = () => {
                 <DropdownMenuItem onClick={() => navigate("/account")}>
                   <CircleUser size={16} className="mr-2" />
                   <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  <Settings size={16} className="mr-2" />
-                  <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="text-red-600">
