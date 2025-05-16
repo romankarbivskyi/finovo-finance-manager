@@ -805,6 +805,15 @@
     "@radix-ui/react-roving-focus" "1.1.9"
     "@radix-ui/react-use-controllable-state" "1.2.2"
 
+"@radix-ui/react-toggle@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-toggle/-/react-toggle-1.1.8.tgz#49966facbf94aa7d51293790c78c67c1f7487aef"
+  integrity sha512-hrpa59m3zDnsa35LrTOH5s/a3iGv/VD+KKQjjiCTo/W4r0XwPpiWQvAv6Xl1nupSoaZeNNxW6sJH9ZydsjKdYQ==
+  dependencies:
+    "@radix-ui/primitive" "1.1.2"
+    "@radix-ui/react-primitive" "2.1.2"
+    "@radix-ui/react-use-controllable-state" "1.2.2"
+
 "@radix-ui/react-tooltip@^1.2.6":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-tooltip/-/react-tooltip-1.2.6.tgz#2311da593951f85d36cd45f4025816bf6feda87e"
