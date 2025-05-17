@@ -177,7 +177,7 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
                 <FormItem>
                   <FormLabel>Goal Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Iphone 16" {...field} />
+                    <Input placeholder="Enter goal name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
