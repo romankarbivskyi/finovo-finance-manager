@@ -168,4 +168,17 @@ class Goal
 
     return $this->update($goalId, $goal['user_id'], $goal);
   }
+
+  public function getStats($userId)
+  {
+    $totalGoals = $this->getTotalForUser($userId);
+    $completedGoals = $this->db->fetchOne("SELECT COUNT(*) as count FROM goals WHERE user_id = ? AND status = 'completed'", [$userId])['count'];
+    $activeGoals = $totalGoals - $completedGoals;
+
+    return [
+      'total' => $totalGoals,
+      'completed' => $completedGoals,
+      'active' => $activeGoals
+    ];
+  }
 }

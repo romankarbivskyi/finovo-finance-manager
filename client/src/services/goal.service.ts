@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
-import type { Goal, GoalsResponse } from "@/types/goal.types";
+import type { Goal, GoalsResponse, GoalsStats } from "@/types/goal.types";
 import type { TransactionsResponse } from "@/types/transaction.types";
 import type { AxiosError } from "axios";
 
@@ -100,6 +100,20 @@ export const fetchGoalTransactions = async (
     return response.data;
   } catch (err) {
     const error = err as AxiosError<ApiResponse<TransactionsResponse>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};
+
+export const getGoalsStats = async (): Promise<ApiResponse<GoalsStats>> => {
+  try {
+    const response = await api.get<ApiResponse<GoalsStats>>("/goals/stats");
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<GoalsStats>>;
     return (
       error.response?.data || {
         success: false,

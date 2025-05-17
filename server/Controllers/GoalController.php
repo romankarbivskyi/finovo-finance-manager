@@ -159,4 +159,20 @@ class GoalController
       Response::json(['error' => $e->getMessage()], 400);
     }
   }
+
+  public function getStats()
+  {
+    try {
+      $user = $this->auth->getUser();
+      if (!$user) {
+        Response::json(['error' => 'User not authenticated.'], 401);
+        return;
+      }
+
+      $stats = $this->goalModel->getStats($user['id']);
+      Response::json(['data' => $stats], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
 }

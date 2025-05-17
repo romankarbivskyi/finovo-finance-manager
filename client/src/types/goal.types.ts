@@ -16,3 +16,9 @@ export interface GoalsResponse {
   goals: Goal[];
   total: number;
 }
+
+export interface GoalsStats {
+  total: number;
+  completed: number;
+  active: number;
+}

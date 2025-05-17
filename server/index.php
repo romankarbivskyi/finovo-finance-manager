@@ -52,6 +52,7 @@ $router->addRoute('POST', '/goals/{id}', 'GoalController@update');
 $router->addRoute('POST', '/goals', 'GoalController@create');
 $router->addRoute('GET', '/goals', 'GoalController@getAll');
 $router->addRoute('DELETE', '/goals/{id}', 'GoalController@delete');
+$router->addRoute('GET', '/goals/stats', 'GoalController@getStats');
 $router->addRoute('GET', '/goals/{id}', 'GoalController@getById');
 $router->addRoute('GET', '/goals/{id}/transactions', 'TransactionController@getAllForGoal');
 
