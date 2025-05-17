@@ -5,3 +5,4 @@ export { default as TransactionsPage } from "./TransactionsPage";
 export { default as GoalsPage } from "./GoalsPage";
 export { default as GoalDetailsPage } from "./GoalDetailsPage";
 export { default as AccountPage } from "./AccountPage";
+export { default as ResetPasswordPage } from "./ResetPasswordPage";

@@ -6,6 +6,7 @@ use server\Core\Auth;
 use server\Core\Response;
 use server\Models\User;
 use server\Core\Request;
+use server\Utils\HttpClient;
 
 class UserController
 {
@@ -113,6 +114,35 @@ class UserController
       }
 
       $token = $this->userModel->generateRecoveryToken($user['id']);
+
+      $frontendUrl = getenv('FRONTEND_URL') ?: 'http://localhost:5173';
+
+      $resp = HttpClient::post(
+        'https://send.api.mailtrap.io/api/send',
+        [
+          'from' => [
+            'email' => 'finovo@demomailtrap.co',
+            'name' => 'Finovo'
+          ],
+          'to' => [
+            [
+              'email' => $email,
+            ]
+          ],
+          'subject' => 'Password Recovery',
+          'html' => "<p><a href=\"$frontendUrl/reset-password?token=$token\">Click here to reset your password</a>.</p>",
+          'category' => 'Password Recovery'
+        ],
+        [
+          'Authorization: Bearer 52510613516977ebc55ee48eb08a55cb'
+        ],
+        true
+      );
+
+      if ($resp['statusCode'] !== 200) {
+        $this->userModel->deleteRecoveryToken($token);
+        throw new \Exception("Failed to send recovery email.");
+      }
 
       Response::json(['message' => 'Recovery token sent.'], 200);
     } catch (\Exception $e) {

@@ -92,3 +92,24 @@ export const changePassword = async (
     );
   }
 };
+
+export const resetPassword = async (token: string, password: string) => {
+  try {
+    const response = await api.post<ApiResponse<null>>(
+      "/users/password/reset",
+      {
+        token,
+        password,
+      },
+    );
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<null>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};

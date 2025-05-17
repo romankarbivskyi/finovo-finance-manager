@@ -81,6 +81,11 @@ class User
       throw new \Exception("User not found.");
     }
 
+    $this->db->query(
+      "DELETE FROM password_resets WHERE user_id = ?",
+      [$userId]
+    );
+
     $token = bin2hex(random_bytes(16));
     $createdAt = date('Y-m-d H:i:s');
     $expiresAt = date('Y-m-d H:i:s', strtotime('+15 minutes'));
@@ -104,10 +109,7 @@ class User
     );
 
     if ($reset['expires_at'] < date('Y-m-d H:i:s')) {
-      $this->db->query(
-        "DELETE FROM password_resets WHERE token = ?",
-        [$token]
-      );
+      $this->deleteRecoveryToken($token);
       throw new \Exception("Token has expired.");
     }
 
@@ -136,5 +138,13 @@ class User
       $this->db->getConnection()->rollBack();
       throw new \Exception("Failed to update password: " . $e->getMessage());
     }
+  }
+
+  public function deleteRecoveryToken($token)
+  {
+    $this->db->query(
+      "DELETE FROM password_resets WHERE token = ?",
+      [$token]
+    );
   }
 }

@@ -6,6 +6,7 @@ import {
   GoalsPage,
   HomePage,
   NotFound,
+  ResetPasswordPage,
   TransactionsPage,
 } from "@/pages";
 import { DashboardLayout, HomeLayout } from "@/layouts";
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPasswordPage />,
       },
     ],
   },
