@@ -203,4 +203,23 @@ class UserController
       Response::json(['error' => $e->getMessage()], 400);
     }
   }
+
+  public function delete()
+  {
+    try {
+      $user = $this->auth->getUser();
+
+      if (!$user) {
+        throw new \Exception("User not authenticated.");
+      }
+
+      $this->userModel->deleteUser($user['id']);
+
+      $this->auth->logout();
+
+      Response::json(['message' => 'Account deleted successfully.'], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
 }

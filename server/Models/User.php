@@ -147,4 +147,16 @@ class User
       [$token]
     );
   }
+
+  public function deleteUser($userId)
+  {
+    try {
+      $this->db->query(
+        "DELETE FROM users WHERE id = ?",
+        [$userId]
+      );
+    } catch (\Exception $e) {
+      throw new \Exception("Failed to delete user: " . $e->getMessage());
+    }
+  }
 }

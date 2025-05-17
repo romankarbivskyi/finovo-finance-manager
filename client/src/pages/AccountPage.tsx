@@ -1,4 +1,4 @@
-import { ChangePasswordModal, Header } from "@/components";
+import { ChangePasswordModal, DeleteAccountModal, Header } from "@/components";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { Edit2, Lock, UserIcon } from "lucide-react";
+import { Delete, Edit2, Lock, UserIcon } from "lucide-react";
 
 const AccountPage = () => {
   const { user, logout } = useAuth();
@@ -128,13 +128,7 @@ const AccountPage = () => {
                       Permanently delete your account and all your data
                     </p>
                   </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="mt-2 sm:mt-0"
-                  >
-                    Delete Account
-                  </Button>
+                  <DeleteAccountModal />
                 </div>
               </CardContent>
             </Card>

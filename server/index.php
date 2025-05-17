@@ -43,6 +43,7 @@ $router->addRoute('POST', '/users/register', 'UserController@register');
 $router->addRoute('POST', '/users/login', 'UserController@login');
 $router->addRoute('GET', '/users/profile', 'UserController@getUser');
 $router->addRoute('POST', '/users/logout', 'UserController@logout');
+$router->addRoute('DELETE', '/users', 'UserController@delete');
 $router->addRoute('POST', '/users/password/forgot', 'UserController@sendRecoveryToken');
 $router->addRoute('POST', '/users/password/reset', 'UserController@resetPassword');
 $router->addRoute('POST', '/users/password/change', 'UserController@changePassword');

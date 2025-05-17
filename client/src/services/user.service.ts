@@ -113,3 +113,18 @@ export const resetPassword = async (token: string, password: string) => {
     );
   }
 };
+
+export const deleteAccount = async () => {
+  try {
+    const response = await api.delete<ApiResponse<null>>("/users");
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<null>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};
