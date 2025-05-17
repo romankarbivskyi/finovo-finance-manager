@@ -1,13 +1,4 @@
-import { Pencil, Plus } from "lucide-react";
 import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "./ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -40,6 +31,13 @@ import { toast } from "sonner";
 import type { Goal } from "@/types/goal.types";
 import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 const currencyEnum = z.enum(["USD", "EUR", "UAH"]);
 
@@ -68,19 +66,18 @@ const goalSchema = z
 
 type GoalFormValues = z.infer<typeof goalSchema>;
 
-interface GoalFormModalProps {
+interface GoalFormProps {
   type?: "create" | "edit";
   goal?: Goal;
 }
 
-const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
+const GoalForm = ({ type, goal }: GoalFormProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(
     goal?.preview_image ?? null,
   );
-  const [open, setOpen] = useState(false);
 
   const form = useForm<GoalFormValues>({
     resolver: zodResolver(goalSchema),
@@ -130,7 +127,6 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
         }
       }
 
-      setOpen(false);
       form.reset();
       setImagePreview(null);
 
@@ -144,30 +140,16 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {type === "create" ? (
-          <Button
-            className="flex items-center gap-2"
-            onClick={() => setOpen(true)}
-          >
-            <Plus className="h-4 w-4" />
-            Create
-          </Button>
-        ) : (
-          <Button variant="outline" size="sm">
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-        )}
-      </DialogTrigger>
-      <DialogContent className="w-[calc(100%-2rem)] max-w-[500px] p-4 sm:p-6">
-        <DialogHeader className="mb-4">
-          <DialogTitle>
-            {type === "create" ? "Create" : "Edit"} Goal
-          </DialogTitle>
-        </DialogHeader>
-
+    <Card>
+      <CardHeader>
+        <CardTitle>{type == "create" ? "Create Goal" : "Edit Goal"}</CardTitle>
+        <CardDescription>
+          {type === "create"
+            ? "Fill out the form to create a new savings goal."
+            : "Update the details of your existing goal."}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
@@ -365,26 +347,24 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
               )}
             />
 
-            <DialogFooter className="mt-6 sm:mt-8">
-              <Button
-                type="submit"
-                className="w-full sm:w-auto"
-                disabled={isSubmitting}
-              >
-                {isSubmitting
-                  ? type === "edit"
-                    ? "Saving..."
-                    : "Creating..."
-                  : type === "edit"
-                    ? "Save Changes"
-                    : "Create Goal"}
-              </Button>
-            </DialogFooter>
+            <Button
+              type="submit"
+              className="w-full sm:w-auto"
+              disabled={isSubmitting}
+            >
+              {isSubmitting
+                ? type === "edit"
+                  ? "Saving..."
+                  : "Creating..."
+                : type === "edit"
+                  ? "Save Changes"
+                  : "Create Goal"}
+            </Button>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 };
 
-export default GoalFormModal;
+export default GoalForm;

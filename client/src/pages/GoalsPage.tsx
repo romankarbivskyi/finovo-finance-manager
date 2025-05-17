@@ -1,10 +1,13 @@
 import { fetchAllGoals } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { DataList, GoalCard, GoalFormModal, Header } from "@/components";
+import { DataList, GoalCard, Header } from "@/components";
 import type { ApiResponse } from "@/types/api.types";
 import type { GoalsResponse } from "@/types/goal.types";
 import { ITEMS_PER_PAGE } from "@/constants";
+import { Link } from "react-router";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight } from "lucide-react";
 
 const GoalsPage = () => {
   const [page, setPage] = useState<number>(1);
@@ -23,7 +26,11 @@ const GoalsPage = () => {
   return (
     <div>
       <Header title="Goals" subtitle="Manage your financial goals">
-        <GoalFormModal type="create" />
+        <Button asChild>
+          <Link to="/goals/create">
+            Create New Goal <ArrowUpRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
       </Header>
 
       <DataList

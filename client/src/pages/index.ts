@@ -6,3 +6,5 @@ export { default as GoalsPage } from "./GoalsPage";
 export { default as GoalDetailsPage } from "./GoalDetailsPage";
 export { default as AccountPage } from "./AccountPage";
 export { default as ResetPasswordPage } from "./ResetPasswordPage";
+export { default as CreateGoalPage } from "./CreateGoalPage";
+export { default as EditGoalPage } from "./EditGoalPage";

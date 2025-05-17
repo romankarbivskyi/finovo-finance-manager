@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   CreateTransactionModal,
   DeleteGoalModal,
-  GoalFormModal,
   TransactionList,
 } from "@/components";
 import { useState } from "react";
@@ -111,7 +110,9 @@ const GoalDetailsPage = () => {
         </div>
 
         <div className="flex gap-2">
-          <GoalFormModal type="edit" goal={goal} />
+          <Button variant="outline" asChild>
+            <Link to={`/goals/${gId}/edit`}>Edit</Link>
+          </Button>
           <DeleteGoalModal goalId={gId} />
         </div>
       </div>
