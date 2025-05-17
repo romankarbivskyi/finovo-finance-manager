@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { Delete, Edit2, Lock, UserIcon } from "lucide-react";
+import { Edit2, Lock, UserIcon } from "lucide-react";
 
 const AccountPage = () => {
   const { user, logout } = useAuth();
