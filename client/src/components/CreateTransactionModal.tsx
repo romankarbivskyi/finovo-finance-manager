@@ -42,7 +42,7 @@ const transactionSchema = z.object({
   }),
 });
 
-export type CreateTransactionValues = z.infer<typeof transactionSchema>;
+type CreateTransactionValues = z.infer<typeof transactionSchema>;
 
 interface CreateTransactionModalProps {
   goalId: number;
@@ -53,6 +53,7 @@ const CreateTransactionModal = ({
   goalId,
   onCreate,
 }: CreateTransactionModalProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
 
   const form = useForm<CreateTransactionValues>({
@@ -66,25 +67,26 @@ const CreateTransactionModal = ({
   });
 
   const onSubmit = async (data: CreateTransactionValues) => {
-    console.log("Form submitted:", data);
+    setIsSubmitting(true);
     const { goal_id, amount, description, transaction_type } = data;
 
     const response = await createTransaction(
       goal_id,
       amount,
-      description,
+      description!,
       transaction_type,
     );
 
     if (response.success) {
-      toast.success("Transaction created successfully");
+      toast.success(response?.message || "Transaction created successfully");
       form.reset();
       setOpen(false);
       onCreate?.();
     } else {
-      const errorMessage = response.error || "Failed to create transaction";
-      toast.error(errorMessage);
+      toast.error(response?.error || "Failed to create transaction");
     }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -162,7 +164,9 @@ const CreateTransactionModal = ({
                 </FormItem>
               )}
             />
-            <Button type="submit">Create transaction</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Create Transaction"}
+            </Button>
           </form>
         </Form>
       </DialogContent>

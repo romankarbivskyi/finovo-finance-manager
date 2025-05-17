@@ -114,18 +114,18 @@ const GoalFormModal = ({ type, goal }: GoalFormModalProps) => {
         const response = await createOrUpdateGoal(formData, goal.id);
 
         if (response.success) {
-          toast.success("Goal updated successfully");
+          toast.success(response?.message || "Goal updated successfully");
         } else {
-          toast.error(response.message || "Failed to update goal");
+          toast.error(response?.message || "Failed to update goal");
           return;
         }
       } else if (type === "create") {
         const response = await createOrUpdateGoal(formData);
 
         if (response.success) {
-          toast.success("Goal created successfully");
+          toast.success(response?.message || "Goal created successfully");
         } else {
-          toast.error(response.message || "Failed to create goal");
+          toast.error(response?.message || "Failed to create goal");
           return;
         }
       }

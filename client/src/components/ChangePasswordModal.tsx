@@ -53,21 +53,16 @@ const ChangePasswordModal = () => {
     },
   });
 
-  const handleSubmit = async (data: ChangePasswordFormValues) => {
+  const onSubmit = async (data: ChangePasswordFormValues) => {
     setIsSubmitting(true);
-    const { currentPassword, password } = data;
-
-    const response = await changePassword(currentPassword, password);
+    const response = await changePassword(data.currentPassword, data.password);
 
     if (response.success) {
-      const successMessage =
-        response?.message || "Password successfully changed";
-      toast.success(successMessage);
+      toast.success(response?.message || "Password successfully changed");
       setOpen(false);
       form.reset();
     } else {
-      const errorMessage = response?.error || "Failed to change password";
-      toast.error(errorMessage);
+      toast.error(response?.error || "Failed to change password");
     }
 
     setIsSubmitting(false);
@@ -86,10 +81,7 @@ const ChangePasswordModal = () => {
           <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="currentPassword"

@@ -16,11 +16,6 @@ import { toast } from "sonner";
 import { login } from "@/services/user.service";
 import { useState } from "react";
 
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
-
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -28,11 +23,13 @@ const loginSchema = z.object({
     .min(6, { message: "Password must be at least 6 characters" }),
 });
 
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
   const { setUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<LoginFormInputs>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -40,16 +37,15 @@ const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
     },
   });
 
-  const onSubmit = async (data: LoginFormInputs) => {
+  const onSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
-    const { email, password } = data;
-    const response = await login(email, password);
+    const response = await login(data.email, data.password);
 
     if (response.success && response.data) {
       setUser(response.data);
       toast.success("Login successful!");
     } else {
-      toast.error(response.error || response.message || "Login failed");
+      toast.error(response?.error || "Login failed");
     }
     setIsSubmitting(false);
   };

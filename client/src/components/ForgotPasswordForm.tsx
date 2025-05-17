@@ -42,11 +42,12 @@ const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
     const response = await sendRecoveryToken(data.email);
 
     if (response.success) {
-      toast.success("Recovery link sent to your email");
+      toast.success(response?.message || "Recovery link sent successfully");
       onBackToLogin();
     } else {
-      toast.error("Failed to send recovery link");
+      toast.error(response?.message || "Failed to send recovery link");
     }
+
     setIsSubmitting(false);
   };
 
