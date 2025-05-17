@@ -5,7 +5,7 @@ export interface ITransaction {
   amount: number;
   currency: string;
   description: string;
-  transaction_type: "income" | "expense";
+  transaction_type: "contribution" | "withdrawal";
   created_at: Date;
 }
 

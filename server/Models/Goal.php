@@ -156,9 +156,9 @@ class Goal
       throw new \Exception("Goal not found.");
     }
 
-    if ($transactionType === 'income') {
+    if ($transactionType === 'contribution') {
       $goal['current_amount'] += $amount;
-    } elseif ($transactionType === 'expense') {
+    } elseif ($transactionType === 'withdrawal') {
       $goal['current_amount'] -= $amount;
     } else {
       throw new \Exception("Invalid transaction type.");

@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Plus } from "lucide-react";
+import { BanknoteArrowDown, BanknoteArrowUp, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Select,
@@ -36,9 +36,10 @@ const transactionSchema = z.object({
     .positive({ message: "Goal ID must be a positive number" }),
   amount: z.number().positive({ message: "Amount must be a positive number" }),
   description: z.string().optional(),
-  transaction_type: z.enum(["income", "expense"], {
+  transaction_type: z.enum(["contribution", "withdrawal"], {
     required_error: "Transaction type is required",
-    invalid_type_error: "Transaction type must be 'income' or 'expense'",
+    invalid_type_error:
+      "Transaction type must be 'contribution' or 'withdrawal'",
   }),
 });
 
@@ -62,7 +63,7 @@ const CreateTransactionModal = ({
       goal_id: goalId,
       amount: 0,
       description: "",
-      transaction_type: "income",
+      transaction_type: "contribution",
     },
   });
 
@@ -150,13 +151,19 @@ const CreateTransactionModal = ({
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select transaction type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="income">Income</SelectItem>
-                        <SelectItem value="expense">Expense</SelectItem>
+                        <SelectItem value="contribution">
+                          <BanknoteArrowUp />
+                          Contribution
+                        </SelectItem>
+                        <SelectItem value="withdrawal">
+                          <BanknoteArrowDown />
+                          Withdrawal
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

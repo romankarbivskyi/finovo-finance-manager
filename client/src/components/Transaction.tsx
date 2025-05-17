@@ -23,7 +23,7 @@ const Transaction = ({ transaction, onDelete }: TransactionProps) => {
   const { id, amount, transaction_type, description, created_at, currency } =
     transaction;
 
-  const isIncome = transaction_type === "income";
+  const isContribution = transaction_type === "contribution";
   const formattedDate = formatDistanceToNow(new Date(created_at), {
     addSuffix: true,
   });
@@ -51,10 +51,10 @@ const Transaction = ({ transaction, onDelete }: TransactionProps) => {
             <div
               className={cn(
                 "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
-                isIncome ? "bg-green-100" : "bg-red-100",
+                isContribution ? "bg-green-100" : "bg-red-100",
               )}
             >
-              {isIncome ? (
+              {isContribution ? (
                 <ArrowUpCircle className="h-6 w-6 text-green-600" />
               ) : (
                 <ArrowDownCircle className="h-6 w-6 text-red-600" />
@@ -84,10 +84,10 @@ const Transaction = ({ transaction, onDelete }: TransactionProps) => {
               <p
                 className={cn(
                   "text-lg font-semibold",
-                  isIncome ? "text-green-600" : "text-red-600",
+                  isContribution ? "text-green-600" : "text-red-600",
                 )}
               >
-                {isIncome ? "+" : "-"}
+                {isContribution ? "+" : "-"}
                 {Math.abs(amount).toFixed(2)}
                 <span className="text-sm">{currency}</span>
               </p>

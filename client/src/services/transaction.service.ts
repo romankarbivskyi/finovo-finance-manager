@@ -10,7 +10,7 @@ export const createTransaction = async (
   goalId: number,
   amount: number,
   description: string,
-  type: "income" | "expense",
+  type: "contribution" | "withdrawal",
 ): Promise<ApiResponse<ITransaction>> => {
   try {
     const response = await api.post<ApiResponse<ITransaction>>(
