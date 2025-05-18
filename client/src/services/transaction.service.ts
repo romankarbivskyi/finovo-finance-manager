@@ -9,6 +9,7 @@ import type { AxiosError } from "axios";
 export const createTransaction = async (
   goalId: number,
   amount: number,
+  currency: "USD" | "EUR" | "UAH",
   description: string,
   type: "contribution" | "withdrawal",
 ): Promise<ApiResponse<ITransaction>> => {
@@ -18,6 +19,7 @@ export const createTransaction = async (
       {
         goal_id: goalId,
         amount,
+        currency,
         description,
         transaction_type: type,
       },

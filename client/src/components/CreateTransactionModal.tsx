@@ -29,12 +29,14 @@ import {
 import { createTransaction } from "@/services/transaction.service";
 import { toast } from "sonner";
 import { useState } from "react";
+import { currencyEnum } from "@/constants";
 
 const transactionSchema = z.object({
   goal_id: z
     .number()
     .positive({ message: "Goal ID must be a positive number" }),
   amount: z.number().positive({ message: "Amount must be a positive number" }),
+  currency: currencyEnum,
   description: z.string().optional(),
   transaction_type: z.enum(["contribution", "withdrawal"], {
     required_error: "Transaction type is required",
@@ -62,6 +64,7 @@ const CreateTransactionModal = ({
     defaultValues: {
       goal_id: goalId,
       amount: 0,
+      currency: "USD",
       description: "",
       transaction_type: "contribution",
     },
@@ -69,11 +72,12 @@ const CreateTransactionModal = ({
 
   const onSubmit = async (data: CreateTransactionValues) => {
     setIsSubmitting(true);
-    const { goal_id, amount, description, transaction_type } = data;
+    const { goal_id, amount, currency, description, transaction_type } = data;
 
     const response = await createTransaction(
       goal_id,
       amount,
+      currency,
       description!,
       transaction_type,
     );
@@ -104,28 +108,56 @@ const CreateTransactionModal = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === "" ? 0 : Number(value));
-                      }}
-                      value={field.value === 0 ? "" : field.value}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        className="w-full"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
+                        }}
+                        value={field.value === 0 ? "" : field.value}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currency</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="UAH">UAH</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="description"

@@ -3,6 +3,7 @@
 namespace server\Models;
 
 use server\Core\Database;
+use server\Helpers\ExchangeRate;
 use server\Models\Goal;
 
 class Transaction
@@ -26,7 +27,10 @@ class Transaction
       throw new \Exception("Access denied.");
     }
 
-    $amount = $data['transaction_type'] === 'withdrawal' ? -$data['amount'] : $data['amount'];
+    $conversionRate = ExchangeRate::getPair($data['currency'], $goal['currency']);
+    $convertedAmount = $data['amount'] * $conversionRate;
+
+    $amount = $data['transaction_type'] === 'withdrawal' ? -$convertedAmount : $convertedAmount;
     if ($goal['current_amount'] + $amount < 0) {
       throw new \Exception("Insufficient funds.");
     }
@@ -34,7 +38,7 @@ class Transaction
     $this->db->getConnection()->beginTransaction();
     $goalModel = new Goal();
 
-    $updatedGoal = $goalModel->updateCurrentAmount($goalId, $data['amount'], $data['transaction_type']);
+    $updatedGoal = $goalModel->updateCurrentAmount($goalId, $convertedAmount, $data['transaction_type']);
     if (!$updatedGoal) {
       $this->db->getConnection()->rollBack();
       throw new \Exception("Failed to update goal amount.");
@@ -47,7 +51,7 @@ class Transaction
         $goalId,
         $userId,
         $data['amount'],
-        $goal['currency'],
+        $data['currency'],
         $data['description'],
         $data['transaction_type'],
       ]
@@ -99,9 +103,15 @@ class Transaction
     if (!$transaction || $transaction['user_id'] !== $userId) {
       throw new \Exception("Transaction not found or access denied.");
     }
-    $this->db->getConnection()->beginTransaction();
+
     $goalModel = new Goal();
-    $goalModel->updateCurrentAmount($transaction['goal_id'], -$transaction['amount'], $transaction['transaction_type']);
+    $goal = $goalModel->getById($transaction['goal_id']);
+
+    $conversionRate = ExchangeRate::getPair($transaction['currency'], $goal['currency']);
+    $convertedAmount = $transaction['amount'] * $conversionRate;
+
+    $this->db->getConnection()->beginTransaction();
+    $goalModel->updateCurrentAmount($transaction['goal_id'], -$convertedAmount, $transaction['transaction_type']);
 
     $this->db->query("DELETE FROM transactions WHERE id = ?", [$id]);
 

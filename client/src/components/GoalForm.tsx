@@ -38,8 +38,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-
-const currencyEnum = z.enum(["USD", "EUR", "UAH"]);
+import { currencyEnum } from "@/constants";
 
 const goalSchema = z
   .object({
