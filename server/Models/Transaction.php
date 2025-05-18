@@ -74,7 +74,10 @@ class Transaction
   public function getAllForUser($userId, $limit = 10, $offset = 0)
   {
     return $this->db->fetchAll(
-      "SELECT * FROM transactions WHERE user_id = ? ORDER BY id DESC LIMIT ? OFFSET ?",
+      "SELECT transactions.*, goals.name AS goal_name FROM transactions 
+       JOIN goals ON transactions.goal_id = goals.id 
+       WHERE transactions.user_id = ? 
+       ORDER BY transactions.id DESC LIMIT ? OFFSET ?",
       [$userId, $limit, $offset]
     );
   }
@@ -87,7 +90,10 @@ class Transaction
   public function getAllForGoal($goalId, $limit = 10, $offset = 0)
   {
     return $this->db->fetchAll(
-      "SELECT * FROM transactions WHERE goal_id = ? ORDER BY id DESC LIMIT ? OFFSET ?",
+      "SELECT transactions.*, goals.name AS goal_name FROM transactions 
+       JOIN goals ON transactions.goal_id = goals.id 
+       WHERE transactions.goal_id = ?
+       ORDER BY id DESC LIMIT ? OFFSET ?",
       [$goalId, $limit, $offset]
     );
   }

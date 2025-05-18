@@ -6,6 +6,7 @@ export interface ITransaction {
   currency: string;
   description: string;
   transaction_type: "contribution" | "withdrawal";
+  goal_name: string;
   created_at: Date;
 }
 

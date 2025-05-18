@@ -5,7 +5,7 @@ const HomeLayout = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav />
-      <main className="flex-1">
+      <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
     </div>

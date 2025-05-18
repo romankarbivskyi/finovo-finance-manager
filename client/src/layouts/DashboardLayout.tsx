@@ -22,7 +22,7 @@ const DashboardLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-screen overflow-hidden">
+      <div className="flex w-screen overflow-hidden">
         <SidebarNav />
         <SidebarTrigger />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
