@@ -8,8 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
@@ -51,7 +49,7 @@ const AccountPage = () => {
                   </Button>
                 </CardTitle>
                 <CardDescription>
-                  Update your personal details and profile information
+                  View and update your profile details.
                 </CardDescription>
               </CardHeader>
 
@@ -74,20 +72,6 @@ const AccountPage = () => {
                       Member since{" "}
                       {new Date(user?.created_at).toLocaleDateString()}
                     </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="displayName">Display Name</Label>
-                    <Input id="displayName" value={user?.username} />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" value={user?.email} disabled />
                   </div>
                 </div>
               </CardContent>
