@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
+  BackLink,
   CreateTransactionModal,
   DeleteGoalModal,
   TransactionList,
@@ -98,18 +99,10 @@ const GoalDetailsPage = () => {
   const remaining = target_amount - current_amount;
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <BackLink to="/goals" title={name} className="mb-0" />
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" asChild>
-            <Link to="/goals">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-bold">{name}</h1>
-        </div>
-
-        <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to={`/goals/${gId}/edit`}>Edit</Link>
           </Button>

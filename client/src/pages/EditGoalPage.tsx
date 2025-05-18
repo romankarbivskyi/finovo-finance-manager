@@ -1,4 +1,4 @@
-import { GoalForm } from "@/components";
+import { BackLink, GoalForm } from "@/components";
 import { fetchGoalById } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -23,7 +23,12 @@ const EditGoalPage = () => {
     );
   }
 
-  return <GoalForm type="edit" goal={goal} />;
+  return (
+    <div className="container mx-auto">
+      <BackLink to={`/goals/${goalId}`} />
+      <GoalForm type="edit" goal={goal} />
+    </div>
+  );
 };
 
 export default EditGoalPage;

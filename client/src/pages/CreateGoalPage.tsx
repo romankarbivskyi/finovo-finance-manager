@@ -1,7 +1,12 @@
-import { GoalForm } from "@/components";
+import { BackLink, GoalForm } from "@/components";
 
 const CreateGoalPage = () => {
-  return <GoalForm type="create" />;
+  return (
+    <div className="container mx-auto">
+      <BackLink to="/goals" />
+      <GoalForm type="create" />
+    </div>
+  );
 };
 
 export default CreateGoalPage;

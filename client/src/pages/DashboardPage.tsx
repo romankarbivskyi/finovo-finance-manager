@@ -62,7 +62,7 @@ const DashboardPage = () => {
   );
 
   return (
-    <div className="container mx-auto space-y-8 px-4 py-6">
+    <div className="container mx-auto space-y-8 py-6">
       <div className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
