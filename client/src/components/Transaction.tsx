@@ -107,7 +107,7 @@ const Transaction = ({ transaction, onDelete }: TransactionProps) => {
               )}
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col items-start">
               {getTransactionLabel()}
               <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
                 {description || "No description provided"}
