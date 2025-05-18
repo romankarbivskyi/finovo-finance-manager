@@ -11,7 +11,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
-  DollarSign,
   Flag,
   LineChart,
   Loader2,
@@ -20,6 +19,8 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
+import { getAllTransactions } from "@/services/transaction.service";
+import { Transaction } from "@/components";
 
 const DashboardPage = () => {
   const { data: goalsStatsResponse, isLoading: isGoalsStatsLoading } = useQuery(
@@ -29,15 +30,32 @@ const DashboardPage = () => {
     },
   );
 
-  const { data: goalsStats } = goalsStatsResponse || {};
+  const {
+    data: lastTransactionsResponse,
+    isLoading: isLastTransactionsLoading,
+    refetch: refetchLastTransactions,
+  } = useQuery({
+    queryKey: ["lastTransactions"],
+    queryFn: async () => await getAllTransactions(2, 0),
+  });
 
-  if (isGoalsStatsLoading || !goalsStats) {
+  const { data: goalsStats } = goalsStatsResponse || {};
+  const { data: transactionsData } = lastTransactionsResponse || {};
+
+  if (
+    isGoalsStatsLoading ||
+    !goalsStats ||
+    isLastTransactionsLoading ||
+    !transactionsData
+  ) {
     return (
       <div className="flex h-64 w-full items-center justify-center">
         <Loader2 className="text-primary h-8 w-8 animate-spin" />
       </div>
     );
   }
+
+  const { transactions } = transactionsData;
 
   const completionPercent = Math.round(
     (goalsStats.completed / (goalsStats.total || 1)) * 100,
@@ -196,7 +214,15 @@ const DashboardPage = () => {
                 Your latest financial transactions
               </CardDescription>
             </CardHeader>
-            <CardContent></CardContent>
+            <CardContent className="space-y-2">
+              {transactions.length > 0 &&
+                transactions.map((transaction) => (
+                  <Transaction
+                    transaction={transaction}
+                    onDelete={refetchLastTransactions}
+                  />
+                ))}
+            </CardContent>
           </Card>
 
           <Card>
@@ -213,16 +239,6 @@ const DashboardPage = () => {
                 <Link to="/goals/create" className="gap-2">
                   <Target className="h-4 w-4" />
                   Create New Goal
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="w-full justify-start"
-              >
-                <Link to="/transactions/create" className="gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  Add Transaction
                 </Link>
               </Button>
               <Button
