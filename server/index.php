@@ -66,6 +66,7 @@ $router->addRoute('GET', '/', function () {
 $router->addRoute('POST', '/users/register', 'UserController@register');
 $router->addRoute('POST', '/users/login', 'UserController@login');
 $router->addRoute('GET', '/users/profile', 'UserController@getUser');
+$router->addRoute('POST', '/users/profile', 'UserController@updateProfile');
 $router->addRoute('POST', '/users/logout', 'UserController@logout');
 $router->addRoute('DELETE', '/users', 'UserController@delete');
 $router->addRoute('POST', '/users/password/forgot', 'UserController@sendRecoveryToken');

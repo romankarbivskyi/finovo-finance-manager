@@ -204,6 +204,35 @@ class UserController
     }
   }
 
+  public function updateProfile(Request $request)
+  {
+    try {
+      $data = $request->getJsonBody();
+      $user = $this->auth->getUser();
+
+      if (!$user) {
+        throw new \Exception("User not authenticated.");
+      }
+
+      $updatedData = [
+        'username' => isset($data['username']) ? trim($data['username']) : '',
+        'email' => isset($data['email']) ? trim($data['email']) : ''
+      ];
+
+      $errors = $this->userModel->validateProfileUpdate($updatedData);
+      if (!empty($errors)) {
+        Response::json(['errors' => $errors], 400);
+        return;
+      }
+
+      $this->userModel->updateProfile($user['id'], $updatedData);
+
+      Response::json(['message' => 'Profile updated successfully.'], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
+
   public function delete()
   {
     try {

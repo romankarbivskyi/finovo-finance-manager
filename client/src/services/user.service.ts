@@ -128,3 +128,21 @@ export const deleteAccount = async () => {
     );
   }
 };
+
+export const updateProfile = async (username: string, email: string) => {
+  try {
+    const response = await api.post<ApiResponse<null>>("/users/profile", {
+      username,
+      email,
+    });
+
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<null>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};

@@ -148,6 +148,35 @@ class User
     );
   }
 
+  public function validateProfileUpdate($data)
+  {
+    $errors = [];
+
+    if (empty($data['username'])) {
+      $errors['username'] = "Username is required.";
+    }
+
+    if (empty($data['email'])) {
+      $errors['email'] = "Email is required.";
+    } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+      $errors['email'] = "Invalid email format.";
+    }
+
+    return $errors;
+  }
+
+  public function updateProfile($userId, $data)
+  {
+    try {
+      $this->db->query(
+        "UPDATE users SET username = ?, email = ? WHERE id = ?",
+        [$data['username'], $data['email'], $userId]
+      );
+    } catch (\Exception $e) {
+      throw new \Exception("Failed to update user: " . $e->getMessage());
+    }
+  }
+
   public function deleteUser($userId)
   {
     try {

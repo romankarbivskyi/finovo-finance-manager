@@ -17,3 +17,4 @@ export { default as ChangePasswordModal } from "./ChangePasswordModal";
 export { default as ThemeToggle } from "./ThemeToggle";
 export { default as DeleteAccountModal } from "./DeleteAccountModal";
 export { default as BackLink } from "./BackLink";
+export { default as EditProfileModal } from "./EditProfileModal";

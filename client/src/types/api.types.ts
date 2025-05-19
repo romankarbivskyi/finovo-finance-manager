@@ -3,4 +3,5 @@ export interface ApiResponse<T = undefined> {
   message?: string;
   data?: T;
   error?: string;
+  errors?: unknown;
 }

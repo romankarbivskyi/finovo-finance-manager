@@ -1,4 +1,9 @@
-import { ChangePasswordModal, DeleteAccountModal, Header } from "@/components";
+import {
+  ChangePasswordModal,
+  DeleteAccountModal,
+  EditProfileModal,
+  Header,
+} from "@/components";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +16,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { Edit2, Lock, UserIcon } from "lucide-react";
+import { Lock, UserIcon } from "lucide-react";
 
 const AccountPage = () => {
   const { user, logout } = useAuth();
@@ -43,10 +48,7 @@ const AccountPage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Personal Information</span>
-                  <Button variant="outline" size="sm" className="h-8 gap-1">
-                    <Edit2 className="h-4 w-4" />
-                    <span className="hidden sm:inline">Edit Profile</span>
-                  </Button>
+                  <EditProfileModal />
                 </CardTitle>
                 <CardDescription>
                   View and update your profile details.
