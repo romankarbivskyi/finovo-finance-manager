@@ -87,6 +87,15 @@ const CreateTransactionModal = ({
       form.reset();
       setOpen(false);
       onCreate?.();
+    } else if (response.errors) {
+      if (Object.keys(response.errors).length > 0) {
+        Object.entries(response.errors).forEach(([input, error]) => {
+          form.setError(input as keyof CreateTransactionValues, {
+            type: "manual",
+            message: error,
+          });
+        });
+      }
     } else {
       toast.error(response?.error || "Failed to create transaction");
     }

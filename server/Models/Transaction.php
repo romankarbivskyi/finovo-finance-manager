@@ -123,4 +123,29 @@ class Transaction
 
     return $this->db->getConnection()->commit() ? true : false;
   }
+
+  public function validate($data)
+  {
+    $errors = [];
+
+    if (empty($data['amount'])) {
+      $errors["amount"] = "Amount is required.";
+    } elseif (!is_numeric($data['amount'])) {
+      $errors["amount"] = "Amount must be a number.";
+    } elseif ($data['amount'] <= 0) {
+      $errors["amount"] = "Amount must be greater than zero.";
+    }
+    if (empty($data['currency'])) {
+      $errors["currency"] = "Currency is required.";
+    } elseif (!in_array($data['currency'], ['USD', 'UAH', 'EUR'])) {
+      $errors["currency"] = "Invalid currency.";
+    }
+    if (empty($data['transaction_type'])) {
+      $errors["transaction_type"] = "Transaction type is required.";
+    } elseif (!in_array($data['transaction_type'], ['contribution', 'withdrawal'])) {
+      $errors["transaction_type"] = "Invalid transaction type.";
+    }
+
+    return $errors;
+  }
 }

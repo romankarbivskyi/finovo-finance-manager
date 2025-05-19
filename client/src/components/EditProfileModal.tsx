@@ -57,6 +57,15 @@ const EditProfileModal = () => {
       toast.success(response?.message || "Profile updated successfully");
       setUser(await getProfile());
       setOpen(false);
+    } else if (response.errors) {
+      if (Object.keys(response.errors).length > 0) {
+        Object.entries(response.errors).forEach(([input, error]) => {
+          form.setError(input as keyof EditProfileFormValues, {
+            type: "manual",
+            message: error,
+          });
+        });
+      }
     } else {
       toast.error(response?.message || "Failed to update profile");
     }

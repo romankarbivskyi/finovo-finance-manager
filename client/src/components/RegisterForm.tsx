@@ -50,6 +50,15 @@ const RegisterForm = () => {
     if (response.success && response.data) {
       setUser(response.data);
       toast.success("Registration successful!");
+    } else if (response.errors) {
+      if (Object.keys(response.errors).length > 0) {
+        Object.entries(response.errors).forEach(([input, error]) => {
+          form.setError(input as keyof RegisterFormValues, {
+            type: "manual",
+            message: error,
+          });
+        });
+      }
     } else {
       toast.error(response?.error || "Registration failed");
     }

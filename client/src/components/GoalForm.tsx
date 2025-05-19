@@ -111,6 +111,15 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
 
         if (response.success) {
           toast.success(response?.message || "Goal updated successfully");
+        } else if (response.errors) {
+          if (Object.keys(response.errors).length > 0) {
+            Object.entries(response.errors).forEach(([input, error]) => {
+              form.setError(input as keyof GoalFormValues, {
+                type: "manual",
+                message: error,
+              });
+            });
+          }
         } else {
           toast.error(response?.message || "Failed to update goal");
           return;
@@ -120,6 +129,15 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
 
         if (response.success) {
           toast.success(response?.message || "Goal created successfully");
+        } else if (response.errors) {
+          if (Object.keys(response.errors).length > 0) {
+            Object.entries(response.errors).forEach(([input, error]) => {
+              form.setError(input as keyof GoalFormValues, {
+                type: "manual",
+                message: error,
+              });
+            });
+          }
         } else {
           toast.error(response?.message || "Failed to create goal");
           return;

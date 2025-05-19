@@ -29,6 +29,12 @@ class TransactionController
         throw new \Exception("User not authenticated.");
       }
 
+      $errors = $this->transactionModel->validate($data);
+      if (!empty($errors)) {
+        Response::json(['errors' => $errors], 400);
+        return;
+      }
+
       $transaction = $this->transactionModel->create($goalId, $user['id'], $data);
 
       Response::json(['data' => $transaction], 201);
