@@ -1,12 +1,13 @@
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import AuthModal from "./AuthModal";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router";
+import { useModalStore } from "@/stores/modalStore";
 
 const TopNav = () => {
   const { isAuthenticated } = useAuth();
+  const { openModal } = useModalStore();
 
   return (
     <div className="relative flex items-center justify-between border-b p-4">
@@ -28,7 +29,9 @@ const TopNav = () => {
             <Link to="/dashboard">Dashboard</Link>
           </Button>
         ) : (
-          <AuthModal />
+          <Button variant="outline" onClick={() => openModal("auth")}>
+            Sign In
+          </Button>
         )}
       </div>
       <div className="md:hidden">
@@ -55,7 +58,9 @@ const TopNav = () => {
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
             ) : (
-              <AuthModal />
+              <Button variant="outline" onClick={() => openModal("auth")}>
+                Sign In
+              </Button>
             )}
           </PopoverContent>
         </Popover>

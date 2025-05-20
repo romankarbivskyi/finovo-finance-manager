@@ -1,9 +1,4 @@
-import {
-  ChangePasswordModal,
-  DeleteAccountModal,
-  EditProfileModal,
-  Header,
-} from "@/components";
+import { Header } from "@/components";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,10 +11,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { Lock, UserIcon } from "lucide-react";
+import { useModalStore } from "@/stores/modalStore";
+import { Edit2, Lock, UserIcon } from "lucide-react";
 
 const AccountPage = () => {
   const { user, logout } = useAuth();
+  const { openModal } = useModalStore();
 
   const getInitials = (name: string) => {
     return name
@@ -48,7 +45,13 @@ const AccountPage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Personal Information</span>
-                  <EditProfileModal />
+                  <Button
+                    variant="outline"
+                    onClick={() => openModal("editProfile")}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Edit Profile
+                  </Button>
                 </CardTitle>
                 <CardDescription>
                   View and update your profile details.
@@ -100,7 +103,13 @@ const AccountPage = () => {
                       For your security, change your password regularly.
                     </p>
                   </div>
-                  <ChangePasswordModal />
+                  <Button
+                    variant="outline"
+                    onClick={() => openModal("changePassword")}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Change Password
+                  </Button>
                 </div>
               </CardContent>
 
@@ -114,7 +123,13 @@ const AccountPage = () => {
                       Permanently delete your account and all your data
                     </p>
                   </div>
-                  <DeleteAccountModal />
+                  <Button
+                    variant="destructive"
+                    onClick={() => openModal("deleteAccount")}
+                  >
+                    <Lock className="h-4 w-4" />
+                    Delete Account
+                  </Button>
                 </div>
               </CardContent>
             </Card>

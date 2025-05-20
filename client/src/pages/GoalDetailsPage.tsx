@@ -1,6 +1,6 @@
 import { fetchGoalById, fetchGoalTransactions } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import { useParams, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -14,17 +14,14 @@ import {
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import {
-  BackLink,
-  CreateTransactionModal,
-  DeleteGoalModal,
-  TransactionList,
-} from "@/components";
+import { BackLink, TransactionList } from "@/components";
 import { useState } from "react";
+import { useModalStore } from "@/stores/modalStore";
 
 export const transactionLimit = 5;
 
 const GoalDetailsPage = () => {
+  const { openModal } = useModalStore();
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * transactionLimit;
 
@@ -106,7 +103,13 @@ const GoalDetailsPage = () => {
           <Button variant="outline" asChild>
             <Link to={`/goals/${gId}/edit`}>Edit</Link>
           </Button>
-          <DeleteGoalModal goalId={gId} />
+          <Button
+            variant="destructive"
+            onClick={() => openModal("deleteGoal", { goalId: gId })}
+            className="hidden sm:inline-flex"
+          >
+            Delete
+          </Button>
         </div>
       </div>
 
@@ -186,7 +189,19 @@ const GoalDetailsPage = () => {
                   Track your progress with transactions
                 </CardDescription>
               </div>
-              <CreateTransactionModal goalId={gId} onCreate={handleRefetch} />
+
+              <Button
+                size="sm"
+                onClick={() =>
+                  openModal("createTransaction", {
+                    goalId: gId,
+                    onCreate: handleRefetch,
+                  })
+                }
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Transaction
+              </Button>
             </CardHeader>
 
             <CardContent>
