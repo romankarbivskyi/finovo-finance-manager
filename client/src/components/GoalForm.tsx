@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -39,6 +39,8 @@ import {
   CardTitle,
 } from "./ui/card";
 import { currencyEnum } from "@/constants";
+import { useDropzone } from "react-dropzone";
+import { UploadIcon, X } from "lucide-react";
 
 const goalSchema = z
   .object({
@@ -87,7 +89,33 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
       targetAmount: goal?.target_amount ? Number(goal.target_amount) : 0,
       targetDate: goal?.target_date ? new Date(goal.target_date) : new Date(),
       currency: goal?.currency || "USD",
+      image: undefined,
     },
+  });
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      if (file) {
+        form.setValue("image", file);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    [form],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [],
+    },
+    maxFiles: 1,
+    maxSize: 10485760, // 10MB
   });
 
   const onSubmit = async (data: GoalFormValues) => {
@@ -263,7 +291,7 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
                       </FormControl>
@@ -321,37 +349,53 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
             <FormField
               control={form.control}
               name="image"
-              render={({ field: { value, onChange, ...fieldProps } }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Image</FormLabel>
                   <FormControl>
                     <div className="space-y-2">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            onChange(file);
-
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setImagePreview(reader.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                        {...fieldProps}
-                        className="w-full"
-                      />
-
-                      {imagePreview && (
-                        <div className="mt-2 aspect-video max-h-[160px] overflow-hidden rounded border">
-                          <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="h-full w-full object-cover"
-                          />
+                      {!imagePreview ? (
+                        <div
+                          {...getRootProps()}
+                          className={cn(
+                            "border-input hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed p-4 transition",
+                            isDragActive && "border-primary bg-primary/5",
+                          )}
+                        >
+                          <input {...getInputProps()} />
+                          <div className="flex flex-col items-center justify-center gap-1 text-center">
+                            <UploadIcon className="text-muted-foreground h-8 w-8" />
+                            <p className="text-sm font-medium">
+                              {isDragActive
+                                ? "Drop the image here"
+                                : "Drag & drop an image here, or click to select"}
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                              JPEG, PNG, GIF up to 10MB
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <div className="aspect-video max-h-[160px] overflow-hidden rounded-md border">
+                            <img
+                              src={imagePreview}
+                              alt="Preview"
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6 rounded-full"
+                            onClick={() => {
+                              form.setValue("image", undefined);
+                              setImagePreview(null);
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
                       )}
                     </div>
