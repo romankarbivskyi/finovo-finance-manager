@@ -217,6 +217,7 @@ const GoalDetailsPage = () => {
                       page={page}
                       setPage={setPage}
                       onDelete={handleRefetch}
+                      itemsPerPage={transactionLimit}
                     />
                     <p className="text-muted-foreground text-sm">
                       Total Transactions: {goalTransactions.total}

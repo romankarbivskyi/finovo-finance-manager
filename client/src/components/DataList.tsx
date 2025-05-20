@@ -12,6 +12,7 @@ interface DataListProps<T> {
   onPageChange: (page: number) => void;
   renderItem: (item: T, key?: string | number) => JSX.Element;
   containerClassName?: string;
+  itemsPerPage?: number;
 }
 
 export const DataList = function <T>(props: DataListProps<T>) {
@@ -23,6 +24,7 @@ export const DataList = function <T>(props: DataListProps<T>) {
     onPageChange,
     renderItem,
     containerClassName,
+    itemsPerPage = ITEMS_PER_PAGE,
   } = props;
 
   if (isLoading && data.length === 0) {
@@ -50,12 +52,12 @@ export const DataList = function <T>(props: DataListProps<T>) {
         {data.map((item, idx) => renderItem(item, idx))}
       </div>
 
-      {total > ITEMS_PER_PAGE && (
+      {total > itemsPerPage && (
         <div className="flex justify-center pt-4">
           <PaginationComponent
             currentPage={page}
             totalItems={total}
-            pageSize={ITEMS_PER_PAGE}
+            pageSize={itemsPerPage}
             onPageChange={onPageChange}
           />
         </div>

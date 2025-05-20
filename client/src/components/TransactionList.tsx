@@ -1,6 +1,7 @@
 import type { ITransaction } from "@/types/transaction.types";
 import DataList from "./DataList";
 import Transaction from "./Transaction";
+import { ITEMS_PER_PAGE } from "@/constants";
 
 interface TransactionListProps {
   transactions: ITransaction[];
@@ -9,6 +10,7 @@ interface TransactionListProps {
   page: number;
   setPage: (page: number) => void;
   onDelete?: () => void;
+  itemsPerPage?: number;
 }
 
 const TransactionList = ({
@@ -18,6 +20,7 @@ const TransactionList = ({
   page,
   setPage,
   onDelete,
+  itemsPerPage = ITEMS_PER_PAGE,
 }: TransactionListProps) => {
   return (
     <DataList
@@ -30,6 +33,7 @@ const TransactionList = ({
         <Transaction transaction={transaction} onDelete={onDelete} />
       )}
       containerClassName="space-y-2"
+      itemsPerPage={itemsPerPage}
     />
   );
 };
