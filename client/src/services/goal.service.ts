@@ -7,12 +7,16 @@ import type { AxiosError } from "axios";
 export const fetchAllGoals = async (
   limit: number,
   offset: number,
+  currency?: string,
+  status?: string,
 ): Promise<ApiResponse<GoalsResponse>> => {
   try {
     const response = await api.get<ApiResponse<GoalsResponse>>("/goals", {
       params: {
         limit,
         offset,
+        ...(currency && { currency }),
+        ...(status && { status }),
       },
     });
 

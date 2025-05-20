@@ -13,3 +13,4 @@ export { default as TransactionList } from "./TransactionList";
 export { default as ThemeToggle } from "./ThemeToggle";
 export { default as BackLink } from "./BackLink";
 export { default as AppModal } from "./AppModal";
+export { default as GoalsFilter } from "./GoalsFilter";

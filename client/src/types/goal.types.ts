@@ -6,9 +6,9 @@ export interface Goal {
   target_date: string;
   current_amount: number;
   target_amount: number;
-  currency: "USD" | "EUR" | "UAH";
+  currency: GoalCurrency;
   preview_image: string;
-  status: "active" | "completed";
+  status: GoalStatus;
   created_at: Date;
 }
 
@@ -22,3 +22,7 @@ export interface GoalsStats {
   completed: number;
   active: number;
 }
+
+export type GoalStatus = "active" | "completed";
+
+export type GoalCurrency = "USD" | "EUR" | "UAH";

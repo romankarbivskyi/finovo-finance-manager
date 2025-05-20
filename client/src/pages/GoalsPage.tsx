@@ -1,7 +1,7 @@
 import { fetchAllGoals } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { DataList, GoalCard, Header } from "@/components";
+import { DataList, GoalCard, GoalsFilter, Header } from "@/components";
 import type { ApiResponse } from "@/types/api.types";
 import type { GoalsResponse } from "@/types/goal.types";
 import { ITEMS_PER_PAGE } from "@/constants";
@@ -10,6 +10,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 
 const GoalsPage = () => {
+  const [filters, setFilters] = useState({
+    currency: "",
+    status: "",
+  });
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
@@ -17,11 +21,25 @@ const GoalsPage = () => {
     ApiResponse<GoalsResponse>,
     Error
   >({
-    queryKey: ["goals", offset, ITEMS_PER_PAGE],
-    queryFn: () => fetchAllGoals(ITEMS_PER_PAGE, offset),
+    queryKey: ["goals", offset, ITEMS_PER_PAGE, filters],
+    queryFn: async () =>
+      await fetchAllGoals(
+        ITEMS_PER_PAGE,
+        offset,
+        filters.currency,
+        filters.status,
+      ),
   });
 
   const { goals = [], total = 0 } = apiResponse?.data ?? {};
+
+  const handleCurrencyChange = (currency: string) => {
+    setFilters((prev) => ({ ...prev, currency }));
+  };
+
+  const handleStatusChange = (status: string) => {
+    setFilters((prev) => ({ ...prev, status }));
+  };
 
   return (
     <div>
@@ -32,6 +50,11 @@ const GoalsPage = () => {
           </Link>
         </Button>
       </Header>
+
+      <GoalsFilter
+        onCurrencyChange={handleCurrencyChange}
+        onStatusChange={handleStatusChange}
+      />
 
       <DataList
         data={goals}

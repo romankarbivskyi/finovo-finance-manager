@@ -121,14 +121,17 @@ class GoalController
     try {
       $limit = $request->query('limit', 10);
       $offset = $request->query('offset', 0);
+      $currency = $request->query('currency', 'all');
+      $status = $request->query('status', 'all');
+
       $user = $this->auth->getUser();
       if (!$user) {
         Response::json(['error' => 'User not authenticated.'], 401);
         return;
       }
 
-      $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset);
-      $total = $this->goalModel->getTotalForUser($user['id']);
+      $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset, $currency, $status);
+      $total = $this->goalModel->getTotalForUser($user['id'], $currency, $status);
       Response::json(['data' => ['goals' => $goals, 'total' => $total]], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
