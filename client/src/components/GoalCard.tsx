@@ -8,16 +8,18 @@ import {
 } from "./ui/card";
 import { Progress } from "./ui/progress";
 import { Link } from "react-router";
-import { ImageOff } from "lucide-react";
+import { ImageOff, Plus } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { useModalStore } from "@/stores/modalStore";
 
 interface GoalCardProps {
   goal: Goal;
-  key?: number | string;
 }
 
 const GoalCard = ({ goal }: GoalCardProps) => {
   const {
+    id,
     name,
     description,
     preview_image,
@@ -27,12 +29,26 @@ const GoalCard = ({ goal }: GoalCardProps) => {
     status,
   } = goal;
 
-  const progressValue = Math.round((current_amount / target_amount) * 100);
+  const progressValue =
+    target_amount > 0
+      ? Math.min(Math.round((current_amount / target_amount) * 100), 100)
+      : 0;
+
+  const { openModal } = useModalStore();
+
+  const handleAddTransaction = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openModal("createTransaction", { goalId: id });
+  };
 
   return (
-    <Link to={`/goals/${goal.id}`}>
-      <Card className="flex h-full flex-col p-0 pb-5">
-        <div className="flex aspect-video w-full items-center justify-center overflow-hidden rounded-t-md">
+    <Link
+      to={`/goals/${id}`}
+      className="block transition-transform hover:scale-[1.01]"
+    >
+      <Card className="flex h-full flex-col gap-2 overflow-hidden p-0 pb-5 transition-shadow hover:shadow-md">
+        <div className="bg-muted/20 relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-t-md">
           {preview_image ? (
             <img
               src={preview_image}
@@ -40,30 +56,48 @@ const GoalCard = ({ goal }: GoalCardProps) => {
               className="h-full w-full object-cover"
             />
           ) : (
-            <ImageOff className="stroke-accent h-1/2 w-1/2" />
+            <ImageOff className="text-muted-foreground h-1/3 w-1/3 opacity-40" />
           )}
         </div>
 
         <CardHeader className="flex-grow">
-          <div className="flex items-center justify-between">
-            <CardTitle className="line-clamp-1">{name}</CardTitle>
-            <Badge>{status}</Badge>
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="line-clamp-1 text-lg">{name}</CardTitle>
+            <Badge variant={status === "active" ? "default" : "outline"}>
+              {status}
+            </Badge>
           </div>
-          <CardDescription className="line-clamp-2">
-            {description}
+          <CardDescription className="mt-1 line-clamp-2 min-h-[2.5rem]">
+            {description || "No description provided"}
           </CardDescription>
         </CardHeader>
 
-        <CardFooter className="flex flex-col gap-4">
-          <div className="flex w-full items-center justify-between">
-            <span className="text-foreground text-sm font-medium">
-              {current_amount} / {target_amount}
-            </span>
-            <span className="text-foreground text-sm font-medium">
-              {currency}
-            </span>
+        <CardFooter className="flex gap-4">
+          <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full items-center justify-between">
+              <span className="text-sm font-medium">
+                {current_amount.toLocaleString()} /{" "}
+                {target_amount.toLocaleString()}
+              </span>
+              <span className="text-sm font-medium">{currency}</span>
+            </div>
+            <div className="space-y-1">
+              <Progress
+                value={progressValue}
+                className={`h-2 ${progressValue >= 100 ? "bg-green-500" : ""}`}
+              />
+              <p className="text-muted-foreground text-right text-xs">
+                {progressValue}% complete
+              </p>
+            </div>
           </div>
-          <Progress value={progressValue} className="h-2" />
+          <Button
+            size="icon"
+            onClick={handleAddTransaction}
+            className="shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </CardFooter>
       </Card>
     </Link>
