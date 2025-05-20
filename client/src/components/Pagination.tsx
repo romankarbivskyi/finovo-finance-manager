@@ -31,32 +31,35 @@ const PaginationComponent = ({
       return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
-    const pages = [];
-    pages.push(1);
+    const pages: (number | string)[] = [1];
+
     const leftSiblingIndex = Math.max(2, currentPage - siblingCount);
     const rightSiblingIndex = Math.min(
       totalPages - 1,
       currentPage + siblingCount,
     );
+
     const showLeftDots = leftSiblingIndex > 2;
     const showRightDots = rightSiblingIndex < totalPages - 1;
 
     if (showLeftDots) {
       pages.push("ellipsis-left");
-    } else if (leftSiblingIndex === 2) {
-      pages.push(2);
-    }
-
-    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-      if (i !== 1 && i !== totalPages) {
+    } else {
+      for (let i = 2; i < leftSiblingIndex; i++) {
         pages.push(i);
       }
     }
 
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+      pages.push(i);
+    }
+
     if (showRightDots) {
       pages.push("ellipsis-right");
-    } else if (rightSiblingIndex === totalPages - 1) {
-      pages.push(totalPages - 1);
+    } else {
+      for (let i = rightSiblingIndex + 1; i < totalPages; i++) {
+        pages.push(i);
+      }
     }
 
     if (totalPages > 1) {
