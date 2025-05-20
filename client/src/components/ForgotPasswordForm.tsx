@@ -14,6 +14,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { toast } from "sonner";
 import { sendRecoveryToken } from "@/services/user.service";
+import { useModalStore } from "@/stores/modalStore";
 
 interface ForgotPasswordFormProps {
   onBackToLogin: () => void;
@@ -29,6 +30,7 @@ const forgotPasswordSchema = z.object({
 
 const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { closeModal } = useModalStore();
 
   const form = useForm<ForgotPasswordFormInputs>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -43,6 +45,7 @@ const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
 
     if (response.success) {
       toast.success(response?.message || "Recovery link sent successfully");
+      closeModal();
       onBackToLogin();
     } else {
       toast.error(response?.message || "Failed to send recovery link");

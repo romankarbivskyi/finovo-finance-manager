@@ -15,6 +15,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { login } from "@/services/user.service";
 import { useState } from "react";
+import { useModalStore } from "@/stores/modalStore";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -28,6 +29,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
   const { setUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { closeModal } = useModalStore();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -43,6 +45,7 @@ const LoginForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
 
     if (response.success && response.data) {
       setUser(response.data);
+      closeModal();
       toast.success("Login successful!");
     } else {
       toast.error(response?.error || "Login failed");

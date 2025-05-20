@@ -15,6 +15,7 @@ import { z } from "zod";
 import { register } from "@/services/user.service";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useModalStore } from "@/stores/modalStore";
 
 const registerSchema = z.object({
   username: z
@@ -32,6 +33,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const RegisterForm = () => {
   const { setUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { closeModal } = useModalStore();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -49,6 +51,7 @@ const RegisterForm = () => {
 
     if (response.success && response.data) {
       setUser(response.data);
+      closeModal();
       toast.success("Registration successful!");
     } else if (response.errors) {
       if (Object.keys(response.errors).length > 0) {
