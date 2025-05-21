@@ -15,9 +15,10 @@ import { useModalStore } from "@/stores/modalStore";
 
 interface GoalCardProps {
   goal: Goal;
+  refetchGoals: () => void;
 }
 
-const GoalCard = ({ goal }: GoalCardProps) => {
+const GoalCard = ({ goal, refetchGoals }: GoalCardProps) => {
   const {
     id,
     name,
@@ -39,7 +40,7 @@ const GoalCard = ({ goal }: GoalCardProps) => {
   const handleAddTransaction = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    openModal("createTransaction", { goalId: id });
+    openModal("createTransaction", { goalId: id, onCreate: refetchGoals });
   };
 
   return (

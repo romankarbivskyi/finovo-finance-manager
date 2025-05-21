@@ -17,10 +17,11 @@ const GoalsPage = () => {
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
-  const { data: apiResponse, isLoading } = useQuery<
-    ApiResponse<GoalsResponse>,
-    Error
-  >({
+  const {
+    data: apiResponse,
+    isLoading,
+    refetch,
+  } = useQuery<ApiResponse<GoalsResponse>, Error>({
     queryKey: ["goals", offset, ITEMS_PER_PAGE, filters],
     queryFn: async () =>
       await fetchAllGoals(
@@ -62,7 +63,9 @@ const GoalsPage = () => {
         page={page}
         total={total}
         onPageChange={setPage}
-        renderItem={(goal) => <GoalCard key={goal.id} goal={goal} />}
+        renderItem={(goal) => (
+          <GoalCard key={goal.id} goal={goal} refetchGoals={refetch} />
+        )}
         containerClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
       />
     </div>
