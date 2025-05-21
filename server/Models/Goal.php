@@ -194,6 +194,7 @@ class Goal
       throw new \Exception("Invalid transaction type.");
     }
 
+    $goal['current_amount'] = max(0, $goal['current_amount']);
     $goal['status'] = $goal['current_amount'] >= $goal['target_amount'] ? 'completed' : 'active';
 
     return $this->update($goalId, $goal['user_id'], $goal);
