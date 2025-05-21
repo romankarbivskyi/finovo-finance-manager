@@ -16,12 +16,12 @@ const TopNav = () => {
         <Link to="/" className="text-sm">
           Home
         </Link>
-        <Link to="/about" className="text-sm">
+        <a href="/#about" className="text-sm">
           About
-        </Link>
-        <Link to="/contact" className="text-sm">
+        </a>
+        <a href="/#contact" className="text-sm">
           Contact
-        </Link>
+        </a>
       </nav>
       <div className="hidden md:block">
         {isAuthenticated ? (
@@ -44,12 +44,12 @@ const TopNav = () => {
               <Link to="/" className="text-sm">
                 Home
               </Link>
-              <Link to="/about" className="text-sm">
+              <a href="/#about" className="text-sm">
                 About
-              </Link>
-              <Link to="/contact" className="text-sm">
+              </a>
+              <a href="/#contact" className="text-sm">
                 Contact
-              </Link>
+              </a>
             </nav>
             {isAuthenticated ? (
               <Button>
