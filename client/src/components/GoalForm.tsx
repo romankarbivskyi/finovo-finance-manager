@@ -41,6 +41,7 @@ import {
 import { currencyEnum } from "@/constants";
 import { useDropzone } from "react-dropzone";
 import { UploadIcon, X } from "lucide-react";
+import { generateImage } from "@/services/pollinations.service";
 
 const goalSchema = z
   .object({
@@ -76,6 +77,7 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(
     goal?.preview_image ?? null,
   );
@@ -182,6 +184,27 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGenerateImage = async () => {
+    setIsLoading(true);
+
+    const name = form.getValues("name");
+    const image = await generateImage(name);
+    console.log("image", image);
+    if (image) {
+      form.setValue("image", image);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(image);
+    } else {
+      toast.error("Failed to generate image");
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -355,26 +378,35 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
                   <FormControl>
                     <div className="space-y-2">
                       {!imagePreview ? (
-                        <div
-                          {...getRootProps()}
-                          className={cn(
-                            "border-input hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed p-4 transition",
-                            isDragActive && "border-primary bg-primary/5",
-                          )}
-                        >
-                          <input {...getInputProps()} />
-                          <div className="flex flex-col items-center justify-center gap-1 text-center">
-                            <UploadIcon className="text-muted-foreground h-8 w-8" />
-                            <p className="text-sm font-medium">
-                              {isDragActive
-                                ? "Drop the image here"
-                                : "Drag & drop an image here, or click to select"}
-                            </p>
-                            <p className="text-muted-foreground text-xs">
-                              JPEG, PNG, GIF up to 10MB
-                            </p>
+                        <>
+                          <div
+                            {...getRootProps()}
+                            className={cn(
+                              "border-input hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed p-4 transition",
+                              isDragActive && "border-primary bg-primary/5",
+                            )}
+                          >
+                            <input {...getInputProps()} />
+                            <div className="flex flex-col items-center justify-center gap-1 text-center">
+                              <UploadIcon className="text-muted-foreground h-8 w-8" />
+                              <p className="text-sm font-medium">
+                                {isDragActive
+                                  ? "Drop the image here"
+                                  : "Drag & drop an image here, or click to select"}
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                JPEG, PNG, GIF up to 10MB
+                              </p>
+                            </div>
                           </div>
-                        </div>
+                          <Button
+                            onClick={handleGenerateImage}
+                            type="button"
+                            disabled={isLoading}
+                          >
+                            {isLoading ? "Generating..." : "Generate with AI"}
+                          </Button>
+                        </>
                       ) : (
                         <div className="relative">
                           <div className="aspect-video max-h-[160px] overflow-hidden rounded-md border">
@@ -411,7 +443,7 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
             <Button
               type="submit"
               className="w-full sm:w-auto"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading}
             >
               {isSubmitting
                 ? type === "edit"
