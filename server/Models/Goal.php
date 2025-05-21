@@ -100,6 +100,12 @@ class Goal
       }
       $imageName = ImageHandler::uploadImage($image);
       $imageUrl = ImageHandler::getImageUrl($imageName);
+    } elseif (isset($imageUrl) && $image == null) {
+      if ($goal['preview_image']) {
+        $imageName = basename(str_replace('\\', '/', $goal['preview_image']));
+        ImageHandler::deleteImage($imageName);
+      }
+      $imageUrl = null;
     }
 
     $status = $data['status'] ?? 'active';
