@@ -29,9 +29,7 @@ const TopNav = () => {
             <Link to="/dashboard">Dashboard</Link>
           </Button>
         ) : (
-          <Button variant="outline" onClick={() => openModal("auth")}>
-            Sign In
-          </Button>
+          <Button onClick={() => openModal("auth")}>Sign In</Button>
         )}
       </div>
       <div className="md:hidden">
@@ -58,9 +56,7 @@ const TopNav = () => {
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
             ) : (
-              <Button variant="outline" onClick={() => openModal("auth")}>
-                Sign In
-              </Button>
+              <Button onClick={() => openModal("auth")}>Sign In</Button>
             )}
           </PopoverContent>
         </Popover>
