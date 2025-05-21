@@ -31,7 +31,7 @@ class GoalController
       if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
         $maxFileSize = 10 * 1024 * 1024; // 10MB
         if ($imageFile['size'] > $maxFileSize) {
-          Response::json(['errors' => ['image' => 'File size exceeds the limit of 5MB.']], 400);
+          Response::json(['errors' => ['image' => 'File size exceeds the limit of 10MB.']], 400);
           return;
         }
       }
@@ -67,7 +67,7 @@ class GoalController
       if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
         $maxFileSize = 10 * 1024 * 1024; // 10MB
         if ($imageFile['size'] > $maxFileSize) {
-          Response::json(['errors' => ['image' => 'File size exceeds the limit of 5MB.']], 400);
+          Response::json(['errors' => ['image' => 'File size exceeds the limit of 10MB.']], 400);
           return;
         }
       }
