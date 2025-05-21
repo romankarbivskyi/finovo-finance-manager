@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { currencyEnum } from "@/constants";
 import { useModalStore } from "@/stores/modalStore";
+import type { GoalCurrency } from "@/types/goal.types";
 
 const transactionSchema = z.object({
   goal_id: z
@@ -45,11 +46,13 @@ type CreateTransactionValues = z.infer<typeof transactionSchema>;
 interface CreateTransactionModalProps {
   goalId: number;
   onCreate?: () => void;
+  defaultCurrency?: GoalCurrency;
 }
 
 const CreateTransactionModal = ({
   goalId,
   onCreate,
+  defaultCurrency,
 }: CreateTransactionModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { closeModal } = useModalStore();
@@ -59,7 +62,7 @@ const CreateTransactionModal = ({
     defaultValues: {
       goal_id: goalId,
       amount: 0,
-      currency: "USD",
+      currency: defaultCurrency || "USD",
       description: "",
       transaction_type: "contribution",
     },

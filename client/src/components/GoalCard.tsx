@@ -40,7 +40,11 @@ const GoalCard = ({ goal, refetchGoals }: GoalCardProps) => {
   const handleAddTransaction = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    openModal("createTransaction", { goalId: id, onCreate: refetchGoals });
+    openModal("createTransaction", {
+      goalId: id,
+      onCreate: refetchGoals,
+      defaultCurrency: currency,
+    });
   };
 
   return (
