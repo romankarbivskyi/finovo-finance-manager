@@ -1,5 +1,6 @@
 import TopNav from "@/components/TopNav";
 import { Outlet } from "react-router";
+import { Footer } from "@/components";
 
 const HomeLayout = () => {
   return (
@@ -8,6 +9,7 @@ const HomeLayout = () => {
       <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 };
