@@ -26,6 +26,16 @@ class GoalController
         throw new \Exception('User not authenticated.', 401);
       }
 
+      $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
+
+      if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
+        $maxFileSize = 10 * 1024 * 1024; // 10MB
+        if ($imageFile['size'] > $maxFileSize) {
+          Response::json(['errors' => ['image' => 'File size exceeds the limit of 5MB.']], 400);
+          return;
+        }
+      }
+
       $errors = $this->goalModel->validate($_POST);
       if (!empty($errors)) {
         Response::json(['errors' => $errors], 400);
@@ -53,6 +63,14 @@ class GoalController
         return;
       }
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
+
+      if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
+        $maxFileSize = 10 * 1024 * 1024; // 10MB
+        if ($imageFile['size'] > $maxFileSize) {
+          Response::json(['errors' => ['image' => 'File size exceeds the limit of 5MB.']], 400);
+          return;
+        }
+      }
 
       $errors = $this->goalModel->validate($_POST);
       if (!empty($errors)) {
