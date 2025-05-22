@@ -85,7 +85,7 @@ class Goal
     return $this->db->fetchOne($query, $params)['count'];
   }
 
-  public function update($id, $userId, $data, $image = null)
+  public function update($id, $userId, $data, $image = null, $preventImageDelete = false)
   {
     $goal = $this->db->fetchOne("SELECT * FROM goals WHERE id = ? AND user_id = ?", [$id, $userId]);
     if (!$goal) {
@@ -100,7 +100,7 @@ class Goal
       }
       $imageName = ImageHandler::uploadImage($image);
       $imageUrl = ImageHandler::getImageUrl($imageName);
-    } elseif (isset($imageUrl) && $image == null) {
+    } elseif (isset($imageUrl) && $image == null && !$preventImageDelete) {
       if ($goal['preview_image']) {
         $imageName = basename(str_replace('\\', '/', $goal['preview_image']));
         ImageHandler::deleteImage($imageName);
@@ -203,7 +203,7 @@ class Goal
     $goal['current_amount'] = max(0, $goal['current_amount']);
     $goal['status'] = $goal['current_amount'] >= $goal['target_amount'] ? 'completed' : 'active';
 
-    return $this->update($goalId, $goal['user_id'], $goal);
+    return $this->update($goalId, $goal['user_id'], $goal, null, true);
   }
 
   public function getStats($userId)
