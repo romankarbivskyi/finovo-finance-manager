@@ -9,6 +9,7 @@ export const fetchAllGoals = async (
   offset: number,
   currency?: string,
   status?: string,
+  sort?: string,
 ): Promise<ApiResponse<GoalsResponse>> => {
   try {
     const response = await api.get<ApiResponse<GoalsResponse>>("/goals", {
@@ -17,6 +18,7 @@ export const fetchAllGoals = async (
         offset,
         ...(currency && { currency }),
         ...(status && { status }),
+        ...(sort && { sort }),
       },
     });
 

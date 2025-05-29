@@ -1,7 +1,13 @@
 import { fetchAllGoals } from "@/services/goal.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { DataList, GoalCard, GoalsFilter, Header } from "@/components";
+import {
+  DataList,
+  GoalCard,
+  GoalsFilter,
+  Header,
+  TimeSort,
+} from "@/components";
 import type { ApiResponse } from "@/types/api.types";
 import type { GoalsResponse } from "@/types/goal.types";
 import { ITEMS_PER_PAGE } from "@/constants";
@@ -14,6 +20,7 @@ const GoalsPage = () => {
     currency: "",
     status: "",
   });
+  const [sort, setSort] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
@@ -22,13 +29,14 @@ const GoalsPage = () => {
     isLoading,
     refetch,
   } = useQuery<ApiResponse<GoalsResponse>, Error>({
-    queryKey: ["goals", offset, ITEMS_PER_PAGE, filters],
+    queryKey: ["goals", offset, ITEMS_PER_PAGE, filters, sort],
     queryFn: async () =>
       await fetchAllGoals(
         ITEMS_PER_PAGE,
         offset,
         filters.currency,
         filters.status,
+        sort,
       ),
   });
 
@@ -42,6 +50,10 @@ const GoalsPage = () => {
     setFilters((prev) => ({ ...prev, status }));
   };
 
+  const handleSortChange = (sortBy: string) => {
+    setSort(sortBy);
+  };
+
   return (
     <div>
       <Header title="Goals" subtitle="Manage your financial goals">
@@ -52,10 +64,14 @@ const GoalsPage = () => {
         </Button>
       </Header>
 
-      <GoalsFilter
-        onCurrencyChange={handleCurrencyChange}
-        onStatusChange={handleStatusChange}
-      />
+      <div className="gap mb-4 flex items-center gap-4">
+        <GoalsFilter
+          onCurrencyChange={handleCurrencyChange}
+          onStatusChange={handleStatusChange}
+        />
+
+        <TimeSort onSortChange={handleSortChange} />
+      </div>
 
       <DataList
         data={goals}

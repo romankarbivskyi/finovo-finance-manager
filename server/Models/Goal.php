@@ -45,7 +45,7 @@ class Goal
     return $this->db->fetchOne("SELECT * FROM goals WHERE id = ?", [$id]);
   }
 
-  public function getAllForUser($userId, $limit = 10, $offset = 0, $currency = null, $status = null)
+  public function getAllForUser($userId, $limit = 10, $offset = 0, $currency = null, $status = null, $sort = null)
   {
     $query = "SELECT * FROM goals WHERE user_id = ?";
     $params = [$userId];
@@ -60,7 +60,15 @@ class Goal
       $params[] = $status;
     }
 
-    $query .= " ORDER BY id DESC LIMIT ? OFFSET ?";
+    if ($sort !== null && strtolower($sort) === 'old') {
+      $query .= " ORDER BY id ASC";
+    } elseif ($sort !== null && strtolower($sort) === 'new') {
+      $query .= " ORDER BY id DESC";
+    } else {
+      $query .= " ORDER BY id DESC";
+    }
+
+    $query .= " LIMIT ? OFFSET ?";
     $params[] = $limit;
     $params[] = $offset;
 

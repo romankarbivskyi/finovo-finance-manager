@@ -17,7 +17,7 @@ const GoalsFilter = ({
   onCurrencyChange,
 }: GoalsFilterProps) => {
   return (
-    <div className="mb-4 flex gap-4">
+    <div className="flex gap-4">
       <Label>Status</Label>
       <Select onValueChange={onStatusChange} defaultValue="all">
         <SelectTrigger className="w-full max-w-[180px]">

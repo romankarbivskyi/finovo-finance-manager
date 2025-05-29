@@ -15,3 +15,4 @@ export { default as BackLink } from "./BackLink";
 export { default as AppModal } from "./AppModal";
 export { default as GoalsFilter } from "./GoalsFilter";
 export { default as Footer } from "./Footer";
+export { default as TimeSort } from "./TimeSort";

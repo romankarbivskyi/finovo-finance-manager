@@ -141,6 +141,7 @@ class GoalController
       $offset = $request->query('offset', 0);
       $currency = $request->query('currency', 'all');
       $status = $request->query('status', 'all');
+      $sort = $request->query('sort', "new");
 
       $user = $this->auth->getUser();
       if (!$user) {
@@ -148,7 +149,7 @@ class GoalController
         return;
       }
 
-      $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset, $currency, $status);
+      $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset, $currency, $status, $sort);
       $total = $this->goalModel->getTotalForUser($user['id'], $currency, $status);
       Response::json(['data' => ['goals' => $goals, 'total' => $total]], 200);
     } catch (\Exception $e) {
