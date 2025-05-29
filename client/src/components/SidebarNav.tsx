@@ -51,7 +51,9 @@ const SidebarNav = () => {
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
-        <h2 className="text-lg font-semibold">Finovo</h2>
+        <Link to="/" className="text-lg font-semibold">
+          Finovo
+        </Link>
       </SidebarHeader>
       <SidebarContent className="flex-1 overflow-y-auto">
         <SidebarMenu className="p-2">

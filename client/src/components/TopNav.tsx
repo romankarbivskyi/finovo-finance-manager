@@ -11,7 +11,9 @@ const TopNav = () => {
 
   return (
     <div className="relative flex items-center justify-between border-b p-4">
-      <h1 className="text-2xl font-semibold">Finovo</h1>
+      <Link to="/" className="text-2xl font-semibold">
+        Finovo
+      </Link>
       <nav className="absolute left-1/2 hidden -translate-x-1/2 transform items-center gap-10 md:flex">
         <Link to="/" className="text-sm">
           Home
