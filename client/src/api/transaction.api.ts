@@ -4,76 +4,46 @@ import type {
   ITransaction,
   TransactionsResponse,
 } from "@/types/transaction.types";
-import type { AxiosError } from "axios";
+import { handleApiRequest } from ".";
 
-export const createTransaction = async (
+export const createTransaction = (
   goalId: number,
   amount: number,
   currency: "USD" | "EUR" | "UAH",
   description: string,
   type: "contribution" | "withdrawal",
 ): Promise<ApiResponse<ITransaction>> => {
-  try {
-    const response = await api.post<ApiResponse<ITransaction>>(
-      "/transactions",
-      {
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<ITransaction>>("/transactions", {
         goal_id: goalId,
         amount,
         currency,
         description,
         transaction_type: type,
-      },
-    );
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<ITransaction>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+      }),
+  );
 };
 
-export const deleteTransaction = async (
+export const deleteTransaction = (
   transactionId: number,
 ): Promise<ApiResponse> => {
-  try {
-    const response = await api.delete<ApiResponse>(
-      `/transactions/${transactionId}`,
-    );
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+  return handleApiRequest(
+    async () => await api.delete<ApiResponse>(`/transactions/${transactionId}`),
+  );
 };
 
-export const getAllTransactions = async (
+export const getAllTransactions = (
   limit: number,
   offset: number,
 ): Promise<ApiResponse<TransactionsResponse>> => {
-  try {
-    const response = await api.get<ApiResponse<TransactionsResponse>>(
-      "/transactions",
-      {
+  return handleApiRequest(
+    async () =>
+      await api.get<ApiResponse<TransactionsResponse>>("/transactions", {
         params: {
           limit,
           offset,
         },
-      },
-    );
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<TransactionsResponse>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+      }),
+  );
 };

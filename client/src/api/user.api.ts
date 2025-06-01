@@ -1,172 +1,95 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
 import type { User, UsersResponse } from "@/types/user.types";
-import { AxiosError } from "axios";
+import { handleApiRequest } from ".";
 
-export const login = async (
+export const login = (
   email: string,
   password: string,
 ): Promise<ApiResponse<User>> => {
-  try {
-    const response = await api.post<ApiResponse<User>>("/users/login", {
-      email,
-      password,
-    });
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<User>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<User>>("/users/login", {
+        email,
+        password,
+      }),
+  );
 };
 
-export const register = async (
+export const register = (
   username: string,
   email: string,
   password: string,
 ): Promise<ApiResponse<User>> => {
-  try {
-    const response = await api.post<ApiResponse<User>>("/users/register", {
-      username,
-      email,
-      password,
-    });
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<User>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<User>>("/users/register", {
+        username,
+        email,
+        password,
+      }),
+  );
 };
 
-export const sendRecoveryToken = async (
+export const sendRecoveryToken = (
   email: string,
 ): Promise<ApiResponse<null>> => {
-  try {
-    const response = await api.post<ApiResponse<null>>(
-      "/users/password/forgot",
-      {
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<null>>("/users/password/forgot", {
         email,
-      },
-    );
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<null>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+      }),
+  );
 };
 
-export const changePassword = async (
+export const changePassword = (
   currentPassword: string,
   newPassword: string,
 ) => {
-  try {
-    const response = await api.post<ApiResponse<null>>(
-      "/users/password/change",
-      {
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<null>>("/users/password/change", {
         current_password: currentPassword,
         new_password: newPassword,
-      },
-    );
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<null>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+      }),
+  );
 };
 
-export const resetPassword = async (token: string, password: string) => {
-  try {
-    const response = await api.post<ApiResponse<null>>(
-      "/users/password/reset",
-      {
+export const resetPassword = (token: string, password: string) => {
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<null>>("/users/password/reset", {
         token,
         password,
-      },
-    );
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<null>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+      }),
+  );
 };
 
-export const deleteAccount = async () => {
-  try {
-    const response = await api.delete<ApiResponse<null>>("/users");
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<null>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+export const deleteAccount = () => {
+  return handleApiRequest(
+    async () => await api.delete<ApiResponse<null>>("/users"),
+  );
 };
 
-export const updateProfile = async (username: string, email: string) => {
-  try {
-    const response = await api.post<ApiResponse<null>>("/users/profile", {
-      username,
-      email,
-    });
-
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<null>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+export const updateProfile = (username: string, email: string) => {
+  return handleApiRequest(
+    async () =>
+      await api.post<ApiResponse<null>>("/users/profile", {
+        username,
+        email,
+      }),
+  );
 };
 
-export const fetchAllUsers = async (
-  limit: number,
-  offset: number,
-  sort?: string,
-) => {
-  try {
-    const response = await api.get<ApiResponse<UsersResponse>>("/users", {
-      params: {
-        limit,
-        offset,
-        ...(sort && { sort }),
-      },
-    });
-    return response.data;
-  } catch (err) {
-    const error = err as AxiosError<ApiResponse<UsersResponse>>;
-    return (
-      error.response?.data || {
-        success: false,
-      }
-    );
-  }
+export const fetchAllUsers = (limit: number, offset: number, sort?: string) => {
+  return handleApiRequest(
+    async () =>
+      await api.get<ApiResponse<UsersResponse>>("/users", {
+        params: {
+          limit,
+          offset,
+          ...(sort && { sort }),
+        },
+      }),
+  );
 };
