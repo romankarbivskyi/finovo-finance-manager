@@ -10,8 +10,14 @@ import {
   NotFound,
   ResetPasswordPage,
   TransactionsPage,
+  UsersPage,
 } from "@/pages";
-import { DashboardLayout, HomeLayout, RootLayout } from "@/layouts";
+import {
+  AdminLayout,
+  DashboardLayout,
+  HomeLayout,
+  RootLayout,
+} from "@/layouts";
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +72,16 @@ export const router = createBrowserRouter([
           {
             path: "/account",
             element: <AccountPage />,
+          },
+          {
+            path: "/",
+            element: <AdminLayout />,
+            children: [
+              {
+                path: "/users",
+                element: <UsersPage />,
+              },
+            ],
           },
         ],
       },

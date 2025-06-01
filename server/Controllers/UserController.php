@@ -251,4 +251,35 @@ class UserController
       Response::json(['error' => $e->getMessage()], 400);
     }
   }
+
+  public function getAllUsers(Request $request)
+  {
+    try {
+      $user = $this->auth->getUser();
+
+      if (!$user) {
+        throw new \Exception("User not authenticated.");
+      }
+
+      if (!$this->auth->isAdmin()) {
+        Response::json(['error' => 'Unauthorized access.'], 403);
+        return;
+      }
+
+      $limit = $request->query('limit', 10);
+      $offset = $request->query('offset', 0);
+      $sort = $request->query('sort', "new");
+
+      $users = $this->userModel->getAll($limit, $offset, $sort);
+      $total = $this->userModel->getTotalUsers();
+      Response::json([
+        'data' => [
+          'users' => $users,
+          'total' => $total,
+        ]
+      ], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => 'Failed to retrieve users.'], 500);
+    }
+  }
 }

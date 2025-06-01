@@ -40,6 +40,31 @@ class User
     return $this->findById($userId);
   }
 
+  public function getAll($limit = 10, $offset = 0, $sort = null)
+  {
+    $query = "SELECT id, username, email, role, created_at FROM users";
+    $params = [];
+
+    if ($sort !== null && strtolower($sort) === 'old') {
+      $query .= " ORDER BY id ASC";
+    } elseif ($sort !== null && strtolower($sort) === 'new') {
+      $query .= " ORDER BY id DESC";
+    } else {
+      $query .= " ORDER BY id DESC";
+    }
+
+    $query .= " LIMIT ? OFFSET ?";
+    $params[] = $limit;
+    $params[] = $offset;
+
+    return $this->db->fetchAll($query, $params);
+  }
+
+  public function getTotalUsers()
+  {
+    return $this->db->fetchOne("SELECT COUNT(*) as total FROM users")['total'];
+  }
+
   public function validateCredentials($email, $password)
   {
     $user = $this->findByEmail($email);

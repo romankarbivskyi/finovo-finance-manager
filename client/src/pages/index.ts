@@ -8,3 +8,4 @@ export { default as AccountPage } from "./AccountPage";
 export { default as ResetPasswordPage } from "./ResetPasswordPage";
 export { default as CreateGoalPage } from "./CreateGoalPage";
 export { default as EditGoalPage } from "./EditGoalPage";
+export { default as UsersPage } from "./UsersPage";

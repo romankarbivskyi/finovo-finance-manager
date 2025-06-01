@@ -7,6 +7,7 @@ import type { ApiResponse } from "@/types/api.types";
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+
   isLoading: boolean;
   setUser: (user: User | null) => void;
   logout: () => Promise<void>;

@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
-import type { User } from "@/types/user.types";
+import type { User, UsersResponse } from "@/types/user.types";
 import { AxiosError } from "axios";
 
 export const login = async (
@@ -139,6 +139,30 @@ export const updateProfile = async (username: string, email: string) => {
     return response.data;
   } catch (err) {
     const error = err as AxiosError<ApiResponse<null>>;
+    return (
+      error.response?.data || {
+        success: false,
+      }
+    );
+  }
+};
+
+export const fetchAllUsers = async (
+  limit: number,
+  offset: number,
+  sort?: string,
+) => {
+  try {
+    const response = await api.get<ApiResponse<UsersResponse>>("/users", {
+      params: {
+        limit,
+        offset,
+        ...(sort && { sort }),
+      },
+    });
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError<ApiResponse<UsersResponse>>;
     return (
       error.response?.data || {
         success: false,

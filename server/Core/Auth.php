@@ -88,4 +88,10 @@ class Auth
   {
     return $this->session->has('user_id');
   }
+
+  public function isAdmin()
+  {
+    $user = $this->getUser();
+    return $user && $user['role'] === 'admin';
+  }
 }

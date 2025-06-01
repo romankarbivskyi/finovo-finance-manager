@@ -5,3 +5,8 @@ export interface User {
   role: "admin" | "user";
   created_at: Date;
 }
+
+export interface UsersResponse {
+  users: User[];
+  total: number;
+}
