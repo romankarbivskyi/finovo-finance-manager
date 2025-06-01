@@ -19,6 +19,7 @@ const UsersPage = () => {
   >({
     queryKey: ["goals", offset, ITEMS_PER_PAGE, sort],
     queryFn: async () => await fetchAllUsers(ITEMS_PER_PAGE, offset, sort),
+    refetchInterval: 10000,
   });
 
   const { users = [], total = 0 } = apiResponse?.data ?? {};
