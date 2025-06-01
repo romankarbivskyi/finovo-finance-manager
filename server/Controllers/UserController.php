@@ -233,7 +233,7 @@ class UserController
     }
   }
 
-  public function delete()
+  public function delete($id)
   {
     try {
       $user = $this->auth->getUser();
@@ -242,9 +242,16 @@ class UserController
         throw new \Exception("User not authenticated.");
       }
 
-      $this->userModel->deleteUser($user['id']);
+      if (!$this->auth->isAdmin() && $user['id'] != ($id ?? null)) {
+        Response::json(['error' => 'Unauthorized access.'], 403);
+        return;
+      }
 
-      $this->auth->logout();
+      $this->userModel->deleteUser($id ?? $user['id']);
+
+      if ($user['id'] == ($id ?? null)) {
+        $this->auth->logout();
+      }
 
       Response::json(['message' => 'Account deleted successfully.'], 200);
     } catch (\Exception $e) {

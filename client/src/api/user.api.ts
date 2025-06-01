@@ -65,9 +65,10 @@ export const resetPassword = (token: string, password: string) => {
   );
 };
 
-export const deleteAccount = () => {
+export const deleteAccount = (id?: number) => {
   return handleApiRequest(
-    async () => await api.delete<ApiResponse<null>>("/users"),
+    async () =>
+      await api.delete<ApiResponse<null>>(`/users${id ? `/${id}` : ""}`),
   );
 };
 

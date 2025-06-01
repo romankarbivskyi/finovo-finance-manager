@@ -11,16 +11,25 @@ import { useNavigate } from "react-router";
 import { deleteAccount } from "@/api/user.api";
 import { useAuth } from "@/hooks/useAuth";
 
-const DeleteAccountModal = () => {
+interface DeleteAccountModalProps {
+  userId?: number;
+  onDelete?: () => void;
+}
+
+const DeleteAccountModal = ({ userId, onDelete }: DeleteAccountModalProps) => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const handleDelete = async () => {
-    const response = await deleteAccount();
+    const response = await deleteAccount(userId);
 
     if (response.success) {
       toast.success(response?.message || "Account deleted successfully");
-      setUser(null);
-      navigate("/");
+      if (onDelete && userId) {
+        onDelete();
+      } else {
+        setUser(null);
+        navigate("/");
+      }
     } else {
       toast.error(response?.error || "Failed to delete account");
     }
