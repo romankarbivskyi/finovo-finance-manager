@@ -41,7 +41,7 @@ import {
 import { currencyEnum } from "@/constants";
 import { useDropzone } from "react-dropzone";
 import { UploadIcon, X } from "lucide-react";
-import { generateImage } from "@/api/pollinations.api";
+import { generateImage } from "@/api/image.api";
 
 const goalSchema = z
   .object({
@@ -131,6 +131,10 @@ const GoalForm = ({ type, goal }: GoalFormProps) => {
       formData.append("target_amount", data.targetAmount.toString());
       formData.append("target_date", format(data.targetDate, "yyyy-MM-dd"));
       formData.append("currency", data.currency);
+
+      if (goal?.preview_image && !data.image && !imagePreview) {
+        formData.append("remove_image", "true");
+      }
 
       if (data.image instanceof File) {
         formData.append("image", data.image);

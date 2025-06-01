@@ -62,6 +62,7 @@ class GoalController
         Response::json(['error' => 'User not authenticated.'], 401);
         return;
       }
+
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
       if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {

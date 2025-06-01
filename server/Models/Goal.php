@@ -101,6 +101,7 @@ class Goal
     }
 
     $imageUrl = $goal['preview_image'];
+
     if ($image && $image['error'] === UPLOAD_ERR_OK) {
       if ($goal['preview_image']) {
         $imageName = basename(str_replace('\\', '/', $goal['preview_image']));
@@ -108,7 +109,7 @@ class Goal
       }
       $imageName = ImageHandler::uploadImage($image);
       $imageUrl = ImageHandler::getImageUrl($imageName);
-    } elseif (isset($imageUrl) && $image == null && !$preventImageDelete) {
+    } elseif (isset($data['remove_image']) && $data['remove_image'] === 'true' && !$preventImageDelete) {
       if ($goal['preview_image']) {
         $imageName = basename(str_replace('\\', '/', $goal['preview_image']));
         ImageHandler::deleteImage($imageName);
@@ -116,7 +117,7 @@ class Goal
       $imageUrl = null;
     }
 
-    $status = $data['status'] ?? 'active';
+    $status = $data['status'] ?? $goal['status'] ?? 'active';
 
     $this->db->query(
       "UPDATE goals SET 
@@ -131,7 +132,7 @@ class Goal
       WHERE id = ? AND user_id = ?",
       [
         $data['name'],
-        $data['description'] ?? null,
+        $data['description'] ?? $goal['description'],
         $data['target_date'],
         $data['current_amount'],
         $data['target_amount'],
