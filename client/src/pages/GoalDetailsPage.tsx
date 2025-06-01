@@ -47,6 +47,7 @@ const GoalDetailsPage = () => {
     queryFn: async () =>
       await fetchGoalTransactions(Number(goalId), transactionLimit, offset),
     enabled: !!goalId && Number(goalId) > 0,
+    refetchInterval: 10000,
   });
 
   const handleRefetch = () => {

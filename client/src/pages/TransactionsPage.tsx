@@ -16,6 +16,7 @@ const TransactionsPage = () => {
   } = useQuery({
     queryKey: ["transactions", page],
     queryFn: async () => await getAllTransactions(ITEMS_PER_PAGE, offset),
+    refetchInterval: 10000,
   });
 
   const { transactions = [], total = 0 } = apiResponse?.data ?? {};

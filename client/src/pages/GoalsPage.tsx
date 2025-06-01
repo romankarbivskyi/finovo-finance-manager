@@ -38,6 +38,7 @@ const GoalsPage = () => {
         filters.status,
         sort,
       ),
+    refetchInterval: 10000,
   });
 
   const { goals = [], total = 0 } = apiResponse?.data ?? {};
