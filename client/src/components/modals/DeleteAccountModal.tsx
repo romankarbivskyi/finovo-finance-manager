@@ -40,8 +40,8 @@ const DeleteAccountModal = ({ userId, onDelete }: DeleteAccountModalProps) => {
       <DialogHeader>
         <DialogTitle>Are you absolutely sure?</DialogTitle>
         <DialogDescription>
-          This action cannot be undone. This will permanently delete your
-          account and remove all associated data.
+          This action cannot be undone. This will permanently delete account and
+          remove all associated data.
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
