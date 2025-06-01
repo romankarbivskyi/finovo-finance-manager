@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
 import type { User, UsersResponse } from "@/types/user.types";
 import { handleApiRequest } from ".";
+import type { ColumnSort } from "@tanstack/react-table";
 
 export const login = (
   email: string,
@@ -82,14 +83,19 @@ export const updateProfile = (username: string, email: string) => {
   );
 };
 
-export const fetchAllUsers = (limit: number, offset: number, sort?: string) => {
+export const fetchAllUsers = (
+  limit: number,
+  offset: number,
+  sort?: ColumnSort,
+) => {
   return handleApiRequest(
     async () =>
       await api.get<ApiResponse<UsersResponse>>("/users", {
         params: {
           limit,
           offset,
-          ...(sort && { sort }),
+          sort_by: sort?.id,
+          sort_order: sort?.desc ? "desc" : "asc",
         },
       }),
   );

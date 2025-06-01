@@ -275,9 +275,10 @@ class UserController
 
       $limit = $request->query('limit', 10);
       $offset = $request->query('offset', 0);
-      $sort = $request->query('sort', "new");
+      $sortBy = $request->query('sort_by', 'id');
+      $sortOrder = $request->query('sort_order', 'asc');
 
-      $users = $this->userModel->getAll($limit, $offset, $sort);
+      $users = $this->userModel->getAll($limit, $offset, $sortBy, $sortOrder);
       $total = $this->userModel->getTotalUsers();
       Response::json([
         'data' => [

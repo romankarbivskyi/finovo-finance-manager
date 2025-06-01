@@ -4,6 +4,8 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  type OnChangeFn,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -27,6 +29,8 @@ interface DataTableProps<TData, TValue> {
   onPageChange: (page: number) => void;
   itemsPerPage?: number;
   isLoading?: boolean;
+  sorting: SortingState;
+  setSorting: OnChangeFn<SortingState>;
 }
 
 const DataTable = <TData, TValue>({
@@ -37,11 +41,19 @@ const DataTable = <TData, TValue>({
   onPageChange,
   itemsPerPage = ITEMS_PER_PAGE,
   isLoading = false,
+  sorting = [],
+  setSorting,
 }: DataTableProps<TData, TValue>) => {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    manualSorting: true,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+    enableMultiSort: false,
   });
 
   if (isLoading && data.length === 0) {

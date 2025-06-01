@@ -1,13 +1,13 @@
-import { DataTable, Header, TimeSort } from "@/components";
+import { DataTable, Header } from "@/components";
 import { ITEMS_PER_PAGE } from "@/constants";
 import { fetchAllUsers } from "@/api/user.api";
 import type { ApiResponse } from "@/types/api.types";
 import type { User, UsersResponse } from "@/types/user.types";
 import { useQuery } from "@tanstack/react-query";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useState } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +23,8 @@ import { toast } from "sonner";
 const UsersPage = () => {
   const { openModal } = useModalStore();
 
-  const [sort, setSort] = useState<string>("");
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
@@ -32,21 +33,28 @@ const UsersPage = () => {
     isLoading,
     refetch,
   } = useQuery<ApiResponse<UsersResponse>, Error>({
-    queryKey: ["goals", offset, ITEMS_PER_PAGE, sort],
-    queryFn: async () => await fetchAllUsers(ITEMS_PER_PAGE, offset, sort),
+    queryKey: ["goals", offset, ITEMS_PER_PAGE, sorting],
+    queryFn: async () =>
+      await fetchAllUsers(ITEMS_PER_PAGE, offset, sorting[0]),
     refetchInterval: 10000,
   });
 
   const { users = [], total = 0 } = apiResponse?.data ?? {};
 
-  const handleSortChange = (sortBy: string) => {
-    setSort(sortBy);
-  };
-
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "id",
-      header: "ID",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            ID
+            <ArrowUpDown />
+          </Button>
+        );
+      },
       cell: ({ row }) => {
         return (
           <span className="text-muted-foreground capitalize">
@@ -57,22 +65,62 @@ const UsersPage = () => {
     },
     {
       accessorKey: "username",
-      header: "Username",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Username
+            <ArrowUpDown />
+          </Button>
+        );
+      },
     },
     {
       accessorKey: "email",
-      header: "Email",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Email
+            <ArrowUpDown />
+          </Button>
+        );
+      },
     },
     {
       accessorKey: "role",
-      header: "Role",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Role
+            <ArrowUpDown />
+          </Button>
+        );
+      },
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue("role")}</div>
       ),
     },
     {
       accessorKey: "created_at",
-      header: "Created At",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Created At
+            <ArrowUpDown />
+          </Button>
+        );
+      },
       cell: ({ row }) => {
         return format(new Date(row.getValue("created_at")), "PPP 'at' p");
       },
@@ -124,7 +172,6 @@ const UsersPage = () => {
       <Header title="Users" subtitle="View and manage users in the system" />
 
       <div className="space-y-4">
-        <TimeSort onSortChange={handleSortChange} />
         <DataTable
           data={users}
           columns={columns}
@@ -132,6 +179,8 @@ const UsersPage = () => {
           onPageChange={setPage}
           total={total}
           isLoading={isLoading}
+          sorting={sorting}
+          setSorting={setSorting}
         />
       </div>
     </div>

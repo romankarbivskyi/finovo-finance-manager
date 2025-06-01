@@ -40,24 +40,18 @@ class User
     return $this->findById($userId);
   }
 
-  public function getAll($limit = 10, $offset = 0, $sort = null)
+  public function getAll($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc")
   {
-    $query = "SELECT id, username, email, role, created_at FROM users";
-    $params = [];
+    $sortBy = in_array($sortBy, ['username', 'email', 'role', 'created_at']) ? $sortBy : 'created_at';
+    $sortOrder = strtolower($sortOrder) === 'desc' ? 'DESC' : 'ASC';
 
-    if ($sort !== null && strtolower($sort) === 'old') {
-      $query .= " ORDER BY id ASC";
-    } elseif ($sort !== null && strtolower($sort) === 'new') {
-      $query .= " ORDER BY id DESC";
-    } else {
-      $query .= " ORDER BY id DESC";
+    $query = "SELECT id, username, email, role, created_at FROM users ORDER BY $sortBy $sortOrder LIMIT ? OFFSET ?";
+
+    if ($limit < 1 || $offset < 0) {
+      throw new \InvalidArgumentException("Invalid limit or offset.");
     }
 
-    $query .= " LIMIT ? OFFSET ?";
-    $params[] = $limit;
-    $params[] = $offset;
-
-    return $this->db->fetchAll($query, $params);
+    return $this->db->fetchAll($query, [$limit, $offset]);
   }
 
   public function getTotalUsers()
