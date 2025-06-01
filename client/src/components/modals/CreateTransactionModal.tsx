@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { createTransaction } from "@/services/transaction.service";
+import { createTransaction } from "@/api/transaction.api";
 import { toast } from "sonner";
 import { useState } from "react";
 import { currencyEnum } from "@/constants";

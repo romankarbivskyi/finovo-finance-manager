@@ -1,5 +1,5 @@
 import { BackLink, GoalForm } from "@/components";
-import { fetchGoalById } from "@/services/goal.service";
+import { fetchGoalById } from "@/api/goal.api";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useParams } from "react-router";

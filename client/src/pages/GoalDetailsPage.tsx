@@ -1,4 +1,4 @@
-import { fetchGoalById, fetchGoalTransactions } from "@/services/goal.service";
+import { fetchGoalById, fetchGoalTransactions } from "@/api/goal.api";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import { useParams, Link } from "react-router";

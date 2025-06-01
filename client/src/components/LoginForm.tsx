@@ -13,7 +13,7 @@ import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { toast } from "sonner";
-import { login } from "@/services/user.service";
+import { login } from "@/api/user.api";
 import { useState } from "react";
 import { useModalStore } from "@/stores/modalStore";
 

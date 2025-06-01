@@ -1,7 +1,7 @@
 import { TransactionList } from "@/components";
 import Header from "@/components/Header";
 import { ITEMS_PER_PAGE } from "@/constants";
-import { getAllTransactions } from "@/services/transaction.service";
+import { getAllTransactions } from "@/api/transaction.api";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 

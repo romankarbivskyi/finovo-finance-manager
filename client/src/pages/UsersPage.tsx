@@ -1,6 +1,6 @@
 import { DataTable, Header, TimeSort } from "@/components";
 import { ITEMS_PER_PAGE } from "@/constants";
-import { fetchAllUsers } from "@/services/user.service";
+import { fetchAllUsers } from "@/api/user.api";
 import type { ApiResponse } from "@/types/api.types";
 import type { User, UsersResponse } from "@/types/user.types";
 import { useQuery } from "@tanstack/react-query";

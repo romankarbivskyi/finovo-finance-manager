@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 import { toast } from "sonner";
-import { resetPassword } from "@/services/user.service";
+import { resetPassword } from "@/api/user.api";
 
 const resetPasswordSchema = z
   .object({

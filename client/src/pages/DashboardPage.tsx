@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getGoalsStats } from "@/services/goal.service";
+import { getGoalsStats } from "@/api/goal.api";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
@@ -19,7 +19,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { getAllTransactions } from "@/services/transaction.service";
+import { getAllTransactions } from "@/api/transaction.api";
 import { Transaction } from "@/components";
 
 const DashboardPage = () => {

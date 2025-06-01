@@ -13,7 +13,7 @@ import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { updateProfile } from "@/services/user.service";
+import { updateProfile } from "@/api/user.api";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useModalStore } from "@/stores/modalStore";

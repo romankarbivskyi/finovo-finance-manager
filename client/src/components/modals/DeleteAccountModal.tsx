@@ -8,7 +8,7 @@ import {
 } from "../ui/dialog";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
-import { deleteAccount } from "@/services/user.service";
+import { deleteAccount } from "@/api/user.api";
 import { useAuth } from "@/hooks/useAuth";
 
 const DeleteAccountModal = () => {

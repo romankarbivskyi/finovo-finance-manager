@@ -1,4 +1,4 @@
-import { fetchAllGoals } from "@/services/goal.service";
+import { fetchAllGoals } from "@/api/goal.api";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {

@@ -26,7 +26,7 @@ import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createOrUpdateGoal } from "@/services/goal.service";
+import { createOrUpdateGoal } from "@/api/goal.api";
 import { toast } from "sonner";
 import type { Goal } from "@/types/goal.types";
 import { useNavigate } from "react-router";
@@ -41,7 +41,7 @@ import {
 import { currencyEnum } from "@/constants";
 import { useDropzone } from "react-dropzone";
 import { UploadIcon, X } from "lucide-react";
-import { generateImage } from "@/services/pollinations.service";
+import { generateImage } from "@/api/pollinations.api";
 
 const goalSchema = z
   .object({

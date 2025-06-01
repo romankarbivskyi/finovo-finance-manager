@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { deleteGoal } from "@/services/goal.service";
+import { deleteGoal } from "@/api/goal.api";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 

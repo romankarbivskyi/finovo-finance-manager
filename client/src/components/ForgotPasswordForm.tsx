@@ -13,7 +13,7 @@ import { Input } from "./ui/input";
 import { z } from "zod";
 import { useState } from "react";
 import { toast } from "sonner";
-import { sendRecoveryToken } from "@/services/user.service";
+import { sendRecoveryToken } from "@/api/user.api";
 import { useModalStore } from "@/stores/modalStore";
 
 interface ForgotPasswordFormProps {

@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { format } from "date-fns";
-import { deleteTransaction } from "@/services/transaction.service";
+import { deleteTransaction } from "@/api/transaction.api";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 

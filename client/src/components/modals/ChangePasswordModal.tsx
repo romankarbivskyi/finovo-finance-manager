@@ -13,7 +13,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { DialogHeader, DialogTitle } from "../ui/dialog";
-import { changePassword } from "@/services/user.service";
+import { changePassword } from "@/api/user.api";
 import { toast } from "sonner";
 import { useModalStore } from "@/stores/modalStore";
 
