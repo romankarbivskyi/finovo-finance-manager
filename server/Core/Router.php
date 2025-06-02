@@ -9,9 +9,19 @@ class Router
   public function addRoute($method, $path, $callback)
   {
     if (is_string($path)) {
+      $path = rtrim($path, '/');
+      if (empty($path)) {
+        $path = '/';
+      }
+
       $path = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $path);
       $path = str_replace('/', '\/', $path);
-      $path = '/^' . $path . '$/';
+
+      if ($path !== '\/') {
+        $path = '/^' . $path . '\/?$/';
+      } else {
+        $path = '/^' . $path . '$/';
+      }
     }
     $this->routes[] = [
       'method' => strtoupper($method),
@@ -29,6 +39,11 @@ class Router
   {
     $pathParts = explode('?', $requestPath, 2);
     $path = $pathParts[0];
+
+    $path = rtrim($path, '/');
+    if (empty($path)) {
+      $path = '/';
+    }
 
     $queryParams = [];
     if (isset($pathParts[1])) {
