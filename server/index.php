@@ -88,6 +88,7 @@ $router->addRoute('GET', '/goals/{id}/transactions', 'TransactionController@getA
 $router->addRoute('GET', '/transactions', 'TransactionController@getAllForUser', [AuthMiddleware::class]);
 $router->addRoute('POST', '/transactions', 'TransactionController@create', [AuthMiddleware::class]);
 $router->addRoute('DELETE', '/transactions/{id}', 'TransactionController@delete', [AuthMiddleware::class]);
+$router->addRoute('GET', '/transactions/stats', 'TransactionController@getStats', [AuthMiddleware::class]);
 
 $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 

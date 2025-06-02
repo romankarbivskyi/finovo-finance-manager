@@ -14,3 +14,10 @@ export interface TransactionsResponse {
   transactions: ITransaction[];
   total: number;
 }
+
+export interface TransactionsStats {
+  total_contributions: number;
+  total_withdrawals: number;
+  total_transactions: number;
+  created_at: Date;
+}

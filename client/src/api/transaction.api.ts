@@ -3,6 +3,7 @@ import type { ApiResponse } from "@/types/api.types";
 import type {
   ITransaction,
   TransactionsResponse,
+  TransactionsStats,
 } from "@/types/transaction.types";
 import { handleApiRequest } from ".";
 
@@ -43,6 +44,21 @@ export const getAllTransactions = (
         params: {
           limit,
           offset,
+        },
+      }),
+  );
+};
+
+export const getTransactionsStats = (
+  startDate: string,
+  endDate: string,
+): Promise<ApiResponse<TransactionsStats[]>> => {
+  return handleApiRequest(
+    async () =>
+      await api.get<ApiResponse<TransactionsStats[]>>("/transactions/stats", {
+        params: {
+          start_date: startDate,
+          end_date: endDate,
         },
       }),
   );

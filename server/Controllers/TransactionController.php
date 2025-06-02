@@ -87,4 +87,23 @@ class TransactionController
       Response::json(['error' => $e->getMessage()], 400);
     }
   }
+
+  public function getStats(Request $request)
+  {
+    try {
+      $startDate = $request->query('start_date');
+      $endDate = $request->query('end_date');
+      $user = $this->auth->getUser();
+
+      if (!$startDate || !$endDate) {
+        throw new \Exception("Start date and end date are required.");
+      }
+
+      $stats = $this->transactionModel->getStats($user['id'], $startDate, $endDate);
+
+      Response::json(['data' => $stats], 200);
+    } catch (\Exception $e) {
+      Response::json(['error' => $e->getMessage()], 400);
+    }
+  }
 }

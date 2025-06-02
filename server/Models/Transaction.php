@@ -148,4 +148,24 @@ class Transaction
 
     return $errors;
   }
+
+  public function getStats($userId, $startDate, $endDate)
+  {
+    $endDateObj = new \DateTime($endDate);
+    $endDateObj->modify('+1 day');
+    $endDatePlusOne = $endDateObj->format('Y-m-d');
+
+    $query = "SELECT 
+                SUM(CASE WHEN transaction_type = 'contribution' THEN amount ELSE 0 END) AS total_contributions,
+                SUM(CASE WHEN transaction_type = 'withdrawal' THEN amount ELSE 0 END) AS total_withdrawals,
+                COUNT(*) AS total_transactions,
+                DATE(created_at) AS created_at
+              FROM transactions
+              WHERE user_id = ? AND created_at 
+              BETWEEN ? AND ?
+              GROUP BY DATE(created_at)
+              ORDER BY created_at";
+
+    return $this->db->fetchAll($query, [$userId, $startDate, $endDatePlusOne]);
+  }
 }
