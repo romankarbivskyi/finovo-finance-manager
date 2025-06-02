@@ -25,10 +25,6 @@ class TransactionController
       $goalId = $data['goal_id'] ?? null;
       $user = $this->auth->getUser();
 
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
-
       $errors = $this->transactionModel->validate($data);
       if (!empty($errors)) {
         Response::json(['errors' => $errors], 400);
@@ -50,10 +46,6 @@ class TransactionController
       $offset = $request->query('offset', 0);
       $user = $this->auth->getUser();
 
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
-
       $transactions = $this->transactionModel->getAllForUser($user['id'], $limit, $offset);
       $total = $this->transactionModel->getTotalForUser($user['id']);
 
@@ -68,10 +60,6 @@ class TransactionController
     try {
       $limit = $request->query('limit', 10);
       $offset = $request->query('offset', 0);
-      $user = $this->auth->getUser();
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
 
       $transactions = $this->transactionModel->getAllForGoal($goalId, $limit, $offset);
       $total = $this->transactionModel->getTotalForGoal($goalId);
@@ -87,10 +75,6 @@ class TransactionController
   {
     try {
       $user = $this->auth->getUser();
-
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
 
       $transaction = $this->transactionModel->delete($transactionId, $user['id']);
 

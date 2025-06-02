@@ -52,6 +52,8 @@ use server\core\Response;
 use server\core\Router;
 use server\core\Session;
 use server\core\Request;
+use server\middlewares\AuthMiddleware;
+use server\middlewares\AdminMiddleware;
 
 Session::getInstance();
 
@@ -65,27 +67,27 @@ $router->addRoute('GET', '/', function () {
 
 $router->addRoute('POST', '/users/register', 'UserController@register');
 $router->addRoute('POST', '/users/login', 'UserController@login');
-$router->addRoute('GET', '/users/profile', 'UserController@getUser');
-$router->addRoute('POST', '/users/profile', 'UserController@updateProfile');
-$router->addRoute('POST', '/users/logout', 'UserController@logout');
+$router->addRoute('GET', '/users/profile', 'UserController@getUser', [AuthMiddleware::class]);
+$router->addRoute('POST', '/users/profile', 'UserController@updateProfile', [AuthMiddleware::class]);
+$router->addRoute('POST', '/users/logout', 'UserController@logout', [AuthMiddleware::class]);
 $router->addRoute('DELETE', '/users/{id}', 'UserController@delete');
-$router->addRoute('DELETE', '/users', 'UserController@delete');
+$router->addRoute('DELETE', '/users', 'UserController@delete', [AuthMiddleware::class]);
 $router->addRoute('POST', '/users/password/forgot', 'UserController@sendRecoveryToken');
 $router->addRoute('POST', '/users/password/reset', 'UserController@resetPassword');
-$router->addRoute('POST', '/users/password/change', 'UserController@changePassword');
-$router->addRoute('GET', '/users', 'UserController@getAllUsers');
+$router->addRoute('POST', '/users/password/change', 'UserController@changePassword', [AuthMiddleware::class]);
+$router->addRoute('GET', '/users', 'UserController@getAllUsers', [AdminMiddleware::class]);
 
-$router->addRoute('POST', '/goals/{id}', 'GoalController@update');
-$router->addRoute('POST', '/goals', 'GoalController@create');
-$router->addRoute('GET', '/goals', 'GoalController@getAll');
-$router->addRoute('DELETE', '/goals/{id}', 'GoalController@delete');
-$router->addRoute('GET', '/goals/stats', 'GoalController@getStats');
-$router->addRoute('GET', '/goals/{id}', 'GoalController@getById');
-$router->addRoute('GET', '/goals/{id}/transactions', 'TransactionController@getAllForGoal');
+$router->addRoute('POST', '/goals/{id}', 'GoalController@update', [AuthMiddleware::class]);
+$router->addRoute('POST', '/goals', 'GoalController@create', [AuthMiddleware::class]);
+$router->addRoute('GET', '/goals', 'GoalController@getAll', [AuthMiddleware::class]);
+$router->addRoute('DELETE', '/goals/{id}', 'GoalController@delete', [AuthMiddleware::class]);
+$router->addRoute('GET', '/goals/stats', 'GoalController@getStats', [AuthMiddleware::class]);
+$router->addRoute('GET', '/goals/{id}', 'GoalController@getById', [AuthMiddleware::class]);
+$router->addRoute('GET', '/goals/{id}/transactions', 'TransactionController@getAllForGoal', [AuthMiddleware::class]);
 
-$router->addRoute('GET', '/transactions', 'TransactionController@getAllForUser');
-$router->addRoute('POST', '/transactions', 'TransactionController@create');
-$router->addRoute('DELETE', '/transactions/{id}', 'TransactionController@delete');
+$router->addRoute('GET', '/transactions', 'TransactionController@getAllForUser', [AuthMiddleware::class]);
+$router->addRoute('POST', '/transactions', 'TransactionController@create', [AuthMiddleware::class]);
+$router->addRoute('DELETE', '/transactions/{id}', 'TransactionController@delete', [AuthMiddleware::class]);
 
 $route = $router->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
@@ -93,28 +95,29 @@ if ($route) {
   $callback = $route['callback'];
   $routeParams = $route['params'];
   $queryParams = $route['query'] ?? [];
+  $middlewares = $route['middlewares'] ?? [];
 
   $request->setQueryParams($queryParams);
 
   $actionParams = array_values($routeParams);
   $actionParams[] = $request;
 
-  if (is_callable($callback)) {
-    call_user_func_array($callback, $actionParams);
-  } else if (is_string($callback) && strpos($callback, '@') !== false) {
-    list($controller, $method) = explode('@', $callback);
-    $controllerClass = "server\\Controllers\\{$controller}";
-    if (class_exists($controllerClass)) {
-      $controllerInstance = new $controllerClass();
-      if (method_exists($controllerInstance, $method)) {
-        call_user_func_array([$controllerInstance, $method], $actionParams);
-      } else {
-        Response::json(['error' => 'Method not found'], 404);
-      }
+  $finalCallback = function (Request $request) use ($callback, $actionParams) {
+    if (is_callable($callback)) {
+      return call_user_func_array($callback, $actionParams);
     } else {
-      Response::json(['error' => 'Controller not found'], 404);
+      list($controllerName, $methodName) = explode('@', $callback);
+      $controllerClass = "server\\controllers\\$controllerName";
+      $controller = new $controllerClass();
+      return call_user_func_array([$controller, $methodName], $actionParams);
     }
+  };
+
+  if (!empty($middlewares)) {
+    $router->executeMiddlewares($middlewares, $request, $finalCallback);
+  } else {
+    $finalCallback($request);
   }
 } else {
-  Response::json(['error' => 'Route not found'], 404);
+  Response::json(['error' => 'Route not found.'], 404);
 }

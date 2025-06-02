@@ -22,9 +22,6 @@ class GoalController
   {
     try {
       $user = $this->auth->getUser();
-      if (!$user) {
-        throw new \Exception('User not authenticated.', 401);
-      }
 
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
@@ -58,10 +55,6 @@ class GoalController
   {
     try {
       $user = $this->auth->getUser();
-      if (!$user) {
-        Response::json(['error' => 'User not authenticated.'], 401);
-        return;
-      }
 
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
@@ -108,10 +101,6 @@ class GoalController
   {
     try {
       $user = $this->auth->getUser();
-      if (!$user) {
-        Response::json(['error' => 'User not authenticated.'], 401);
-        return;
-      }
 
       $goal = $this->goalModel->getById($id);
       if (!$goal) {
@@ -145,10 +134,6 @@ class GoalController
       $sort = $request->query('sort', "new");
 
       $user = $this->auth->getUser();
-      if (!$user) {
-        Response::json(['error' => 'User not authenticated.'], 401);
-        return;
-      }
 
       $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset, $currency, $status, $sort);
       $total = $this->goalModel->getTotalForUser($user['id'], $currency, $status);
@@ -162,10 +147,6 @@ class GoalController
   {
     try {
       $user = $this->auth->getUser();
-      if (!$user) {
-        Response::json(['error' => 'User not authenticated.'], 401);
-        return;
-      }
 
       $goal = $this->goalModel->getById($id);
       if (!$goal) {
@@ -187,11 +168,6 @@ class GoalController
   {
     try {
       $user = $this->auth->getUser();
-      if (!$user) {
-        Response::json(['error' => 'User not authenticated.'], 401);
-        return;
-      }
-
       $stats = $this->goalModel->getStats($user['id']);
       Response::json(['data' => $stats], 200);
     } catch (\Exception $e) {

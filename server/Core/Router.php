@@ -6,7 +6,7 @@ class Router
 {
   private $routes = [];
 
-  public function addRoute($method, $path, $callback)
+  public function addRoute($method, $path, $callback, $middlewares = [])
   {
     if (is_string($path)) {
       $path = rtrim($path, '/');
@@ -27,6 +27,7 @@ class Router
       'method' => strtoupper($method),
       'path' => $path,
       'callback' => $callback,
+      'middlewares' => $middlewares,
     ];
   }
 
@@ -61,11 +62,29 @@ class Router
           return [
             'callback' => $route['callback'],
             'params' => $params,
-            'query' => $queryParams
+            'query' => $queryParams,
+            'middlewares' => $route['middlewares'] ?? []
           ];
         }
       }
     }
     return null;
+  }
+
+  public function executeMiddlewares($middlewares, Request $request, callable $finalCallback)
+  {
+    $middlewareStack = array_reverse($middlewares);
+
+    $next = $finalCallback;
+
+    foreach ($middlewareStack as $middlewareClass) {
+      $middleware = new $middlewareClass();
+      $currentNext = $next;
+      $next = function (Request $request) use ($middleware, $currentNext) {
+        return $middleware->handle($request, $currentNext);
+      };
+    }
+
+    return $next($request);
   }
 }

@@ -77,11 +77,7 @@ class UserController
   {
     try {
       $user = $this->auth->getUser();
-      if ($user) {
-        Response::json(['data' => $user], 200);
-      } else {
-        Response::json(['error' => 'User not authenticated.'], 401);
-      }
+      Response::json(['data' => $user], 200);
     } catch (\Exception $e) {
       Response::json(['error' => 'Failed to retrieve user.'], 500);
     }
@@ -188,10 +184,6 @@ class UserController
 
       $user = $this->auth->getUser();
 
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
-
       if (!$this->userModel->validateCredentials($user['email'], $currentPassword)) {
         throw new \Exception("Current password is incorrect.");
       }
@@ -209,10 +201,6 @@ class UserController
     try {
       $data = $request->getJsonBody();
       $user = $this->auth->getUser();
-
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
 
       $updatedData = [
         'username' => isset($data['username']) ? trim($data['username']) : '',
@@ -238,10 +226,6 @@ class UserController
     try {
       $user = $this->auth->getUser();
 
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
-
       if (!$this->auth->isAdmin() && $user['id'] != ($id ?? null)) {
         Response::json(['error' => 'Unauthorized access.'], 403);
         return;
@@ -262,17 +246,6 @@ class UserController
   public function getAllUsers(Request $request)
   {
     try {
-      $user = $this->auth->getUser();
-
-      if (!$user) {
-        throw new \Exception("User not authenticated.");
-      }
-
-      if (!$this->auth->isAdmin()) {
-        Response::json(['error' => 'Unauthorized access.'], 403);
-        return;
-      }
-
       $limit = $request->query('limit', 10);
       $offset = $request->query('offset', 0);
       $sortBy = $request->query('sort_by', 'id');
