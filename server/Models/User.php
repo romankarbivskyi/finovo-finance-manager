@@ -1,6 +1,6 @@
 <?php
 
-namespace server\Models;
+namespace server\models;
 
 use server\Core\Database;
 

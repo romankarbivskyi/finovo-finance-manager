@@ -1,8 +1,8 @@
 <?php
 
-namespace server\Helpers;
+namespace server\helpers;
 
-use server\Utils\HttpClient;
+use server\utils\HttpClient;
 
 class ExchangeRate
 {

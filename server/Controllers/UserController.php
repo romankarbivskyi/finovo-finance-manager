@@ -1,12 +1,12 @@
 <?php
 
-namespace server\Controllers;
+namespace server\controllers;
 
-use server\Core\Auth;
-use server\Core\Response;
-use server\Models\User;
-use server\Core\Request;
-use server\Utils\HttpClient;
+use server\core\Auth;
+use server\core\Response;
+use server\models\User;
+use server\core\Request;
+use server\utils\HttpClient;
 
 class UserController
 {

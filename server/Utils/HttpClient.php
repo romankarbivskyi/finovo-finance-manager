@@ -1,8 +1,6 @@
 <?php
 
-namespace server\Utils;
-
-use CURLFile;
+namespace server\utils;
 
 class HttpClient
 {

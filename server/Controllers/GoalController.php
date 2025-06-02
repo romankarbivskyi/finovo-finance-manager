@@ -1,11 +1,11 @@
 <?php
 
-namespace server\Controllers;
+namespace server\controllers;
 
-use server\Core\Auth;
-use server\Core\Response;
-use server\Models\Goal;
-use server\Core\Request;
+use server\core\Auth;
+use server\core\Response;
+use server\models\Goal;
+use server\core\Request;
 
 class GoalController
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace server\Models;
+namespace server\models;
 
-use server\Core\Database;
-use server\Core\ImageHandler;
+use server\core\Database;
+use server\core\ImageHandler;
 
 class Goal
 {

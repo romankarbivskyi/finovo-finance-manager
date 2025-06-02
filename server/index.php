@@ -47,11 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/autoload.php';
 
-use server\Core\Database;
-use server\Core\Response;
-use server\Core\Router;
-use server\Core\Session;
-use server\Core\Request;
+use server\core\Database;
+use server\core\Response;
+use server\core\Router;
+use server\core\Session;
+use server\core\Request;
 
 Session::getInstance();
 

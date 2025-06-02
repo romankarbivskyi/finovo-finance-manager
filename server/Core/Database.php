@@ -1,6 +1,6 @@
 <?php
 
-namespace server\Core;
+namespace server\core;
 
 use PDO;
 use PDOException;

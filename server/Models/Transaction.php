@@ -1,10 +1,10 @@
 <?php
 
-namespace server\Models;
+namespace server\models;
 
-use server\Core\Database;
-use server\Helpers\ExchangeRate;
-use server\Models\Goal;
+use server\core\Database;
+use server\helpers\ExchangeRate;
+use server\models\Goal;
 
 class Transaction
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace server\Controllers;
+namespace server\controllers;
 
-use server\Core\Response;
-use server\Core\Auth;
-use server\Models\Transaction;
-use server\Core\Request;
+use server\core\Response;
+use server\core\Auth;
+use server\models\Transaction;
+use server\core\Request;
 
 class TransactionController
 {
