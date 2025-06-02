@@ -10,6 +10,7 @@ export const fetchAllGoals = (
   currency?: string,
   status?: string,
   sort?: string,
+  search?: string,
 ): Promise<ApiResponse<GoalsResponse>> => {
   return handleApiRequest(
     async () =>
@@ -20,6 +21,7 @@ export const fetchAllGoals = (
           ...(currency && { currency }),
           ...(status && { status }),
           ...(sort && { sort }),
+          ...(search && { search }),
         },
       }),
   );

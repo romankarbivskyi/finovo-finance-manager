@@ -40,23 +40,48 @@ class User
     return $this->findById($userId);
   }
 
-  public function getAll($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc")
+  public function getAll($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc", $search = null)
   {
-    $sortBy = in_array($sortBy, ['username', 'email', 'role', 'created_at']) ? $sortBy : 'created_at';
-    $sortOrder = strtolower($sortOrder) === 'desc' ? 'DESC' : 'ASC';
-
-    $query = "SELECT id, username, email, role, created_at FROM users ORDER BY $sortBy $sortOrder LIMIT ? OFFSET ?";
-
     if ($limit < 1 || $offset < 0) {
       throw new \InvalidArgumentException("Invalid limit or offset.");
     }
 
-    return $this->db->fetchAll($query, [$limit, $offset]);
+    $whereClause = '';
+    $params = [];
+
+    if ($search) {
+      $whereClause = "WHERE LOWER(username) LIKE ? OR LOWER(email) LIKE ?";
+      $params[] = "%" . strtolower($search) . "%";
+      $params[] = "%" . strtolower($search) . "%";
+    }
+
+    $sortBy = in_array($sortBy, ['username', 'email', 'role', 'created_at']) ? $sortBy : 'created_at';
+    $sortOrder = strtolower($sortOrder) === 'desc' ? 'DESC' : 'ASC';
+
+    $query = "SELECT id, username, email, role, created_at FROM users $whereClause ORDER BY $sortBy $sortOrder LIMIT ? OFFSET ?";
+    $params[] = $limit;
+    $params[] = $offset;
+
+    return $this->db->fetchAll($query, $params);
   }
 
-  public function getTotalUsers()
+  public function getTotalUsers($search = null)
   {
-    return $this->db->fetchOne("SELECT COUNT(*) as total FROM users")['total'];
+    $whereClause = '';
+    $params = [];
+
+    if ($search) {
+      $whereClause = "WHERE LOWER(username) LIKE ? OR LOWER(email) LIKE ?";
+      $params[] = "%" . strtolower($search) . "%";
+      $params[] = "%" . strtolower($search) . "%";
+    }
+
+    $query = "SELECT COUNT(*) as total FROM users $whereClause";
+
+    if ($whereClause) {
+      return $this->db->fetchOne($query, $params)['total'];
+    }
+    return $this->db->fetchOne($query)['total'];
   }
 
   public function validateCredentials($email, $password)

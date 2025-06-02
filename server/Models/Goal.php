@@ -45,7 +45,7 @@ class Goal
     return $this->db->fetchOne("SELECT * FROM goals WHERE id = ?", [$id]);
   }
 
-  public function getAllForUser($userId, $limit = 10, $offset = 0, $currency = null, $status = null, $sort = null)
+  public function getAllForUser($userId, $limit = 10, $offset = 0, $currency = null, $status = null, $sort = null, $search = null)
   {
     $query = "SELECT * FROM goals WHERE user_id = ?";
     $params = [$userId];
@@ -58,6 +58,12 @@ class Goal
     if ($status !== null && strtolower($status) !== 'all') {
       $query .= " AND status = ?";
       $params[] = $status;
+    }
+
+    if ($search !== null && $search !== '') {
+      $query .= " AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)";
+      $params[] = '%' . strtolower($search) . '%';
+      $params[] = '%' . strtolower($search) . '%';
     }
 
     if ($sort !== null && strtolower($sort) === 'old') {
@@ -75,7 +81,7 @@ class Goal
     return $this->db->fetchAll($query, $params);
   }
 
-  public function getTotalForUser($userId, $currency = null, $status = null)
+  public function getTotalForUser($userId, $currency = null, $status = null, $search = null)
   {
     $query = "SELECT COUNT(*) as count FROM goals WHERE user_id = ?";
     $params = [$userId];
@@ -88,6 +94,12 @@ class Goal
     if ($status !== null && strtolower($status) !== 'all') {
       $query .= " AND status = ?";
       $params[] = $status;
+    }
+
+    if ($search !== null && $search !== '') {
+      $query .= " AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)";
+      $params[] = '%' . strtolower($search) . '%';
+      $params[] = '%' . strtolower($search) . '%';
     }
 
     return $this->db->fetchOne($query, $params)['count'];

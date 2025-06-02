@@ -87,6 +87,7 @@ export const fetchAllUsers = (
   limit: number,
   offset: number,
   sort?: ColumnSort,
+  search?: string,
 ) => {
   return handleApiRequest(
     async () =>
@@ -96,6 +97,7 @@ export const fetchAllUsers = (
           offset,
           sort_by: sort?.id,
           sort_order: sort?.desc ? "desc" : "asc",
+          search: search,
         },
       }),
   );

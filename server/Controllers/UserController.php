@@ -250,9 +250,10 @@ class UserController
       $offset = $request->query('offset', 0);
       $sortBy = $request->query('sort_by', 'id');
       $sortOrder = $request->query('sort_order', 'asc');
+      $search = $request->query('search', '');
 
-      $users = $this->userModel->getAll($limit, $offset, $sortBy, $sortOrder);
-      $total = $this->userModel->getTotalUsers();
+      $users = $this->userModel->getAll($limit, $offset, $sortBy, $sortOrder, $search);
+      $total = $this->userModel->getTotalUsers($search);
       Response::json([
         'data' => [
           'users' => $users,

@@ -17,3 +17,4 @@ export { default as GoalsFilter } from "./GoalsFilter";
 export { default as Footer } from "./Footer";
 export { default as TimeSort } from "./TimeSort";
 export { default as DataTable } from "./DataTable";
+export { default as Search } from "./Search";

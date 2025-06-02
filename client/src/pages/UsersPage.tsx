@@ -1,4 +1,4 @@
-import { DataTable, Header } from "@/components";
+import { DataTable, Header, Search } from "@/components";
 import { ITEMS_PER_PAGE } from "@/constants";
 import { fetchAllUsers } from "@/api/user.api";
 import type { ApiResponse } from "@/types/api.types";
@@ -24,7 +24,7 @@ const UsersPage = () => {
   const { openModal } = useModalStore();
 
   const [sorting, setSorting] = useState<SortingState>([]);
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
@@ -33,9 +33,9 @@ const UsersPage = () => {
     isLoading,
     refetch,
   } = useQuery<ApiResponse<UsersResponse>, Error>({
-    queryKey: ["goals", offset, ITEMS_PER_PAGE, sorting],
+    queryKey: ["goals", offset, ITEMS_PER_PAGE, sorting, searchQuery],
     queryFn: async () =>
-      await fetchAllUsers(ITEMS_PER_PAGE, offset, sorting[0]),
+      await fetchAllUsers(ITEMS_PER_PAGE, offset, sorting[0], searchQuery),
     refetchInterval: 10000,
   });
 
@@ -172,6 +172,7 @@ const UsersPage = () => {
       <Header title="Users" subtitle="View and manage users in the system" />
 
       <div className="space-y-4">
+        <Search onSearchChange={setSearchQuery} />
         <DataTable
           data={users}
           columns={columns}

@@ -6,6 +6,7 @@ import {
   GoalCard,
   GoalsFilter,
   Header,
+  Search,
   TimeSort,
 } from "@/components";
 import type { ApiResponse } from "@/types/api.types";
@@ -20,6 +21,7 @@ const GoalsPage = () => {
     currency: "",
     status: "",
   });
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [sort, setSort] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const offset = (page - 1) * ITEMS_PER_PAGE;
@@ -29,7 +31,7 @@ const GoalsPage = () => {
     isLoading,
     refetch,
   } = useQuery<ApiResponse<GoalsResponse>, Error>({
-    queryKey: ["goals", offset, ITEMS_PER_PAGE, filters, sort],
+    queryKey: ["goals", offset, ITEMS_PER_PAGE, filters, sort, searchQuery],
     queryFn: async () =>
       await fetchAllGoals(
         ITEMS_PER_PAGE,
@@ -37,6 +39,7 @@ const GoalsPage = () => {
         filters.currency,
         filters.status,
         sort,
+        searchQuery,
       ),
     refetchInterval: 10000,
   });
@@ -66,11 +69,11 @@ const GoalsPage = () => {
       </Header>
 
       <div className="gap mb-4 flex items-center gap-4">
+        <Search onSearchChange={setSearchQuery} />
         <GoalsFilter
           onCurrencyChange={handleCurrencyChange}
           onStatusChange={handleStatusChange}
         />
-
         <TimeSort onSortChange={handleSortChange} />
       </div>
 
