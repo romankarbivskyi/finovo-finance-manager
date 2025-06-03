@@ -161,7 +161,6 @@ class Transaction
     return $errors;
   }
 
-
   public function getStats($userId, $startDate, $endDate)
   {
     $query = "SELECT 
@@ -178,6 +177,7 @@ class Transaction
 
     $results = $this->db->fetchAll($query, [$userId, $startDate, $endDate]);
 
+    $exchangeRates = [];
     $statsByDate = [];
 
     foreach ($results as $result) {
@@ -197,7 +197,11 @@ class Transaction
         $contributionsInUSD = $result['total_contributions'];
         $withdrawalsInUSD = $result['total_withdrawals'];
       } else {
-        $exchangeRate = ExchangeRate::getPair($currency, 'USD');
+        if (!isset($exchangeRates[$currency])) {
+          $exchangeRates[$currency] = ExchangeRate::getPair($currency, 'USD');
+        }
+
+        $exchangeRate = $exchangeRates[$currency];
         $contributionsInUSD = $result['total_contributions'] * $exchangeRate;
         $withdrawalsInUSD = $result['total_withdrawals'] * $exchangeRate;
       }
