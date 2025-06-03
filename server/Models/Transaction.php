@@ -161,19 +161,52 @@ class Transaction
     return $errors;
   }
 
+
   public function getStats($userId, $startDate, $endDate)
   {
     $query = "SELECT 
-                SUM(CASE WHEN transaction_type = 'contribution' THEN amount ELSE 0 END) AS total_contributions,
-                SUM(CASE WHEN transaction_type = 'withdrawal' THEN amount ELSE 0 END) AS total_withdrawals,
-                COUNT(*) AS total_transactions,
-                DATE(created_at) AS created_at
-              FROM transactions
-              WHERE user_id = ? AND created_at 
-              BETWEEN ? AND ?
-              GROUP BY DATE(created_at)
-              ORDER BY created_at";
+              SUM(CASE WHEN transaction_type = 'contribution' THEN amount ELSE 0 END) AS total_contributions,
+              SUM(CASE WHEN transaction_type = 'withdrawal' THEN amount ELSE 0 END) AS total_withdrawals,
+              COUNT(*) AS total_transactions,
+              currency,
+              DATE(created_at) AS created_at
+            FROM transactions
+            WHERE user_id = ? AND created_at 
+            BETWEEN ? AND ?
+            GROUP BY DATE(created_at), currency
+            ORDER BY created_at";
 
-    return $this->db->fetchAll($query, [$userId, $startDate, $endDate]);
+    $results = $this->db->fetchAll($query, [$userId, $startDate, $endDate]);
+
+    $statsByDate = [];
+
+    foreach ($results as $result) {
+      $date = $result['created_at'];
+      $currency = $result['currency'];
+
+      if (!isset($statsByDate[$date])) {
+        $statsByDate[$date] = [
+          'total_contributions' => 0,
+          'total_withdrawals' => 0,
+          'total_transactions' => 0,
+          'created_at' => $date
+        ];
+      }
+
+      if ($currency === 'USD') {
+        $contributionsInUSD = $result['total_contributions'];
+        $withdrawalsInUSD = $result['total_withdrawals'];
+      } else {
+        $exchangeRate = ExchangeRate::getPair($currency, 'USD');
+        $contributionsInUSD = $result['total_contributions'] * $exchangeRate;
+        $withdrawalsInUSD = $result['total_withdrawals'] * $exchangeRate;
+      }
+
+      $statsByDate[$date]['total_contributions'] += $contributionsInUSD;
+      $statsByDate[$date]['total_withdrawals'] += $withdrawalsInUSD;
+      $statsByDate[$date]['total_transactions'] += $result['total_transactions'];
+    }
+
+    return array_values($statsByDate);
   }
 }

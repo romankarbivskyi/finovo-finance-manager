@@ -96,6 +96,7 @@ class TransactionController
         throw new \Exception("Start date cannot be after end date.");
       }
 
+      $endDate = date('Y-m-d', strtotime($endDate . ' +1 day'));
       $stats = $this->transactionModel->getStats($userId, $startDate, $endDate);
 
       Response::json(['data' => $stats], 200);
