@@ -70,7 +70,7 @@ $router->addRoute('POST', '/users/login', 'UserController@login');
 $router->addRoute('GET', '/users/profile', 'UserController@getUser', [AuthMiddleware::class]);
 $router->addRoute('POST', '/users/profile', 'UserController@updateProfile', [AuthMiddleware::class]);
 $router->addRoute('POST', '/users/logout', 'UserController@logout', [AuthMiddleware::class]);
-$router->addRoute('DELETE', '/users/{id}', 'UserController@delete');
+$router->addRoute('DELETE', '/users/{id}', 'UserController@delete', [AdminMiddleware::class]);
 $router->addRoute('DELETE', '/users', 'UserController@delete', [AuthMiddleware::class]);
 $router->addRoute('POST', '/users/password/forgot', 'UserController@sendRecoveryToken');
 $router->addRoute('POST', '/users/password/reset', 'UserController@resetPassword');
