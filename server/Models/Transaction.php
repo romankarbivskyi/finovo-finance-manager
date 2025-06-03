@@ -171,7 +171,7 @@ class Transaction
               FROM transactions
               WHERE user_id = ? AND created_at 
               BETWEEN ? AND ?
-              GROUP BY created_at
+              GROUP BY DATE(created_at)
               ORDER BY created_at";
 
     return $this->db->fetchAll($query, [$userId, $startDate, $endDate]);
