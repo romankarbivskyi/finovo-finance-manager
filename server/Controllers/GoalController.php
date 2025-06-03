@@ -2,31 +2,34 @@
 
 namespace server\controllers;
 
-use server\core\Auth;
 use server\core\Response;
 use server\models\Goal;
 use server\core\Request;
+use server\core\Session;
+use server\models\User;
 
 class GoalController
 {
-  private $auth;
   private $goalModel;
+  private $session;
+  private $userModel;
 
   public function __construct()
   {
-    $this->auth = Auth::getInstance();
     $this->goalModel = new Goal();
+    $this->session = Session::getInstance();
+    $this->userModel = new User();
   }
 
   public function create()
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
       if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
-        $maxFileSize = 10 * 1024 * 1024; // 10MB
+        $maxFileSize = 10 * 1024 * 1024;
         if ($imageFile['size'] > $maxFileSize) {
           Response::json(['errors' => ['image' => 'File size exceeds the limit of 10MB.']], 400);
           return;
@@ -40,7 +43,7 @@ class GoalController
       }
 
       $goal = $this->goalModel->create(
-        $user['id'],
+        $userId,
         $_POST,
         isset($_FILES['image']) ? $_FILES['image'] : null
       );
@@ -54,12 +57,12 @@ class GoalController
   public function update($id)
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
       $imageFile = isset($_FILES['image']) ? $_FILES['image'] : null;
 
       if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
-        $maxFileSize = 10 * 1024 * 1024; // 10MB
+        $maxFileSize = 10 * 1024 * 1024;
         if ($imageFile['size'] > $maxFileSize) {
           Response::json(['errors' => ['image' => 'File size exceeds the limit of 10MB.']], 400);
           return;
@@ -74,7 +77,7 @@ class GoalController
 
       $updatedGoal = $this->goalModel->update(
         $id,
-        $user['id'],
+        $userId,
         $_POST,
         $imageFile
       );
@@ -100,19 +103,19 @@ class GoalController
   public function delete($id)
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
       $goal = $this->goalModel->getById($id);
       if (!$goal) {
         Response::json(['error' => 'Goal not found.'], 404);
         return;
       }
-      if ($goal['user_id'] !== $user['id']) {
+      if ($goal['user_id'] !== $userId) {
         Response::json(['error' => 'Unauthorized action.'], 403);
         return;
       }
 
-      $deleted = $this->goalModel->delete($id, $user['id']);
+      $deleted = $this->goalModel->delete($id, $userId);
 
       if ($deleted) {
         Response::json(['message' => 'Goal deleted successfully.'], 200);
@@ -134,10 +137,10 @@ class GoalController
       $sort = $request->query('sort', 'new');
       $search = $request->query('search', '');
 
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
-      $goals = $this->goalModel->getAllForUser($user['id'], $limit, $offset, $currency, $status, $sort, $search);
-      $total = $this->goalModel->getTotalForUser($user['id'], $currency, $status, $search);
+      $goals = $this->goalModel->getAllForUser($userId, $limit, $offset, $currency, $status, $sort, $search);
+      $total = $this->goalModel->getTotalForUser($userId, $currency, $status, $search);
       Response::json(['data' => ['goals' => $goals, 'total' => $total]], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
@@ -147,14 +150,14 @@ class GoalController
   public function getById($id)
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
       $goal = $this->goalModel->getById($id);
       if (!$goal) {
         Response::json(['error' => 'Goal not found.'], 404);
         return;
       }
-      if ($goal['user_id'] !== $user['id']) {
+      if ($goal['user_id'] !== $userId) {
         Response::json(['error' => 'Unauthorized action.'], 403);
         return;
       }
@@ -168,8 +171,8 @@ class GoalController
   public function getStats()
   {
     try {
-      $user = $this->auth->getUser();
-      $stats = $this->goalModel->getStats($user['id']);
+      $userId = $this->session->get('user_id');
+      $stats = $this->goalModel->getStats($userId);
       Response::json(['data' => $stats], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);

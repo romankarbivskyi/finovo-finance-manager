@@ -3,19 +3,19 @@
 namespace server\controllers;
 
 use server\core\Response;
-use server\core\Auth;
 use server\models\Transaction;
 use server\core\Request;
+use server\core\Session;
 
 class TransactionController
 {
-  private $auth;
   private $transactionModel;
+  private $session;
 
   public function __construct()
   {
-    $this->auth = Auth::getInstance();
     $this->transactionModel = new Transaction();
+    $this->session = Session::getInstance();
   }
 
   public function create(Request $request)
@@ -23,7 +23,7 @@ class TransactionController
     try {
       $data = $request->getJsonBody();
       $goalId = $data['goal_id'] ?? null;
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
       $errors = $this->transactionModel->validate($data);
       if (!empty($errors)) {
@@ -31,7 +31,7 @@ class TransactionController
         return;
       }
 
-      $transaction = $this->transactionModel->create($goalId, $user['id'], $data);
+      $transaction = $this->transactionModel->create($goalId, $userId, $data);
 
       Response::json(['data' => $transaction], 201);
     } catch (\Exception $e) {
@@ -44,10 +44,10 @@ class TransactionController
     try {
       $limit = $request->query('limit', 10);
       $offset = $request->query('offset', 0);
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
-      $transactions = $this->transactionModel->getAllForUser($user['id'], $limit, $offset);
-      $total = $this->transactionModel->getTotalForUser($user['id']);
+      $transactions = $this->transactionModel->getAllForUser($userId, $limit, $offset);
+      $total = $this->transactionModel->getTotalForUser($userId);
 
       Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
     } catch (\Exception $e) {
@@ -65,22 +65,17 @@ class TransactionController
       $total = $this->transactionModel->getTotalForGoal($goalId);
 
       Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
-      statusCode:
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
   }
 
-  public function delete($transactionId)
+  public function delete($id)
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
-      $transaction = $this->transactionModel->delete($transactionId, $user['id']);
-
-      if (!$transaction) {
-        throw new \Exception("Transaction not found or access denied.");
-      }
+      $this->transactionModel->delete($id, $userId);
 
       Response::json(['message' => 'Transaction deleted successfully.'], 200);
     } catch (\Exception $e) {
@@ -91,15 +86,11 @@ class TransactionController
   public function getStats(Request $request)
   {
     try {
-      $startDate = $request->query('start_date');
-      $endDate = $request->query('end_date');
-      $user = $this->auth->getUser();
+      $startDate = $request->query('start_date', date('Y-m-d', strtotime('-30 days')));
+      $endDate = $request->query('end_date', date('Y-m-d'));
+      $userId = $this->session->get('user_id');
 
-      if (!$startDate || !$endDate) {
-        throw new \Exception("Start date and end date are required.");
-      }
-
-      $stats = $this->transactionModel->getStats($user['id'], $startDate, $endDate);
+      $stats = $this->transactionModel->getStats($userId, $startDate, $endDate);
 
       Response::json(['data' => $stats], 200);
     } catch (\Exception $e) {

@@ -2,21 +2,21 @@
 
 namespace server\controllers;
 
-use server\core\Auth;
 use server\core\Response;
 use server\models\User;
 use server\core\Request;
 use server\utils\HttpClient;
+use server\core\Session;
 
 class UserController
 {
-  private $auth;
   private $userModel;
+  private $session;
 
   public function __construct()
   {
-    $this->auth = Auth::getInstance();
     $this->userModel = new User();
+    $this->session = Session::getInstance();
   }
 
   public function register(Request $request)
@@ -35,7 +35,15 @@ class UserController
         return;
       }
 
-      $user = $this->auth->register($userData['username'], $userData['email'], $userData['password']);
+      $existingUser = $this->userModel->findByEmail($userData['email']);
+      if ($existingUser) {
+        throw new \Exception("Email already exists.");
+      }
+
+      $user = $this->userModel->create($userData);
+
+      $this->session->set('user_id', $user['id']);
+      $this->session->regenerate();
 
       unset($user['password']);
 
@@ -62,7 +70,8 @@ class UserController
         throw new \Exception("Invalid email or password.");
       }
 
-      $this->auth->login($email, $password);
+      $this->session->set('user_id', $user['id']);
+      $this->session->regenerate();
 
       unset($user['password']);
 
@@ -72,11 +81,18 @@ class UserController
     }
   }
 
-
   public function getUser()
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
+      $user = $this->userModel->findById($userId);
+
+      if (!$user) {
+        $this->session->remove('user_id');
+        throw new \Exception("User not found.");
+      }
+
+      unset($user['password']);
       Response::json(['data' => $user], 200);
     } catch (\Exception $e) {
       Response::json(['error' => 'Failed to retrieve user.'], 500);
@@ -86,7 +102,7 @@ class UserController
   public function logout()
   {
     try {
-      $this->auth->logout();
+      $this->session->destroy();
       Response::json(['message' => 'Logged out successfully.'], 200);
     } catch (\Exception $e) {
       Response::json(['error' => 'Logout failed.'], 500);
@@ -140,7 +156,7 @@ class UserController
         throw new \Exception("Failed to send recovery email.");
       }
 
-      Response::json(['message' => 'Recovery token sent.'], 200);
+      Response::json(['message' => 'Recovery email sent successfully.'], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
@@ -150,20 +166,19 @@ class UserController
   {
     try {
       $data = $request->getJsonBody();
-      $token = isset($data['token']) ? trim($data['token']) : '';
-      $newPassword = isset($data['password']) ? $data['password'] : '';
+      $token = isset($data['token']) ? $data['token'] : '';
+      $password = isset($data['password']) ? $data['password'] : '';
 
-      if (empty($token) || empty($newPassword)) {
-        throw new \Exception("Token and new password are required.");
+      if (empty($token) || empty($password)) {
+        throw new \Exception("Token and password are required.");
+      }
+
+      if (strlen($password) < 6) {
+        throw new \Exception("Password must be at least 6 characters long.");
       }
 
       $userId = $this->userModel->validateRecoveryToken($token);
-
-      if (!$userId) {
-        throw new \Exception("Invalid or expired token.");
-      }
-
-      $this->userModel->updatePassword($userId, $newPassword);
+      $this->userModel->updatePassword($userId, $password);
 
       Response::json(['message' => 'Password reset successfully.'], 200);
     } catch (\Exception $e) {
@@ -182,7 +197,8 @@ class UserController
         throw new \Exception("Current and new passwords are required.");
       }
 
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
+      $user = $this->userModel->findById($userId);
 
       if (!$this->userModel->validateCredentials($user['email'], $currentPassword)) {
         throw new \Exception("Current password is incorrect.");
@@ -200,7 +216,7 @@ class UserController
   {
     try {
       $data = $request->getJsonBody();
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
 
       $updatedData = [
         'username' => isset($data['username']) ? trim($data['username']) : '',
@@ -213,7 +229,7 @@ class UserController
         return;
       }
 
-      $this->userModel->updateProfile($user['id'], $updatedData);
+      $this->userModel->updateProfile($userId, $updatedData);
 
       Response::json(['message' => 'Profile updated successfully.'], 200);
     } catch (\Exception $e) {
@@ -224,9 +240,10 @@ class UserController
   public function delete($id)
   {
     try {
-      $user = $this->auth->getUser();
+      $userId = $this->session->get('user_id');
+      $user = $this->userModel->findById($userId);
 
-      if (!$this->auth->isAdmin() && $user['id'] != ($id ?? null)) {
+      if ($user['role'] !== 'admin' && $user['id'] != ($id ?? null)) {
         Response::json(['error' => 'Unauthorized access.'], 403);
         return;
       }
@@ -234,7 +251,7 @@ class UserController
       $this->userModel->deleteUser($id ?? $user['id']);
 
       if ($user['id'] == ($id ?? null)) {
-        $this->auth->logout();
+        $this->session->destroy();
       }
 
       Response::json(['message' => 'Account deleted successfully.'], 200);
@@ -254,14 +271,10 @@ class UserController
 
       $users = $this->userModel->getAll($limit, $offset, $sortBy, $sortOrder, $search);
       $total = $this->userModel->getTotalUsers($search);
-      Response::json([
-        'data' => [
-          'users' => $users,
-          'total' => $total,
-        ]
-      ], 200);
+
+      Response::json(['data' => ['users' => $users, 'total' => $total]], 200);
     } catch (\Exception $e) {
-      Response::json(['error' => 'Failed to retrieve users.'], 500);
+      Response::json(['error' => $e->getMessage()], 400);
     }
   }
 }

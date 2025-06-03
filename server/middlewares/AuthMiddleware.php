@@ -5,15 +5,15 @@ namespace server\middlewares;
 use server\core\MiddlewareInterface;
 use server\core\Request;
 use server\core\Response;
-use server\core\Auth;
+use server\core\Session;
 
 class AuthMiddleware implements MiddlewareInterface
 {
   public function handle(Request $request, callable $next)
   {
-    $auth = Auth::getInstance();
+    $session = Session::getInstance();
 
-    if (!$auth->isAuthenticated()) {
+    if (!$session->has('user_id')) {
       Response::json(['error' => 'User not authenticated.'], 401);
       return;
     }
