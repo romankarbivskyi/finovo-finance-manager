@@ -88,6 +88,14 @@ class TransactionController
       $endDate = $request->query('end_date', date('Y-m-d'));
       $userId = $this->session->get('user_id');
 
+      if (!$startDate || !$endDate) {
+        throw new \Exception("Invalid date range provided.");
+      }
+
+      if (strtotime($startDate) > strtotime($endDate)) {
+        throw new \Exception("Start date cannot be after end date.");
+      }
+
       $stats = $this->transactionModel->getStats($userId, $startDate, $endDate);
 
       Response::json(['data' => $stats], 200);
