@@ -126,6 +126,11 @@ class UserController
       }
 
       $token = $this->userModel->generateRecoveryToken($user['id']);
+      $mailTrapApiKey = getenv('MAILTRAP_API_KEY');
+
+      if (!$mailTrapApiKey) {
+        throw new \Exception("Mailtrap API key is not set.");
+      }
 
       $frontendUrl = getenv('FRONTEND_URL') ?: 'http://localhost:5173';
 
@@ -146,7 +151,7 @@ class UserController
           'category' => 'Password Recovery'
         ],
         [
-          'Authorization: Bearer 52510613516977ebc55ee48eb08a55cb'
+          'Authorization: Bearer ' . $mailTrapApiKey,
         ],
         true
       );
