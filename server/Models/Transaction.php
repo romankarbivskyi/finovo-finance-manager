@@ -71,26 +71,21 @@ class Transaction
     return $this->db->fetchOne("SELECT * FROM transactions WHERE id = ?", [$id]);
   }
 
-  public function getAllForUser($userId, $limit = 10, $offset = 0)
-  {
-    return $this->db->fetchAll(
-      "SELECT transactions.*, goals.name AS goal_name FROM transactions 
-       JOIN goals ON transactions.goal_id = goals.id 
-       WHERE transactions.user_id = ? 
-       ORDER BY transactions.id DESC LIMIT ? OFFSET ?",
-      [$userId, $limit, $offset]
-    );
-  }
-
-  public function getTotalForUser($userId)
-  {
-    return $this->db->fetchOne("SELECT COUNT(*) as count FROM transactions WHERE user_id = ?", [$userId])['count'];
-  }
-
   public function getAllForUserWithTotal($userId, $limit = 10, $offset = 0)
   {
-    $transactions = $this->getAllForUser($userId, $limit, $offset);
-    $total = $this->getTotalForUser($userId);
+    $baseQuery = "FROM transactions 
+                  JOIN goals ON transactions.goal_id = goals.id 
+                  WHERE transactions.user_id = ?";
+    $params = [$userId];
+
+    $countQuery = "SELECT COUNT(*) as count " . $baseQuery;
+    $total = $this->db->fetchOne($countQuery, $params)['count'];
+
+    $selectQuery = "SELECT transactions.*, goals.name AS goal_name " . $baseQuery .
+      " ORDER BY transactions.id DESC LIMIT ? OFFSET ?";
+    $selectParams = array_merge($params, [$limit, $offset]);
+
+    $transactions = $this->db->fetchAll($selectQuery, $selectParams);
 
     return [
       'transactions' => $transactions,
@@ -98,26 +93,21 @@ class Transaction
     ];
   }
 
-  public function getAllForGoal($goalId, $limit = 10, $offset = 0)
-  {
-    return $this->db->fetchAll(
-      "SELECT transactions.*, goals.name AS goal_name FROM transactions 
-       JOIN goals ON transactions.goal_id = goals.id 
-       WHERE transactions.goal_id = ?
-       ORDER BY id DESC LIMIT ? OFFSET ?",
-      [$goalId, $limit, $offset]
-    );
-  }
-
-  public function getTotalForGoal($goalId)
-  {
-    return $this->db->fetchOne("SELECT COUNT(*) as count FROM transactions WHERE goal_id = ?", [$goalId])['count'];
-  }
-
   public function getAllForGoalWithTotal($goalId, $limit = 10, $offset = 0)
   {
-    $transactions = $this->getAllForGoal($goalId, $limit, $offset);
-    $total = $this->getTotalForGoal($goalId);
+    $baseQuery = "FROM transactions 
+                  JOIN goals ON transactions.goal_id = goals.id 
+                  WHERE transactions.goal_id = ?";
+    $params = [$goalId];
+
+    $countQuery = "SELECT COUNT(*) as count " . $baseQuery;
+    $total = $this->db->fetchOne($countQuery, $params)['count'];
+
+    $selectQuery = "SELECT transactions.*, goals.name AS goal_name " . $baseQuery .
+      " ORDER BY transactions.id DESC LIMIT ? OFFSET ?";
+    $selectParams = array_merge($params, [$limit, $offset]);
+
+    $transactions = $this->db->fetchAll($selectQuery, $selectParams);
 
     return [
       'transactions' => $transactions,

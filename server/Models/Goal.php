@@ -45,70 +45,44 @@ class Goal
     return $this->db->fetchOne("SELECT * FROM goals WHERE id = ?", [$id]);
   }
 
-  public function getAllForUser($userId, $limit = 10, $offset = 0, $currency = null, $status = null, $sort = null, $search = null)
-  {
-    $query = "SELECT * FROM goals WHERE user_id = ?";
-    $params = [$userId];
-
-    if ($currency !== null && strtolower($currency) !== 'all') {
-      $query .= " AND currency = ?";
-      $params[] = $currency;
-    }
-
-    if ($status !== null && strtolower($status) !== 'all') {
-      $query .= " AND status = ?";
-      $params[] = $status;
-    }
-
-    if ($search !== null && $search !== '') {
-      $query .= " AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)";
-      $params[] = '%' . strtolower($search) . '%';
-      $params[] = '%' . strtolower($search) . '%';
-    }
-
-    if ($sort !== null && strtolower($sort) === 'old') {
-      $query .= " ORDER BY id ASC";
-    } elseif ($sort !== null && strtolower($sort) === 'new') {
-      $query .= " ORDER BY id DESC";
-    } else {
-      $query .= " ORDER BY id DESC";
-    }
-
-    $query .= " LIMIT ? OFFSET ?";
-    $params[] = $limit;
-    $params[] = $offset;
-
-    return $this->db->fetchAll($query, $params);
-  }
-
-  public function getTotalForUser($userId, $currency = null, $status = null, $search = null)
-  {
-    $query = "SELECT COUNT(*) as count FROM goals WHERE user_id = ?";
-    $params = [$userId];
-
-    if ($currency !== null && strtolower($currency) !== 'all') {
-      $query .= " AND currency = ?";
-      $params[] = $currency;
-    }
-
-    if ($status !== null && strtolower($status) !== 'all') {
-      $query .= " AND status = ?";
-      $params[] = $status;
-    }
-
-    if ($search !== null && $search !== '') {
-      $query .= " AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)";
-      $params[] = '%' . strtolower($search) . '%';
-      $params[] = '%' . strtolower($search) . '%';
-    }
-
-    return $this->db->fetchOne($query, $params)['count'];
-  }
-
   public function getAllForUserWithTotal($userId, $limit = 10, $offset = 0, $currency = null, $status = null, $sort = null, $search = null)
   {
-    $goals = $this->getAllForUser($userId, $limit, $offset, $currency, $status, $sort, $search);
-    $total = $this->getTotalForUser($userId, $currency, $status, $search);
+    $baseQuery = "FROM goals WHERE user_id = ?";
+    $params = [$userId];
+
+    if ($currency !== null && strtolower($currency) !== 'all') {
+      $baseQuery .= " AND currency = ?";
+      $params[] = $currency;
+    }
+
+    if ($status !== null && strtolower($status) !== 'all') {
+      $baseQuery .= " AND status = ?";
+      $params[] = $status;
+    }
+
+    if ($search !== null && $search !== '') {
+      $baseQuery .= " AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)";
+      $params[] = '%' . strtolower($search) . '%';
+      $params[] = '%' . strtolower($search) . '%';
+    }
+
+    $countQuery = "SELECT COUNT(*) as count " . $baseQuery;
+    $total = $this->db->fetchOne($countQuery, $params)['count'];
+
+    $selectQuery = "SELECT * " . $baseQuery;
+
+    if ($sort !== null && strtolower($sort) === 'old') {
+      $selectQuery .= " ORDER BY id ASC";
+    } elseif ($sort !== null && strtolower($sort) === 'new') {
+      $selectQuery .= " ORDER BY id DESC";
+    } else {
+      $selectQuery .= " ORDER BY id DESC";
+    }
+
+    $selectQuery .= " LIMIT ? OFFSET ?";
+    $selectParams = array_merge($params, [$limit, $offset]);
+
+    $goals = $this->db->fetchAll($selectQuery, $selectParams);
 
     return [
       'goals' => $goals,

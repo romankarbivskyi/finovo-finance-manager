@@ -40,54 +40,32 @@ class User
     return $this->findById($userId);
   }
 
-  public function getAll($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc", $search = null)
+  public function getAllWithTotal($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc", $search = null)
   {
     if ($limit < 1 || $offset < 0) {
       throw new \InvalidArgumentException("Invalid limit or offset.");
     }
 
-    $whereClause = '';
+    $baseQuery = "FROM users";
     $params = [];
 
     if ($search) {
-      $whereClause = "WHERE LOWER(username) LIKE ? OR LOWER(email) LIKE ?";
+      $baseQuery .= " WHERE LOWER(username) LIKE ? OR LOWER(email) LIKE ?";
       $params[] = "%" . strtolower($search) . "%";
       $params[] = "%" . strtolower($search) . "%";
     }
+
+    $countQuery = "SELECT COUNT(*) as total " . $baseQuery;
+    $total = $this->db->fetchOne($countQuery, $params)['total'];
 
     $sortBy = in_array($sortBy, ['username', 'email', 'role', 'created_at']) ? $sortBy : 'created_at';
     $sortOrder = strtolower($sortOrder) === 'desc' ? 'DESC' : 'ASC';
 
-    $query = "SELECT id, username, email, role, created_at FROM users $whereClause ORDER BY $sortBy $sortOrder LIMIT ? OFFSET ?";
-    $params[] = $limit;
-    $params[] = $offset;
+    $selectQuery = "SELECT id, username, email, role, created_at " . $baseQuery .
+      " ORDER BY $sortBy $sortOrder LIMIT ? OFFSET ?";
+    $selectParams = array_merge($params, [$limit, $offset]);
 
-    return $this->db->fetchAll($query, $params);
-  }
-
-  public function getTotalUsers($search = null)
-  {
-    $whereClause = '';
-    $params = [];
-
-    if ($search) {
-      $whereClause = "WHERE LOWER(username) LIKE ? OR LOWER(email) LIKE ?";
-      $params[] = "%" . strtolower($search) . "%";
-      $params[] = "%" . strtolower($search) . "%";
-    }
-
-    $query = "SELECT COUNT(*) as total FROM users $whereClause";
-
-    if ($whereClause) {
-      return $this->db->fetchOne($query, $params)['total'];
-    }
-    return $this->db->fetchOne($query)['total'];
-  }
-
-  public function getAllWithTotal($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc", $search = null)
-  {
-    $users = $this->getAll($limit, $offset, $sortBy, $sortOrder, $search);
-    $total = $this->getTotalUsers($search);
+    $users = $this->db->fetchAll($selectQuery, $selectParams);
 
     return [
       'users' => $users,
