@@ -87,6 +87,17 @@ class Transaction
     return $this->db->fetchOne("SELECT COUNT(*) as count FROM transactions WHERE user_id = ?", [$userId])['count'];
   }
 
+  public function getAllForUserWithTotal($userId, $limit = 10, $offset = 0)
+  {
+    $transactions = $this->getAllForUser($userId, $limit, $offset);
+    $total = $this->getTotalForUser($userId);
+
+    return [
+      'transactions' => $transactions,
+      'total' => $total
+    ];
+  }
+
   public function getAllForGoal($goalId, $limit = 10, $offset = 0)
   {
     return $this->db->fetchAll(
@@ -101,6 +112,17 @@ class Transaction
   public function getTotalForGoal($goalId)
   {
     return $this->db->fetchOne("SELECT COUNT(*) as count FROM transactions WHERE goal_id = ?", [$goalId])['count'];
+  }
+
+  public function getAllForGoalWithTotal($goalId, $limit = 10, $offset = 0)
+  {
+    $transactions = $this->getAllForGoal($goalId, $limit, $offset);
+    $total = $this->getTotalForGoal($goalId);
+
+    return [
+      'transactions' => $transactions,
+      'total' => $total
+    ];
   }
 
   public function delete($id, $userId)
@@ -151,10 +173,6 @@ class Transaction
 
   public function getStats($userId, $startDate, $endDate)
   {
-    $endDateObj = new \DateTime($endDate);
-    $endDateObj->modify('+1 day');
-    $endDatePlusOne = $endDateObj->format('Y-m-d');
-
     $query = "SELECT 
                 SUM(CASE WHEN transaction_type = 'contribution' THEN amount ELSE 0 END) AS total_contributions,
                 SUM(CASE WHEN transaction_type = 'withdrawal' THEN amount ELSE 0 END) AS total_withdrawals,
@@ -163,9 +181,9 @@ class Transaction
               FROM transactions
               WHERE user_id = ? AND created_at 
               BETWEEN ? AND ?
-              GROUP BY DATE(created_at)
+              GROUP BY created_at
               ORDER BY created_at";
 
-    return $this->db->fetchAll($query, [$userId, $startDate, $endDatePlusOne]);
+    return $this->db->fetchAll($query, [$userId, $startDate, $endDate]);
   }
 }

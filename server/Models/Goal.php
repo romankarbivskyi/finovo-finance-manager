@@ -105,6 +105,17 @@ class Goal
     return $this->db->fetchOne($query, $params)['count'];
   }
 
+  public function getAllForUserWithTotal($userId, $limit = 10, $offset = 0, $currency = null, $status = null, $sort = null, $search = null)
+  {
+    $goals = $this->getAllForUser($userId, $limit, $offset, $currency, $status, $sort, $search);
+    $total = $this->getTotalForUser($userId, $currency, $status, $search);
+
+    return [
+      'goals' => $goals,
+      'total' => $total
+    ];
+  }
+
   public function update($id, $userId, $data, $image = null, $preventImageDelete = false)
   {
     $goal = $this->db->fetchOne("SELECT * FROM goals WHERE id = ? AND user_id = ?", [$id, $userId]);

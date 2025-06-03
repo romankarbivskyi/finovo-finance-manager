@@ -84,6 +84,17 @@ class User
     return $this->db->fetchOne($query)['total'];
   }
 
+  public function getAllWithTotal($limit = 10, $offset = 0, $sortBy = null, $sortOrder = "asc", $search = null)
+  {
+    $users = $this->getAll($limit, $offset, $sortBy, $sortOrder, $search);
+    $total = $this->getTotalUsers($search);
+
+    return [
+      'users' => $users,
+      'total' => $total
+    ];
+  }
+
   public function validateCredentials($email, $password)
   {
     $user = $this->findByEmail($email);
@@ -133,6 +144,7 @@ class User
     $token = bin2hex(random_bytes(16));
     $createdAt = date('Y-m-d H:i:s');
     $expiresAt = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+
     $this->db->insert(
       "INSERT INTO password_resets (user_id, token, created_at, expires_at) VALUES (?, ?, ?, ?)",
       [
@@ -152,13 +164,13 @@ class User
       [$token]
     );
 
+    if (!$reset) {
+      throw new \Exception("Invalid or expired token.");
+    }
+
     if ($reset['expires_at'] < date('Y-m-d H:i:s')) {
       $this->deleteRecoveryToken($token);
       throw new \Exception("Token has expired.");
-    }
-
-    if (!$reset) {
-      throw new \Exception("Invalid or expired token.");
     }
 
     return $reset['user_id'];

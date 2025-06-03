@@ -46,10 +46,9 @@ class TransactionController
       $offset = $request->query('offset', 0);
       $userId = $this->session->get('user_id');
 
-      $transactions = $this->transactionModel->getAllForUser($userId, $limit, $offset);
-      $total = $this->transactionModel->getTotalForUser($userId);
+      $result = $this->transactionModel->getAllForUserWithTotal($userId, $limit, $offset);
 
-      Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
+      Response::json(['data' => $result], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
@@ -61,10 +60,9 @@ class TransactionController
       $limit = $request->query('limit', 10);
       $offset = $request->query('offset', 0);
 
-      $transactions = $this->transactionModel->getAllForGoal($goalId, $limit, $offset);
-      $total = $this->transactionModel->getTotalForGoal($goalId);
+      $result = $this->transactionModel->getAllForGoalWithTotal($goalId, $limit, $offset);
 
-      Response::json(['data' => ['transactions' => $transactions, 'total' => $total]], 200);
+      Response::json(['data' => $result], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }

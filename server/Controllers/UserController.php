@@ -269,10 +269,9 @@ class UserController
       $sortOrder = $request->query('sort_order', 'asc');
       $search = $request->query('search', '');
 
-      $users = $this->userModel->getAll($limit, $offset, $sortBy, $sortOrder, $search);
-      $total = $this->userModel->getTotalUsers($search);
+      $result = $this->userModel->getAllWithTotal($limit, $offset, $sortBy, $sortOrder, $search);
 
-      Response::json(['data' => ['users' => $users, 'total' => $total]], 200);
+      Response::json(['data' => $result], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }

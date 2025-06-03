@@ -139,9 +139,9 @@ class GoalController
 
       $userId = $this->session->get('user_id');
 
-      $goals = $this->goalModel->getAllForUser($userId, $limit, $offset, $currency, $status, $sort, $search);
-      $total = $this->goalModel->getTotalForUser($userId, $currency, $status, $search);
-      Response::json(['data' => ['goals' => $goals, 'total' => $total]], 200);
+      $result = $this->goalModel->getAllForUserWithTotal($userId, $limit, $offset, $currency, $status, $sort, $search);
+
+      Response::json(['data' => $result], 200);
     } catch (\Exception $e) {
       Response::json(['error' => $e->getMessage()], 400);
     }
