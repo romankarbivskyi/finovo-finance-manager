@@ -8,20 +8,16 @@ class ExchangeRate
 {
   public static function getPair($baseCode, $targetCode)
   {
-    $apiKey = getenv('EXCHANGE_RATE_API_KEY');
-
-    if (empty($apiKey)) {
-      throw new \Exception("Exchange rate API key is not configured. Please set EXCHANGE_RATE_API_KEY in your environment variables.");
-    }
-
-    $url = "https://v6.exchangerate-api.com/v6/$apiKey/pair/$baseCode/$targetCode";
+    $startDate = date('Y-m-d', strtotime('-1 day'));
+    $endDate = date('Y-m-d');
+    $url = "https://fxds-public-exchange-rates-api.oanda.com/cc-api/currencies?base=$baseCode&quote=$targetCode&data_type=general_currency_pair&start_date=$startDate&end_date=$endDate";
 
     $response = HttpClient::get($url);
 
     if ($response['statusCode'] === 200) {
       $data = json_decode($response['body'], true);
-      if (isset($data['conversion_rate'])) {
-        return $data['conversion_rate'];
+      if (isset($data['response'][0]['average_bid'])) {
+        return $data['response'][0]['average_bid'];
       } else {
         throw new \Exception("Invalid response from API: " . json_encode($data));
       }
