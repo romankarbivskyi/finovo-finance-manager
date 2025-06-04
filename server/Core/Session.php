@@ -52,11 +52,6 @@ class Session
     }
   }
 
-  public function clear()
-  {
-    session_unset();
-  }
-
   public function destroy()
   {
     session_destroy();
@@ -66,10 +61,5 @@ class Session
   public function regenerate($deleteOldSession = true)
   {
     session_regenerate_id($deleteOldSession);
-  }
-
-  public function getAll()
-  {
-    return $_SESSION;
   }
 }
