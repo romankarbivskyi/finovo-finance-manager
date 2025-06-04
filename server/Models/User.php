@@ -202,6 +202,11 @@ class User
   public function updateProfile($userId, $data)
   {
     try {
+      $existingUser = $this->findByEmail($data['email']);
+      if ($existingUser && $existingUser['id'] != $userId) {
+        throw new \Exception("Email already exists.");
+      }
+
       $this->db->query(
         "UPDATE users SET username = ?, email = ? WHERE id = ?",
         [$data['username'], $data['email'], $userId]
