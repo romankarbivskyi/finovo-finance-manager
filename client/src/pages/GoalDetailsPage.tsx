@@ -246,29 +246,32 @@ const GoalDetailsPage = () => {
                 <span>{format(new Date(created_at), "PPP")}</span>
               </div>
 
-              <Separator />
-
-              <div>
-                <p className="mb-2 font-medium">Saving Suggestion</p>
-                <p className="text-muted-foreground text-sm">
-                  To reach your goal by the target date, you should save
-                  approximately
-                  <span className="text-foreground mx-1 font-medium">
-                    {(
-                      remaining /
-                      Math.max(
-                        1,
-                        Math.ceil(
-                          (new Date(target_date).getTime() -
-                            new Date().getTime()) /
-                            (1000 * 60 * 60 * 24 * 30),
-                        ),
-                      )
-                    ).toFixed(2)}
-                  </span>
-                  {currency} per month.
-                </p>
-              </div>
+              {status === "active" && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="mb-2 font-medium">Saving Suggestion</p>
+                    <p className="text-muted-foreground text-sm">
+                      To reach your goal by the target date, you should save
+                      approximately
+                      <span className="text-foreground mx-1 font-medium">
+                        {(
+                          remaining /
+                          Math.max(
+                            1,
+                            Math.ceil(
+                              (new Date(target_date).getTime() -
+                                new Date().getTime()) /
+                                (1000 * 60 * 60 * 24 * 30),
+                            ),
+                          )
+                        ).toFixed(2)}
+                      </span>
+                      {currency} per month.
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
